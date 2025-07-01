@@ -1,5 +1,9 @@
 # Getting Started with Create React App
 
+This is an React App, but created with https://github.com/gitname/react-gh-pages 
+
+The list of spanis verbs is taken from: https://github.com/asosab/esp_verbos/blob/master/esp_verbos.json
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
