@@ -1,11 +1,12 @@
 # Getting Started with Create React App
 
+This app is deployed to: https://rczyzewski.github.io/conjugator/
+
 This is an React App, but created with https://github.com/gitname/react-gh-pages 
 
 The list of spanis verbs is taken from: https://github.com/asosab/esp_verbos/blob/master/esp_verbos.json
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 ## Available Scripts
 
 In the project directory, you can run:
