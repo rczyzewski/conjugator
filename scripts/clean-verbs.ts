@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 
 interface VerbData {
@@ -316,3 +316,4 @@ function main(): void {
 if (require.main === module) {
     main();
 } 
+export {}
