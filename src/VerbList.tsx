@@ -8,7 +8,9 @@ interface Conjugations {
 
 interface VerbEntry {
   verbo: string;
-  [mood: string]: Conjugations | string;
+  imperativo:  Conjugations  ;
+  indicativo:  Conjugations  ;
+  subjuntivo: Conjugations ;
 }
   var persons = ["1s", "2s", "1p", "2p", "3s", "3p"];  
 
@@ -20,6 +22,8 @@ interface VerbEntry {
   ["indicativo", "preterito"],
   ["indicativo", "imperfecto"],
   ["indicativo", "condicional"],
+  ["subjuntivo", "presente"],
+  ["subjuntivo", "preterito"],
   ["subjuntivo", "futuro"],
   ]
 
@@ -35,14 +39,33 @@ const VerbList: React.FC = () => {
   const [tense, setTense] = useState<string[]|null>(null);
   const [verb, setVerb] = useState<VerbEntry|null>(null);
   const [person, setPerson] = useState<string|null>(null);
+  const [answer, setAnswer] = useState<string|null>(null);
+
+ function getResponse(){ 
+   const [ mood, tenseName ] = tense?? ["indicativo"  , "presente" ] ;
+   
+   // Access the verbo property from the verb state
+   // Access mood properties using dynamic mood name
+   const moodData = verb?.[mood as keyof VerbEntry];
+
+   console.log(`${mood} mood:`, moodData);
+   
+   // Get tense out of mood data
+   const tenseData = typeof moodData === 'object' ? moodData?.[tenseName] : undefined;
+   console.log(`${tenseName} tense:`, tenseData);
+   
+   // Get specific person from tense
+   const personData = typeof tenseData === 'object' ? tenseData?.[person ?? "1s"] : undefined;
+   console.log(`${person ?? "1s"} person:`, personData);
+   
+   return personData;
+ }
+
 
 
   useEffect(()=> {
     setTense(getRandomItem(tenses));
     setPerson(getRandomItem(persons))
-
- //   setTense(getRandomItem(tenses));
-
   } )
 
 
@@ -55,7 +78,9 @@ const VerbList: React.FC = () => {
       .then((data: VerbEntry[]) => {
         setVerbs(data);
         setVerb(getRandomItem(data));
+       
         setLoading(false);
+
       })
       .catch((err) => {
         setError(err.message);
@@ -70,32 +95,12 @@ const VerbList: React.FC = () => {
     <div>
       <h2>Spanish Verbs</h2>
       <h2>verbo: {verb?.verbo}</h2>
-      <h2>tiempo: {tense}</h2>
+      <h2>mode: {tense?.[0] || null} tense: {tense?.[1] || null} </h2>
       <h2>person {person}</h2>
-      <ul>
-        {verbs.slice(0, 10).map((verb, idx) => (
-          <li key={idx} style={{ marginBottom: '1em' }}>
-            <strong>{verb.verbo}</strong>
-            <ul>
-              {verb.indicativo && typeof verb.indicativo === 'object' &&
-                Object.entries(verb.indicativo).slice(0, 1).map(([tense, forms]) => (
-                  <li key={tense}>
-                    <em>{tense}</em>:
-                    <ul>
-                      {Object.entries(forms as { [person: string]: string }).slice(0, 3).map(
-                        ([person, form]) => (
-                          <li key={person}>
-                            {person}: {form}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </li>
-                ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      <h2>expected answer: {answer}</h2>
+      <form>
+      <input onInput={(e) => console.log((e.target as HTMLInputElement).value)}></input>
+    </form>
     </div>
   );
 };

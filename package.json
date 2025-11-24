@@ -11,20 +11,25 @@
     "@types/jest": "^27.5.2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@vscode/test-electron": "^2.5.2",
+    "bootstrap": "^5.3.3",
+    "g": "^2.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-scripts": "^5.0.1",
-    "web-vitals": "^2.1.4",
-    "bootstrap": "^5.3.3"
+    "source-map-support": "^0.5.21",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "clean-verbs": "ts-node scripts/clean-verbs.ts"
+    "clean-verbs": "ts-node scripts/clean-verbs.ts",
+    "test": "ts-mocha  test/*.spec.ts  --watch-files test/*.spec.ts ",
+    "mocha": "ts-mocha  test/*.spec.ts  --watch-files test/*.spec.ts ",
+    "console": " ts-node"
   },
   "eslintConfig": {
     "extends": [
@@ -46,8 +51,13 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.10",
+    "chai": "^4.3.7",
     "gh-pages": "^6.3.0",
+    "mocha": "^11.7.1",
+    "mocha-explorer-launcher-scripts": "^0.4.0",
+    "ts-mocha": "^11.1.0",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "tslib": "^2.8.1",
     "typescript": "^4.9.5"
   }
