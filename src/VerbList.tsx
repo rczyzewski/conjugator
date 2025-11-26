@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
-interface Conjugations {
+
+ interface Conjugations {
   [tense: string]: {
     [person: string]: string;
   };
 }
 
-interface VerbEntry {
+ interface VerbEntry {
   verbo: string;
   imperativo:  Conjugations  ;
   indicativo:  Conjugations  ;
@@ -14,7 +15,7 @@ interface VerbEntry {
 }
   var persons = ["1s", "2s", "1p", "2p", "3s", "3p"];  
 
-  var tenses = [
+  var tenses : Array< [string, string]> = [
   ["imperativo", "negativo"],
   ["imperativo", "afirmativo"],
   ["indicativo", "futuro"],
@@ -40,6 +41,8 @@ const VerbList: React.FC = () => {
   const [verb, setVerb] = useState<VerbEntry|null>(null);
   const [person, setPerson] = useState<string|null>(null);
   const [answer, setAnswer] = useState<string|null>(null);
+ const [response, setResponse] = useState<"OK"|"NO"|null>(null); 
+ const answerRef = useRef<HTMLInputElement>(null)
 
  function getResponse(){ 
    const [ mood, tenseName ] = tense?? ["indicativo"  , "presente" ] ;
@@ -62,13 +65,6 @@ const VerbList: React.FC = () => {
  }
 
 
-
-  useEffect(()=> {
-    setTense(getRandomItem(tenses));
-    setPerson(getRandomItem(persons))
-  } )
-
-
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + '/verbs/esp_verbos_cleaned_batch_001.json')
       .then((res) => {
@@ -77,8 +73,17 @@ const VerbList: React.FC = () => {
       })
       .then((data: VerbEntry[]) => {
         setVerbs(data);
-        setVerb(getRandomItem(data));
-       
+        let r = getRandomItem(data);
+        setVerb(r);
+
+        const te = getRandomItem(tenses)
+        setTense(te);
+        const pe = getRandomItem(persons);
+        setPerson(pe)
+
+        let expectedAnswer = r.indicativo[te[1]!][pe]
+        setAnswer(expectedAnswer)
+
         setLoading(false);
 
       })
@@ -91,6 +96,18 @@ const VerbList: React.FC = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log(e);
+
+     if (answerRef?.current?.value === answer) {
+       setResponse("OK")
+     }
+     else {
+       setResponse("NO")
+     }
+   }
+
   return (
     <div>
       <h2>Spanish Verbs</h2>
@@ -98,11 +115,12 @@ const VerbList: React.FC = () => {
       <h2>mode: {tense?.[0] || null} tense: {tense?.[1] || null} </h2>
       <h2>person {person}</h2>
       <h2>expected answer: {answer}</h2>
-      <form>
-      <input onInput={(e) => console.log((e.target as HTMLInputElement).value)}></input>
+      <form onSubmit={handleSubmit}>
+      <input onInput={(e) => console.log((e.target as HTMLInputElement).value)} ref={answerRef}></input>
     </form>
+    <div>Rersponse: {response} </div>
     </div>
   );
-};
 
-export default VerbList; 
+}
+export default VerbList;
