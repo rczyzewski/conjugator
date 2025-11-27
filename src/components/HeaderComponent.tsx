@@ -1,22 +1,39 @@
 import { JSX } from "react";
 import { Link } from "react-router-dom";
 
+
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+
 function HeaderComponent(): JSX.Element {
     return <header className="header">
-        <h1>Welcome to Conjugator!</h1>
-        <nav>
-            <ul className="link-list">
-                <li>
-                    <Link className="link" to="/">Home</Link>
-                </li>
-                <li>
-                    <Link className="link" to="/setup">Configuration</Link>
-                </li>
-                <li>
-                    <Link className="link" to="/list">Verbs </Link>
-                </li>
-            </ul>
-        </nav>
+        <Navbar expand="lg" className="bg-body-tertiary">
+            <Container>
+                <Navbar.Brand href="/">Conjugator</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                        <Nav.Link href="/list">List</Nav.Link>
+                        <Nav.Link href="/setup">Settup</Nav.Link>
+                        <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="#link">Link</Nav.Link>
+                        <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                            <NavDropdown.Item href="#action/3.2">
+                                Another action
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                            <NavDropdown.Divider />
+                            <NavDropdown.Item href="#action/3.4">
+                                Separated link
+                            </NavDropdown.Item>
+                        </NavDropdown>
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
     </header>
 
 }
