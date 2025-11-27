@@ -16,7 +16,7 @@ function App() {
       <Routes>
         <Route path='/' element={<HomePage/>} />
         <Route path='/setup' element={<ConjugationsSettings/>} />
-        <Route path='/list' element={<VerbList/>} />
+        <Route path='/list' element={<VerbList title='Basic exercise for spanish conjugation' range={100}/>} />
       </Routes>
     </div>
   );

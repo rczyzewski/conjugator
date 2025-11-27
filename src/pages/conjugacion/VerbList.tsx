@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
+import Card from 'react-bootstrap/Card';
 
 
 interface Conjugations {
@@ -14,28 +15,19 @@ interface VerbEntry {
   indicativo: Conjugations;
   subjuntivo: Conjugations;
 }
-var persons = ["1s", "2s", "1p", "2p", "3s", "3p"];
-
-var tenses: Array<[string, string]> = [
-  ["imperativo", "negativo"],
-  ["imperativo", "afirmativo"],
-  ["indicativo", "futuro"],
-  ["indicativo", "presente"],
-  ["indicativo", "preterito"],
-  ["indicativo", "imperfecto"],
-  ["indicativo", "condicional"],
-  ["subjuntivo", "presente"],
-  ["subjuntivo", "preterito"],
-  ["subjuntivo", "futuro"],
-]
 
 function getRandomItem<T>(set: T[]): T {
   return Array.from(set)[Math.floor(Math.random() * set.length)];
 }
 
+interface VerbListProps {
+  title: string;
+  range: number;
+}
 
-const VerbList: React.FC = () => {
-  const [verbs, setVerbs] = useState<VerbEntry[]>([]);
+
+function VerbList( { title, range }: VerbListProps ):JSX.Element   {
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tense, setTense] = useState<string[] | null>(null);
@@ -73,36 +65,40 @@ const VerbList: React.FC = () => {
         return res.json();
       })
       .then((data: VerbEntry[]) => {
-        setVerbs(data);
-        let r = getRandomItem(data);
-        setVerb(r);
 
-        const te = getRandomItem(tenses)
-        setTense(te);
+        let selectedVerb = getRandomItem(data);
 
-        let possible : { [key: string]: string } = r.indicativo[te[1]!]
-          console.log("selected", r.verbo)
-console.log(r)
+        setVerb(selectedVerb);
+        const modes = Object.getOwnPropertyNames(selectedVerb).filter(it => it !== "verbo");
+        const mode = getRandomItem(modes)
+        const modeData = selectedVerb[mode as keyof VerbEntry] as Conjugations;
+        console.log("moodData: ", modeData)
 
-persons = Object.getOwnPropertyNames(possible);
+        const tense = getRandomItem(Object.getOwnPropertyNames(modeData))
+        setTense([mode, tense])
+
+        const tenseData = modeData[tense]
+        console.log(tenseData)
+        const persons = Object.getOwnPropertyNames(tenseData);
+
         const pe = getRandomItem(persons);
-        
 
         setPerson(pe)
-        setAnswer(possible[pe])
+        setAnswer(tenseData[pe])
 
         setLoading(false);
 
       })
-      .catch((err) => {
+      .catch((err: TypeError) => {
         setError(err.message);
+        console.log(err.stack)
 
         setLoading(false);
       });
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div>My custom Error Error: {error}</div>;
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -116,22 +112,32 @@ persons = Object.getOwnPropertyNames(possible);
     }
   }
 
+  let variant ="Secondary"
+
   return (
     <>
       <HeaderComponent></HeaderComponent>
+      <Card 
+          bg={variant.toLowerCase()}
+          key={variant}
+          text={variant.toLowerCase() === 'light' ? 'dark' : 'white'}
+  
+      style={{ width: '24rem' }}
+      className="mb-2" 
+      >
+        <Card.Header>{title}</Card.Header>
+        <Card.Title>{verb?.verbo}</Card.Title>
+        <Card.Subtitle>{tense?.[0] || ""} {tense?.[1]||""}</Card.Subtitle>
+        <Card.Title>{person}</Card.Title>
       <div>
-        <h2>Spanish Verbs</h2>
-        <h2>verbo: {verb?.verbo}</h2>
-        <h2>mode: {tense?.[0] || null} tense: {tense?.[1] || null} </h2>
-        <h2>person {person}</h2>
-        <h2>expected answer: {answer}</h2>
         <form onSubmit={handleSubmit}>
           <input onInput={(e) => console.log((e.target as HTMLInputElement).value)} ref={answerRef}></input>
         </form>
         <div>Rersponse: {response} </div>
       </div>
+        <h2>expected answer: {answer}</h2>
+    </Card>
     </>
   );
-
 }
 export default VerbList;
