@@ -1,5 +1,4 @@
 import { JSX } from "react";
-import { Link } from "react-router-dom";
 
 
 import Container from 'react-bootstrap/Container';
@@ -8,6 +7,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
 function HeaderComponent(): JSX.Element {
+
+        //<Route path='/game/sw001' element={<VerbList title='Basic exercise for spanish conjugation' range={10}/>} />
     return <header className="header">
         <Navbar expand="lg" className="bg-body-tertiary">
             <Container>
@@ -15,20 +16,23 @@ function HeaderComponent(): JSX.Element {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="/list">List</Nav.Link>
-                        <Nav.Link href="/setup">Settup</Nav.Link>
-                        <Nav.Link href="/">Home</Nav.Link>
-                        <Nav.Link href="#link">Link</Nav.Link>
-                        <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">
-                                Another action
-                            </NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                        <NavDropdown title="Conjugacion Training" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="/game/sw001">10 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw002">20 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw003">30 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw004">50 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw005">70 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw006">100 MostPopular</NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action/3.4">
-                                Separated link
-                            </NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw001">150 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw002">200 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw003">300 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw004">500 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw005">700 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Item href="/game/sw006">1000 MostPopular</NavDropdown.Item>
+                            <NavDropdown.Divider />
+                            <NavDropdown.Item href="/list">Trained Conjugations</NavDropdown.Item>
+                            <NavDropdown.Item href="/setup">Game Settings</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
