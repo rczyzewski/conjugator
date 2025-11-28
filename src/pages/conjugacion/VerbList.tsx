@@ -55,7 +55,7 @@ function VerbList({ title, range }: VerbListProps): JSX.Element {
   const answerRef = useRef<HTMLInputElement>(null)
 
 
- const  PUBLIC_URL =   import.meta.env.BASE_URL
+ const  PUBLIC_URL = "https://rczyzewski.github.io/conjugator"
 
   useEffect(() => {
     fetch(PUBLIC_URL + '/verbs/esp_verbos_cleaned_batch_001.json')

@@ -9,15 +9,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   return (
     <div className="App">
-      <Routes>
-        <Route path='/conjugator/' element={<HomePage/>} />
-        <Route path='/conjugator/setup' element={<ConjugationsSettings/>} />
-        <Route path='/conjugator/game/sw001' element={<VerbList title='Basic exercise for spanish conjugation' range={10}/>} />
-        <Route path='/conjugator/game/sw002' element={<VerbList title='Basic exercise for spanish conjugation' range={20}/>} />
-        <Route path='/conjugator/game/sw003' element={<VerbList title='Basic exercise for spanish conjugation' range={30}/>} />
-        <Route path='/conjugator/game/sw004' element={<VerbList title='Basic exercise for spanish conjugation' range={50}/>} />
-        <Route path='/conjugator/game/sw005' element={<VerbList title='Basic exercise for spanish conjugation' range={70}/>} />
-        <Route path='/conjugator/game/sw006' element={<VerbList title='Basic exercise for spanish conjugation' range={100}/>} />
+      <Routes >
+        <Route path='/' element={<HomePage/>} />
+        <Route path='/setup' element={<ConjugationsSettings/>} />
+        <Route path='/game/sw001' element={<VerbList title='Basic exercise for spanish conjugation' range={10}/>} />
+        <Route path='/game/sw002' element={<VerbList title='Basic exercise for spanish conjugation' range={20}/>} />
+        <Route path='/game/sw003' element={<VerbList title='Basic exercise for spanish conjugation' range={30}/>} />
+        <Route path='/game/sw004' element={<VerbList title='Basic exercise for spanish conjugation' range={50}/>} />
+        <Route path='/game/sw005' element={<VerbList title='Basic exercise for spanish conjugation' range={70}/>} />
+        <Route path='/game/sw006' element={<VerbList title='Basic exercise for spanish conjugation' range={100}/>} />
       </Routes>
     </div>
   );
