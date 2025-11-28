@@ -16,7 +16,7 @@ interface VerbEntry {
   subjuntivo: Conjugations;
 }
 
-function getRandomItem<T>(set: T[]): T {
+function pickRandom<T>(set: T[]): T {
   return Array.from(set)[Math.floor(Math.random() * set.length)];
 }
 
@@ -24,6 +24,7 @@ interface VerbListProps {
   title: string;
   range: number;
 }
+
 
 class ConjugatedVerb {
   constructor(
@@ -35,15 +36,16 @@ class ConjugatedVerb {
   ) { }
 
 }
+/*
 function fetchData(range: number) {
 
   let maxPages = Math.ceil(range / 100);
   Array.from({ length: maxPages })
     .map((_, index) => index + 1)
     .map(it => it.toString().padStart(3, "0"))
-    .map(it => process.env.PUBLIC_URL + `/verbs/esp_verbos_cleaned_batch_{it}.json`);
+   // .map(it => process.env.PUBLIC_URL + `/verbs/esp_verbos_cleaned_batch_{it}.json`);
 }
-
+*/
 function VerbList({ title, range }: VerbListProps): JSX.Element {
 
   const [loading, setLoading] = useState(true);
@@ -53,29 +55,31 @@ function VerbList({ title, range }: VerbListProps): JSX.Element {
   const answerRef = useRef<HTMLInputElement>(null)
 
 
+ const  PUBLIC_URL =   import.meta.env.BASE_URL
 
   useEffect(() => {
-    fetch(process.env.PUBLIC_URL + '/verbs/esp_verbos_cleaned_batch_001.json')
+    fetch(PUBLIC_URL + '/verbs/esp_verbos_cleaned_batch_001.json')
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch');
         return res.json();
       })
       .then((data: VerbEntry[]) => {
 
-        let selectedVerb = getRandomItem(data);
+        let selectedVerb = pickRandom(data);
 
         const modes = Object.getOwnPropertyNames(selectedVerb).filter(it => it !== "verbo");
-        const mode = getRandomItem(modes)
+        const mode = pickRandom(modes)
         const modeData = selectedVerb[mode as keyof VerbEntry] as Conjugations;
+
         console.log("moodData: ", modeData)
 
-        const tense = getRandomItem(Object.getOwnPropertyNames(modeData))
+        const tense = pickRandom(Object.getOwnPropertyNames(modeData))
 
         const tenseData = modeData[tense]
         console.log(tenseData)
         const persons = Object.getOwnPropertyNames(tenseData);
 
-        const pe = getRandomItem(persons);
+        const pe = pickRandom(persons);
 
 
         let selectedData = new ConjugatedVerb(selectedVerb.verbo, mode, tense, pe, tenseData[pe]);
@@ -113,7 +117,7 @@ function VerbList({ title, range }: VerbListProps): JSX.Element {
         style={{ width: '24rem' }}
         className="mb-2"
       >
-        <Card.Header>{title}</Card.Header>
+        <Card.Header>{title} : {range}</Card.Header>
         <Card.Title>{ }</Card.Title>
         <Card.Subtitle>{conjugatedVerb?.mode} {conjugatedVerb?.tense}</Card.Subtitle>
         <Card.Title>{conjugatedVerb?.person}</Card.Title>
