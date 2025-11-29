@@ -5,7 +5,7 @@ function HomePage(): JSX.Element {
 
 
     return <>
-    <HeaderComponent></HeaderComponent>
+    <HeaderComponent/>
     <div>HomePage</div>
     </>
     

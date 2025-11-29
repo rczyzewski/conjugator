@@ -1,135 +1,57 @@
-import React, { useRef, useEffect, useState, JSX } from 'react';
+import {useEffect, useState, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
-import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
+import fetchData, { VerbEntry } from './VerbsService';
+import InfiniteScroll from "react-infinite-scroll-component";
 
 
-interface Conjugations {
-  [tense: string]: {
-    [person: string]: string;
-  };
+export default function VerbList(): JSX.Element {
+
+    const refresh = () => { console.log("refresh") }
+
+    const [items, setItems] = useState<VerbEntry[]>([])
+
+    const getData = () => { 
+        //TODO:  just to get some test items
+        fetchData(10).then(it =>
+            setItems([...items, ...it])
+        )
+    }
+
+    useEffect(getData, [])
+
+    return (
+        <>
+            <HeaderComponent />
+            <InfiniteScroll
+                dataLength={items.length} //This is important field to render the next data
+                next={getData}
+                hasMore={true}
+                loader={<h4>Loading...</h4>}
+                endMessage={
+                    <p style={{ textAlign: 'center' }}>
+                        <b>Yay! You have seen it all</b>
+                    </p>
+                }
+                // below props only if you need pull down functionality
+                refreshFunction={refresh}
+                pullDownToRefresh
+                pullDownToRefreshThreshold={50}
+                pullDownToRefreshContent={
+                    <h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>
+                }
+                releaseToRefreshContent={
+                    <h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>
+                }
+            >
+                <ListGroup>
+                    {items.map((it) => (
+                        <ListGroup.Item>{it.verbo}</ListGroup.Item>
+                    ))}
+                </ListGroup>
+            </InfiniteScroll>
+        </>
+    );
 }
 
-interface VerbEntry {
-  verbo: string;
-  imperativo: Conjugations;
-  indicativo: Conjugations;
-  subjuntivo: Conjugations;
-}
 
-function pickRandom<T>(set: T[]): T {
-  return Array.from(set)[Math.floor(Math.random() * set.length)];
-}
-
-interface VerbListProps {
-  title: string;
-  range: number;
-}
-
-
-class ConjugatedVerb {
-  constructor(
-    public readonly infinitivo: string,
-    public readonly mode: string,
-    public readonly tense: string,
-    public readonly person: string,
-    public readonly answer: string
-  ) { }
-
-}
-/*
-function fetchData(range: number) {
-
-  let maxPages = Math.ceil(range / 100);
-  Array.from({ length: maxPages })
-    .map((_, index) => index + 1)
-    .map(it => it.toString().padStart(3, "0"))
-   // .map(it => process.env.PUBLIC_URL + `/verbs/esp_verbos_cleaned_batch_{it}.json`);
-}
-*/
-function VerbList({ title, range }: VerbListProps): JSX.Element {
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [conjugatedVerb, setSelected] = useState<ConjugatedVerb | null>(null)
-  const [response, setResponse] = useState<"OK" | "NO" | null>(null);
-  const answerRef = useRef<HTMLInputElement>(null)
-
-
- const  PUBLIC_URL = "https://rczyzewski.github.io/conjugator"
-
-  useEffect(() => {
-    fetch(PUBLIC_URL + '/verbs/esp_verbos_cleaned_batch_001.json')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch');
-        return res.json();
-      })
-      .then((data: VerbEntry[]) => {
-
-        let selectedVerb = pickRandom(data);
-
-        const modes = Object.getOwnPropertyNames(selectedVerb).filter(it => it !== "verbo");
-        const mode = pickRandom(modes)
-        const modeData = selectedVerb[mode as keyof VerbEntry] as Conjugations;
-
-        console.log("moodData: ", modeData)
-
-        const tense = pickRandom(Object.getOwnPropertyNames(modeData))
-
-        const tenseData = modeData[tense]
-        console.log(tenseData)
-        const persons = Object.getOwnPropertyNames(tenseData);
-
-        const pe = pickRandom(persons);
-
-
-        let selectedData = new ConjugatedVerb(selectedVerb.verbo, mode, tense, pe, tenseData[pe]);
-
-        setSelected(selectedData)
-        setLoading(false);
-
-      })
-      .catch((err: TypeError) => {
-        setError(err.message);
-        console.log(err.stack)
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>My custom Error Error: {error}</div>;
-
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    console.log(e);
-    setResponse((answerRef?.current?.value === conjugatedVerb?.answer) ? "OK": "NO" )  
-
-  }
-
-  let variant = "Secondary"
-
-  return (
-    <>
-      <HeaderComponent></HeaderComponent>
-      <Card
-        bg={variant.toLowerCase()}
-        key={variant}
-        text={variant.toLowerCase() === 'light' ? 'dark' : 'white'}
-        style={{ width: '24rem' }}
-        className="mb-2"
-      >
-        <Card.Header>{title} : {range}</Card.Header>
-        <Card.Title>{ }</Card.Title>
-        <Card.Subtitle>{conjugatedVerb?.mode} {conjugatedVerb?.tense}</Card.Subtitle>
-        <Card.Title>{conjugatedVerb?.person}</Card.Title>
-        <div>
-          <form onSubmit={handleSubmit}>
-            <input onInput={(e) => console.log((e.target as HTMLInputElement).value)} ref={answerRef}></input>
-          </form>
-          <div>Rersponse: {response} </div>
-        </div>
-        <h2>expected answer: {conjugatedVerb?.answer}</h2>
-      </Card>
-    </>
-  );
-}
-export default VerbList;

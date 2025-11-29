@@ -1,0 +1,97 @@
+import React, { useRef, useEffect, useState, JSX } from 'react';
+import HeaderComponent from '../../components/HeaderComponent';
+import Card from 'react-bootstrap/Card';
+import { VerbEntry , pickRandom, Conjugations, ConjugatedVerb} from './VerbsService';
+
+interface VerbListProps {
+  title: string;
+  range: number;
+}
+
+function VerbQuiz({ title, range }: VerbListProps): JSX.Element {
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [conjugatedVerb, setSelected] = useState<ConjugatedVerb | null>(null)
+  const [response, setResponse] = useState<"OK" | "NO" | null>(null);
+  const answerRef = useRef<HTMLInputElement>(null)
+
+
+ const  PUBLIC_URL = "https://rczyzewski.github.io/conjugator"
+
+  useEffect(() => {
+    fetch(PUBLIC_URL + '/verbs/esp_verbos_cleaned_batch_001.json')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
+      .then((data: VerbEntry[]) => {
+
+        let selectedVerb = pickRandom(data);
+
+        const modes = Object.getOwnPropertyNames(selectedVerb).filter(it => it !== "verbo");
+        const mode = pickRandom(modes)
+        const modeData = selectedVerb[mode as keyof VerbEntry] as Conjugations;
+
+        console.log("moodData: ", modeData)
+
+        const tense = pickRandom(Object.getOwnPropertyNames(modeData))
+
+        const tenseData = modeData[tense]
+        console.log(tenseData)
+        const persons = Object.getOwnPropertyNames(tenseData);
+
+        const pe = pickRandom(persons);
+
+
+        let selectedData = new ConjugatedVerb(selectedVerb.verbo, mode, tense, pe, tenseData[pe]);
+
+        setSelected(selectedData)
+        setLoading(false);
+
+      })
+      .catch((err: TypeError) => {
+        setError(err.message);
+        console.log(err.stack)
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>My custom Error Error: {error}</div>;
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log(e);
+    setResponse((answerRef?.current?.value === conjugatedVerb?.answer) ? "OK": "NO" )  
+
+  }
+
+  let variant = "Secondary"
+
+  return (
+    <>
+      <HeaderComponent></HeaderComponent>
+      <Card
+        bg={variant.toLowerCase()}
+        key={variant}
+        text={variant.toLowerCase() === 'light' ? 'dark' : 'white'}
+        style={{ width: '24rem' }}
+        className="mb-2"
+      >
+        <Card.Header>{title} : {range}</Card.Header>
+        <Card.Title>{ }</Card.Title>
+        <Card.Subtitle>{conjugatedVerb?.mode} {conjugatedVerb?.tense}</Card.Subtitle>
+        <Card.Title>{conjugatedVerb?.person}</Card.Title>
+        <div>
+          <form onSubmit={handleSubmit}>
+            <input onInput={(e) => console.log((e.target as HTMLInputElement).value)} ref={answerRef}></input>
+          </form>
+          <div>Rersponse: {response} </div>
+        </div>
+        <h2>expected answer: {conjugatedVerb?.answer}</h2>
+      </Card>
+    </>
+  );
+}
+export default VerbQuiz;
