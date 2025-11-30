@@ -1,31 +1,33 @@
-import {useEffect, useState, JSX } from 'react';
+import {useEffect, useState, useRef, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
-import ListGroup from 'react-bootstrap/ListGroup';
-import fetchData, { VerbEntry } from './VerbsService';
+import  fetchFromJsonDb, { VerbEntry } from './VerbsService';
 import InfiniteScroll from "react-infinite-scroll-component";
-
-
+import  ListGroup  from 'react-bootstrap/ListGroup';
 export default function VerbList(): JSX.Element {
 
     const refresh = () => { console.log("refresh") }
 
     const [items, setItems] = useState<VerbEntry[]>([])
 
-    const getData = () => { 
-        //TODO:  just to get some test items
-        fetchData(10).then(it =>
-            setItems([...items, ...it])
-        )
+    const firstRender = useRef(true);
+
+    const getData = (start: number, end: number) => {
+
+        fetchFromJsonDb(start, end)
+            .then(it => setItems([...items, ...it]))
     }
 
-    useEffect(getData, [])
+    useEffect(() => { if (firstRender.current) { firstRender.current = false; getData(0, 100) } }, [])
 
     return (
         <>
             <HeaderComponent />
             <InfiniteScroll
                 dataLength={items.length} //This is important field to render the next data
-                next={getData}
+                next={() => {
+                    getData(items.length, items.length + 10)
+                }}
+
                 hasMore={true}
                 loader={<h4>Loading...</h4>}
                 endMessage={
@@ -45,9 +47,15 @@ export default function VerbList(): JSX.Element {
                 }
             >
                 <ListGroup>
-                    {items.map((it) => (
-                        <ListGroup.Item>{it.verbo}</ListGroup.Item>
-                    ))}
+                    {items.map((it, index) => (
+                        <ListGroup.Item key={index}>
+                            <h2> {it.verbo}</h2>
+
+                        </ListGroup.Item>
+
+                    ))
+
+                    }
                 </ListGroup>
             </InfiniteScroll>
         </>
