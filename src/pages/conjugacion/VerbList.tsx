@@ -2,7 +2,9 @@ import {useEffect, useState, useRef, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
 import  fetchFromJsonDb, { VerbEntry } from './VerbsService';
 import InfiniteScroll from "react-infinite-scroll-component";
-import  ListGroup  from 'react-bootstrap/ListGroup';
+import {  Col, Container } from 'react-bootstrap';
+import  Row from 'react-bootstrap/Row'
+import { Link } from 'react-router-dom';
 export default function VerbList(): JSX.Element {
 
     const refresh = () => { console.log("refresh") }
@@ -22,7 +24,8 @@ export default function VerbList(): JSX.Element {
     return (
         <>
             <HeaderComponent />
-            <InfiniteScroll
+            <Container >
+            <InfiniteScroll 
                 dataLength={items.length} //This is important field to render the next data
                 next={() => {
                     getData(items.length, items.length + 10)
@@ -46,19 +49,17 @@ export default function VerbList(): JSX.Element {
                     <h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>
                 }
             >
-                <ListGroup>
                     {items.map((it, index) => (
-                        <ListGroup.Item key={index}>
-                            <h2> {it.verbo}</h2>
-
-                        </ListGroup.Item>
+                        <Row key={index}>
+                            <Col><Link to="/single"> {it.verbo}</Link></Col>
+                        </Row>
 
                     ))
 
                     }
-                </ListGroup>
             </InfiniteScroll>
-        </>
+        </Container>
+    </>
     );
 }
 

@@ -1,17 +1,22 @@
 import React, { useRef, useEffect, useState, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
-import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
 import fetchFromJsonDb, { VerbEntry , pickRandom, Conjugations, ConjugatedVerb} from './VerbsService';
 
 interface VerbListProps {
-  title: string;
   range: number;
+  typed: boolean;
 }
 
-interface VerbResponseProps {
-  correct: boolean
+interface VerbEvaluation {
   conjugatedVerb: ConjugatedVerb
+}
+interface VerbResponseProps extends VerbEvaluation{
+  correct: boolean;
+  conjugatedVerb: ConjugatedVerb;
 }
 
 function VerbResponse( { correct, conjugatedVerb }: VerbResponseProps  ): JSX.Element {
@@ -24,38 +29,41 @@ function VerbResponse( { correct, conjugatedVerb }: VerbResponseProps  ): JSX.El
   }
   else {
   return <>
-        <h2>No No No!</h2>
-        <h2>expected answer: {conjugatedVerb?.answer}</h2>
-        <Button variant="primary">Next Verb</Button>
+        <h1> {conjugatedVerb?.answer}</h1>
   </>
 
   }
   
 }
-function VerbQuiz({ title, range }: VerbListProps): JSX.Element {
+function VerbQuiz({  range, typed=false }: VerbListProps): JSX.Element {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [state, setState ] = useState<"open"|"evaluation">("open")
   const [conjugatedVerb, setSelected] = useState<ConjugatedVerb | null>(null)
   const [response, setResponse] = useState<true | false | null>(null);
+
   const answerRef = useRef<HTMLInputElement>(null)
   const [ finished, setFinished ] = useState<boolean>(false)
 
-function EvaluateResponse( { conjugatedVerb }: VerbResponseProps ) : JSX.Element{
-  console.log("should we save it to db? ", conjugatedVerb.answer)
-  return ( <>
-  <Button variant="danger" onClick={ ()=> { setFinished(!finished)}}>Danger</Button>
-  <Button variant="warning" onClick={ ()=> { setFinished(!finished)}}>Warning</Button>
-  <Button variant="secondary" onClick={ ()=> { setFinished(!finished)}}>Secondary</Button>
-  <Button variant="info" onClick={ ()=> { setFinished(!finished)}}>Info</Button>
-  <Button variant="success" onClick={ ()=> { setFinished(!finished)}}>Success</Button>
-</>
-)
+
+  function EvaluateResponse({ conjugatedVerb }: VerbEvaluation): JSX.Element {
+    console.log("should we save it to db? ", conjugatedVerb.answer)
+    return (<>
+      <Col>
+        <Button className="w-100" variant="danger" onClick={() => { setState("open");  setFinished(!finished) }}>Danger</Button>
+      </Col>
+      <Col >
+        <Button  className="w-100"variant="success" onClick={() => { setState("open"); setFinished(!finished) }}>Success</Button>
+      </Col>
+    </>
+    )
 
 }
 
   useEffect(() => {
-    fetchFromJsonDb(0, 100)
+    fetchFromJsonDb(0, range)
       .then((data: VerbEntry[]) => {
 
         let selectedVerb = pickRandom(data);
@@ -93,41 +101,66 @@ function EvaluateResponse( { conjugatedVerb }: VerbResponseProps ) : JSX.Element
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     console.log(event);
+    console.log(response)
     setResponse((answerRef?.current?.value === conjugatedVerb?.answer) ? true: false )  
 
   }
 
-  let variant = "Secondary"
 
   return (
     <>
       <HeaderComponent></HeaderComponent>
-      <Card
-        bg={variant.toLowerCase()}
-        key={variant}
-        text={variant.toLowerCase() === 'light' ? 'dark' : 'white'}
-        style={{ width: '24rem' }}
-        className="mb-2"
-      >
-        <Card.Header>{title} : {range}</Card.Header>
-        <Card.Title>{conjugatedVerb?.infinitivo }</Card.Title>
-        <Card.Subtitle>{conjugatedVerb?.mode} {conjugatedVerb?.tense}</Card.Subtitle>
-        <Card.Title>{conjugatedVerb?.person}</Card.Title>
-        <div>
-          <form onSubmit={handleSubmit}>
-            <input onInput={(e) => console.log((e.target as HTMLInputElement).value)} ref={answerRef}></input>
-          </form>
-        </div>
-      { conjugatedVerb !== null && response !== null &&
-      
-        <VerbResponse correct={false} conjugatedVerb={conjugatedVerb}/> 
-        
+      <Container className="min-vh-75 h-100  d-flex justify-content-center align-items-center align-self-center" >
 
-}
-{ conjugatedVerb !== null &&
-      <EvaluateResponse conjugatedVerb={conjugatedVerb} correct={true}/>
-}
-      </Card>
+        <Container className="bg-body text-center" >
+          <Row className="justify-content-center">
+            <Col className="text-center">
+             <h2>{conjugatedVerb?.infinitivo}</h2>
+                          </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Container><Button>{conjugatedVerb?.mode} {conjugatedVerb?.tense}</Button></Container>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Container>{conjugatedVerb?.person}</Container>
+            </Col>
+          </Row>
+          {typed &&
+            <Row>
+              <Col>
+              <form onSubmit={handleSubmit}>
+                <input onInput={(e) => console.log((e.target as HTMLInputElement).value)} ref={answerRef}></input>
+              </form>
+              </Col>
+            </Row>
+          }
+          { !typed && state=="open" &&
+            <Row>
+              <Col>
+                <Button variant='info' onClick={ ()=> setState("evaluation")}>Check</Button>
+              </Col>
+            </Row>
+          }
+          {conjugatedVerb !== null && state=="evaluation" &&
+
+            <VerbResponse correct={false} conjugatedVerb={conjugatedVerb} />
+
+
+          }
+
+          {conjugatedVerb !== null && state=="evaluation" &&
+            <Row>
+            <EvaluateResponse conjugatedVerb={conjugatedVerb} />
+            </Row>
+          }
+
+
+        </Container>
+      </Container>
+
     </>
   );
 }
