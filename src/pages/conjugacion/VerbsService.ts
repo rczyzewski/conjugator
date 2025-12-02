@@ -1,5 +1,5 @@
 import { from , firstValueFrom} from "rxjs";
-import { mergeMap, toArray, map, skip, take } from "rxjs/operators";
+import { mergeMap, toArray, map, skip, take, filter } from "rxjs/operators";
 
 const PUBLIC_URL = "https://rczyzewski.github.io/conjugator";
 
@@ -46,15 +46,16 @@ export function getFetchPages(start: number, end: number): FetchProperties {
   return { skip: start % 100, take: end - start, pages: pages };
 }
 
-// ...
 export default function fetchFromJsonDb(
   start: number,
-  end: number
+  end: number,
+  predicate: (a: VerbEntry) => boolean = () => true
 ): Promise<VerbEntry[]> {
-  let ddd = getFetchPages(start, end);
+
+  let fetchParams = getFetchPages(start, end);
 
   return firstValueFrom(
-    from(ddd.pages).pipe(
+    from(fetchParams.pages).pipe(
       // 1. Por cada URL, hago un fetch → Item[]
       map((it) => it.toString().padStart(3, "0")),
       map((it) => PUBLIC_URL + `/verbs/esp_verbos_cleaned_batch_${it}.json`),
@@ -67,8 +68,9 @@ export default function fetchFromJsonDb(
         )
       ),
       mergeMap((itemsFromFile: VerbEntry[]) => from(itemsFromFile)),
-      skip(ddd.skip),
-      take(ddd.take),
+      filter(predicate),
+      skip(fetchParams.skip),
+      take(fetchParams.take),
       toArray() // → Item[]
     ),
     { defaultValue: [] }

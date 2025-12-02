@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import fetchFromJsonDb, { VerbEntry , pickRandom, Conjugations, ConjugatedVerb} from './VerbsService';
+import fetchFromJsonDb, { VerbEntry, pickRandom, Conjugations, ConjugatedVerb } from './VerbsService';
 
 interface VerbListProps {
   range: number;
@@ -14,53 +14,53 @@ interface VerbListProps {
 interface VerbEvaluation {
   conjugatedVerb: ConjugatedVerb
 }
-interface VerbResponseProps extends VerbEvaluation{
+interface VerbResponseProps extends VerbEvaluation {
   correct: boolean;
   conjugatedVerb: ConjugatedVerb;
 }
 
-function VerbResponse( { correct, conjugatedVerb }: VerbResponseProps  ): JSX.Element {
+function VerbResponse({ correct, conjugatedVerb }: VerbResponseProps): JSX.Element {
 
-  if ( correct ) {
-  return <>
-        <h2>Yes, Yes, Yes!</h2>
-        <Button variant="primary">Next Verb</Button>
-  </>
+  if (correct) {
+    return <>
+      <h2>Yes, Yes, Yes!</h2>
+      <Button variant="primary">Next Verb</Button>
+    </>
   }
   else {
-  return <>
-        <h1> {conjugatedVerb?.answer}</h1>
-  </>
+    return <>
+      <h1> {conjugatedVerb?.answer}</h1>
+    </>
 
   }
-  
+
 }
-function VerbQuiz({  range, typed=false }: VerbListProps): JSX.Element {
+function VerbQuiz({ range, typed = false }: VerbListProps): JSX.Element {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [state, setState ] = useState<"open"|"evaluation">("open")
+  const [state, setState] = useState<"open" | "evaluation">("open")
   const [conjugatedVerb, setSelected] = useState<ConjugatedVerb | null>(null)
   const [response, setResponse] = useState<true | false | null>(null);
 
   const answerRef = useRef<HTMLInputElement>(null)
-  const [ finished, setFinished ] = useState<boolean>(false)
+  const [finished, setFinished] = useState<boolean>(false)
 
 
   function EvaluateResponse({ conjugatedVerb }: VerbEvaluation): JSX.Element {
     console.log("should we save it to db? ", conjugatedVerb.answer)
     return (<>
       <Col>
-        <Button className="w-100" variant="danger" onClick={() => { setState("open");  setFinished(!finished) }}>Danger</Button>
+        <Button className="w-100" variant="danger" onClick={() => { setState("open"); setFinished(!finished) }}>Danger</Button>
       </Col>
       <Col >
-        <Button  className="w-100"variant="success" onClick={() => { setState("open"); setFinished(!finished) }}>Success</Button>
+        <Button className="w-100" variant="success" onClick={() => { setState("open"); setFinished(!finished) }}>Success</Button>
       </Col>
     </>
     )
 
-}
+  }
 
   useEffect(() => {
     fetchFromJsonDb(0, range)
@@ -102,7 +102,7 @@ function VerbQuiz({  range, typed=false }: VerbListProps): JSX.Element {
     event.preventDefault();
     console.log(event);
     console.log(response)
-    setResponse((answerRef?.current?.value === conjugatedVerb?.answer) ? true: false )  
+    setResponse((answerRef?.current?.value === conjugatedVerb?.answer) ? true : false)
 
   }
 
@@ -110,13 +110,13 @@ function VerbQuiz({  range, typed=false }: VerbListProps): JSX.Element {
   return (
     <>
       <HeaderComponent></HeaderComponent>
-      <Container className="min-vh-75 h-100  d-flex justify-content-center align-items-center align-self-center" >
+      <Container className="min-vh-75 h-100  d-flex justify-content-center align-items-center align-self-center page-wrapper " >
 
         <Container className="bg-body text-center" >
           <Row className="justify-content-center">
             <Col className="text-center">
-             <h2>{conjugatedVerb?.infinitivo}</h2>
-                          </Col>
+              <h2>{conjugatedVerb?.infinitivo}</h2>
+            </Col>
           </Row>
           <Row>
             <Col>
@@ -126,41 +126,47 @@ function VerbQuiz({  range, typed=false }: VerbListProps): JSX.Element {
           <Row>
             <Col>
               <Container>{conjugatedVerb?.person}</Container>
+
             </Col>
           </Row>
-          {typed &&
-            <Row>
-              <Col>
-              <form onSubmit={handleSubmit}>
-                <input onInput={(e) => console.log((e.target as HTMLInputElement).value)} ref={answerRef}></input>
-              </form>
-              </Col>
-            </Row>
-          }
-          { !typed && state=="open" &&
-            <Row>
-              <Col>
-                <Button variant='info' onClick={ ()=> setState("evaluation")}>Check</Button>
-              </Col>
-            </Row>
-          }
-          {conjugatedVerb !== null && state=="evaluation" &&
+          <Row>
+            <Col>
+              {conjugatedVerb !== null && state == "evaluation" &&
+                <VerbResponse correct={false} conjugatedVerb={conjugatedVerb} />
+              }
 
-            <VerbResponse correct={false} conjugatedVerb={conjugatedVerb} />
-
-
-          }
-
-          {conjugatedVerb !== null && state=="evaluation" &&
-            <Row>
-            <EvaluateResponse conjugatedVerb={conjugatedVerb} />
-            </Row>
-          }
-
+            </Col>
+          </Row>
 
         </Container>
       </Container>
-
+      <div className="footer-wrapper">
+        <footer className="container-fluid">
+          <div id="footerPrimary" className="container">
+            {typed &&
+              <Row>
+                <Col>
+                  <form onSubmit={handleSubmit}>
+                    <input onInput={(e) => console.log((e.target as HTMLInputElement).value)} ref={answerRef}></input>
+                  </form>
+                </Col>
+              </Row>
+            }
+            {!typed && state == "open" &&
+              <Row>
+                <Col className="col-12">
+                  <Button variant='info' onClick={() => setState("evaluation")} className='col-12'>Check</Button>
+                </Col>
+              </Row>
+            }
+            {conjugatedVerb !== null && state == "evaluation" &&
+              <Row>
+                <EvaluateResponse conjugatedVerb={conjugatedVerb} />
+              </Row>
+            }
+          </div>
+        </footer>
+      </div>
     </>
   );
 }
