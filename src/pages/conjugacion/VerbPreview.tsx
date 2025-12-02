@@ -1,10 +1,8 @@
-import { useEffect, useState, useRef, JSX } from 'react';
+import { useEffect, useState, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
-import fetchFromJsonDb, { ConjugatedVerb, VerbEntry, Conjugations } from './VerbsService';
-import { CardTitle, Col, Container } from 'react-bootstrap';
-import Row from 'react-bootstrap/Row'
+import fetchFromJsonDb, { VerbEntry, Conjugations } from './VerbsService';
+import { Container } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card'
-import { Link } from 'react-router-dom';
 
 const tiempos : Array<[string, string]> =[
     ["indicativo", "presente"],
