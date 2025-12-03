@@ -3,18 +3,20 @@ import HeaderComponent from '../../components/HeaderComponent';
 import fetchFromJsonDb, { VerbEntry, Conjugations } from './VerbsService';
 import { Container } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import { useParams } from 'react-router-dom';
 
-const tiempos : Array<[string, string]> =[
+const tiempos: Array<[string, string]> = [
     ["indicativo", "presente"],
     ["indicativo", "futuro"],
-     ["indicativo", "condicional"],
-     ["indicativo", "imperfecto"],
-     ["indicativo", "preterito"],
-     ["subjuntivo", "presente"],
-     ["subjuntivo", "futuro"],
-     ["subjuntivo", "imperfecto"],
-     ["subjuntivo", "imperfecto2"],
-
+    ["indicativo", "condicional"],
+    ["indicativo", "imperfecto"],
+    ["indicativo", "preterito"],
+    ["subjuntivo", "presente"],
+    ["subjuntivo", "futuro"],
+    ["subjuntivo", "imperfecto"],
+    ["subjuntivo", "imperfecto2"],
     ["imperativo", "afirmativo"],
     ["imperativo", "negativo"]
 ]
@@ -22,18 +24,20 @@ const persons = [ "1s", "2s", "3s" , "1p", "2p", "3p" ]
 
 export default function VerbPreview(): JSX.Element {
 
+    let params = useParams();
+
     const [conjugatedVerb, setSelected] = useState<VerbEntry | null>(null)
 
 
     useEffect(() => {
-        fetchFromJsonDb(0, 10, (a: VerbEntry) => a.verbo === "hablar")
+        fetchFromJsonDb(0, 1000, (a: VerbEntry) => a.verbo === params.verb)
             .then(it => it[0]!)
-            .then( it=> {console.log(it); return it } )
+            .then(it => { console.log(it); return it })
             .then(it => setSelected(it))
 
     }, [])
 
-    function ddd(verbEntry : VerbEntry,  mode: string, tiempo: string ): JSX.Element {
+    function conjugacionView(verbEntry : VerbEntry,  mode: string, tiempo: string ): JSX.Element {
 
         const modeData = verbEntry[mode as keyof VerbEntry] as Conjugations;
         const verb = modeData[tiempo as keyof Conjugations] ;
@@ -42,23 +46,44 @@ export default function VerbPreview(): JSX.Element {
 
 
         return <>
-            <Card>
-                <Card.Title>{mode} {tiempo}</Card.Title>
-                <Card.Body>
-            { persons.filter(it=> verb[it]  ).map(it=> <h2> {it} {verb[it]}</h2>) }
+            <Col className='col-2'>
+                <Card>
+                    <Card.Body>
+                        <Card.Title> {tiempo}</Card.Title>
 
-                </Card.Body>
-            </Card>
+                        <ul>
+                            {persons.filter(it => verb[it]).map(it => <li> {it} {verb[it]}</li>)}
+                        </ul>
+
+                    </Card.Body>
+                </Card>
+            </Col>
         </>
     }
 
     return (
         <>
             <HeaderComponent />
-            
-            <Container >
-               {  conjugatedVerb && tiempos.map(it=> ddd(conjugatedVerb, ...it) )} 
 
+            <Container className='py-4'>
+                <Row>
+                    <Col><Container><hr /><h4>indicativo</h4></Container></Col>
+                </Row>
+                <Row>
+                    {conjugatedVerb && tiempos.filter(it => it[0] === "indicativo").map(it => conjugacionView(conjugatedVerb, ...it))}
+                </Row>
+                <Row>
+                    <Col><Container><hr /><h4>subjuntivo</h4></Container></Col>
+                </Row>
+                <Row>
+                    {conjugatedVerb && tiempos.filter(it => it[0] === "subjuntivo").map(it => conjugacionView(conjugatedVerb, ...it))}
+                </Row>
+                <Row>
+                    <Col><Container><hr /><h4>imperativo</h4></Container></Col>
+                </Row>
+                <Row>
+                    {conjugatedVerb && tiempos.filter(it => it[0] === "imperativo").map(it => conjugacionView(conjugatedVerb, ...it))}
+                </Row>
             </Container>
 
         </>

@@ -14,7 +14,7 @@ function App() {
       <Routes >
         <Route path="*" element={<NotFound />} />
         <Route path='/' element={<HomePage/>} />
-        <Route path='/single' element={<VerbPreview/>} />
+        <Route path='/single/:verb' element={<VerbPreview/>} />
         <Route path='/all-verbs' element={<VerbList/>} />
         <Route path='/setup' element={<ConjugationsSettings/>} />
         <Route path='/game/sw001' element={<VerbQuiz range={50} typed={false} />} />

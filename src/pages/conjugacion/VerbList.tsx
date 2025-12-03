@@ -51,7 +51,7 @@ export default function VerbList(): JSX.Element {
             >
                     {items.map((it, index) => (
                         <Row key={index}>
-                            <Col><Link to="/single"> {it.verbo}</Link></Col>
+                            <Col><Link to={ "/single/"+ it.verbo }> {it.verbo}</Link></Col>
                         </Row>
 
                     ))
