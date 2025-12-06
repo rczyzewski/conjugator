@@ -7,6 +7,7 @@ import VerbList from './pages/conjugacion/VerbList'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NotFound from './pages/NotFound';
 import VerbPreview from './pages/conjugacion/VerbPreview';
+import FillMissingWords from './pages/vocabulary/FillMissingWords';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path='/all-verbs' element={<VerbList/>} />
         <Route path='/setup' element={<ConjugationsSettings/>} />
         <Route path='/game/sw001' element={<VerbQuiz range={50} typed={false} />} />
+        <Route path='/game/vocab' element={<FillMissingWords  />} />
       </Routes>
     </div>
   );

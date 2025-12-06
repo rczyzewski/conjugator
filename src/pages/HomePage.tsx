@@ -14,10 +14,15 @@ function HomePage(): JSX.Element {
                 <br/>
                 <Link to="https://github.com/rczyzewski/conjugator">https://github.com/rczyzewski/conjugator</Link>
             </p>
-            <p>
-                Let's play the game!<br/>
+            <p> Let's play the game!<br/>
                 <Button>
                     <Nav.Link href="/conjugator/?/game/sw001">10 MostPopular</Nav.Link>
+                </Button>
+            </p>
+
+            <p> Are you ready to learn new exciting vocabulary with the context? <br/>
+                <Button>
+                    <Nav.Link href="/conjugator/?/game/vocab">Vocabulary</Nav.Link>
                 </Button>
             </p>
         </Container>
