@@ -2,6 +2,7 @@ import { useEffect, useState, JSX, DragEvent } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import { PUBLIC_URL } from '../conjugacion/VerbsService';
 
 
 interface GameDefinition {
@@ -90,7 +91,6 @@ export default function FillMissingWords(): JSX.Element {
         return <span>{missingWord}</span>
     }
 
-    const PUBLIC_URL = "http://localhost:5173/conjugator"
 
     useEffect(() => {
 
@@ -123,7 +123,7 @@ export default function FillMissingWords(): JSX.Element {
                 gameState &&
 
                 [...gameState.state.values()]
-                    .map(it => <><Button draggable onDrag={(e) => setCurrentMissingWord(it)}>{it.original}</Button> &nbsp;</>)
+                    .map(it => <><Button draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button> &nbsp;</>)
             }
             <hr />
             {gameState &&

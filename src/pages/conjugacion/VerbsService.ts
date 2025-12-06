@@ -1,7 +1,7 @@
 import { from , firstValueFrom} from "rxjs";
 import { mergeMap, toArray, map, skip, take, filter } from "rxjs/operators";
 
-const PUBLIC_URL = "https://rczyzewski.github.io/conjugator";
+export const PUBLIC_URL = "https://rczyzewski.github.io/conjugator";
 
 export interface Conjugations {
   [tense: string]: {
