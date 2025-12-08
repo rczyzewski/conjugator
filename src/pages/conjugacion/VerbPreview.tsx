@@ -6,21 +6,7 @@ import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { useParams } from 'react-router-dom';
-
-const tiempos: Array<[string, string]> = [
-    ["indicativo", "presente"],
-    ["indicativo", "futuro"],
-    ["indicativo", "condicional"],
-    ["indicativo", "imperfecto"],
-    ["indicativo", "preterito"],
-    ["subjuntivo", "presente"],
-    ["subjuntivo", "futuro"],
-    ["subjuntivo", "imperfecto"],
-    ["subjuntivo", "imperfecto2"],
-    ["imperativo", "afirmativo"],
-    ["imperativo", "negativo"]
-]
-const persons = [ "1s", "2s", "3s" , "1p", "2p", "3p" ]
+import { persons, tiempos } from './Tenses';
 
 export default function VerbPreview(): JSX.Element {
 
