@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import NotFound from './pages/NotFound';
 import VerbPreview from './pages/conjugacion/VerbPreview';
 import FillMissingWords from './pages/vocabulary/FillMissingWords';
+import ConjugationHistoryList from './pages/conjugacion/ConugationHistoryList';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path='/setup' element={<ConjugationsSettings/>} />
         <Route path='/game/sw001' element={<VerbQuiz range={50} typed={false} />} />
         <Route path='/game/vocab' element={<FillMissingWords  />} />
+       <Route path='/game/history' element={<ConjugationHistoryList/>} />
       </Routes>
     </div>
   );

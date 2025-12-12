@@ -23,6 +23,9 @@ function HeaderComponent(): JSX.Element {
                         <Nav.Item>
                             <Nav.Link href="/conjugator/?/setup">Settings</Nav.Link>
                         </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link href="/conjugator/?/game/history">History</Nav.Link>
+                        </Nav.Item>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

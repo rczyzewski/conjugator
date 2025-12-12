@@ -6,6 +6,8 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import fetchFromJsonDb, { VerbEntry, pickRandom, Conjugations, ConjugatedVerb } from './VerbsService';
 
+import ConjugactionHistoryService , {ConjugactionHistoryVerb} from './ConjugactionHistory';
+
 interface VerbListProps {
   range: number;
   typed: boolean;
@@ -47,15 +49,31 @@ function VerbQuiz({ range, typed = false }: VerbListProps): JSX.Element {
   const answerRef = useRef<HTMLInputElement>(null)
   const [finished, setFinished] = useState<boolean>(false)
 
+  function handleResponse(correct: boolean): void {
+    setState("open");
+    setFinished(!finished);
+    const cv = conjugatedVerb;
+
+    if (cv) {
+      const ddd = new ConjugactionHistoryVerb(cv.infinitivo, cv.mode, cv.tense, cv.person, cv.answer, new Date());
+      ConjugactionHistoryService.get(ddd.key)
+     let  newStars =  Math.max( correct ? ddd.stars + 1  : ddd.stars -1, 0)
+
+      const ddd2 = new ConjugactionHistoryVerb(cv.infinitivo, cv.mode, cv.tense, cv.person, cv.answer, new Date(), undefined, newStars)
+
+      ConjugactionHistoryService.insert(ddd2)
+    }
+
+}
 
   function EvaluateResponse({ conjugatedVerb }: VerbEvaluation): JSX.Element {
     console.log("should we save it to db? ", conjugatedVerb.answer)
     return (<>
       <Col>
-        <Button className="w-100" variant="danger" onClick={() => { setState("open"); setFinished(!finished) }}>Danger</Button>
+        <Button className="w-100" variant="danger" onClick={()=>handleResponse(false)}>Danger</Button>
       </Col>
       <Col >
-        <Button className="w-100" variant="success" onClick={() => { setState("open"); setFinished(!finished) }}>Success</Button>
+        <Button className="w-100" variant="success" onClick={()=>handleResponse(true)}>Success</Button>
       </Col>
     </>
     )
