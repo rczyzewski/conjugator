@@ -19,7 +19,7 @@ function App() {
         <Route path='/single/:verb' element={<VerbPreview/>} />
         <Route path='/all-verbs' element={<VerbList/>} />
         <Route path='/setup' element={<ConjugationsSettings/>} />
-        <Route path='/game/sw001' element={<VerbQuiz range={50} typed={false} />} />
+        <Route path='/game/sw001' element={<VerbQuiz typed={false} />} />
         <Route path='/game/vocab' element={<FillMissingWords  />} />
        <Route path='/game/history' element={<ConjugationHistoryList/>} />
       </Routes>

@@ -11,7 +11,6 @@ import congationService, { IConjugacionSettings } from './ConjugactionSettingsSe
 
 
 interface VerbListProps {
-  range: number;
   typed: boolean;
 }
 
@@ -40,7 +39,7 @@ function VerbResponse({ correct, conjugatedVerb }: VerbResponseProps): JSX.Eleme
 
 }
 
-function VerbQuiz({ range, typed = false }: VerbListProps): JSX.Element {
+function VerbQuiz({ typed = false }: VerbListProps): JSX.Element {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -171,6 +170,7 @@ function VerbQuiz({ range, typed = false }: VerbListProps): JSX.Element {
                 </Col>
               </Row>
             }
+
             {!typed && state == "open" &&
               <Row>
                 <Col className="col-12">
