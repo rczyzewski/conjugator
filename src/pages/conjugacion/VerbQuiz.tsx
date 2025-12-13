@@ -4,9 +4,11 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import fetchFromJsonDb, { VerbEntry, pickRandom, Conjugations, ConjugatedVerb } from './VerbsService';
+import fetchFromJsonDb, { VerbEntry, pickRandom, ConjugatedVerb, flatMapVerbEntry } from './VerbsService';
 
 import ConjugactionHistoryService , {ConjugactionHistoryVerb} from './ConjugactionHistory';
+import congationService, { IConjugacionSettings } from './ConjugactionSettingsService';
+
 
 interface VerbListProps {
   range: number;
@@ -37,6 +39,7 @@ function VerbResponse({ correct, conjugatedVerb }: VerbResponseProps): JSX.Eleme
   }
 
 }
+
 function VerbQuiz({ range, typed = false }: VerbListProps): JSX.Element {
 
   const [loading, setLoading] = useState(true);
@@ -81,26 +84,24 @@ function VerbQuiz({ range, typed = false }: VerbListProps): JSX.Element {
   }
 
   useEffect(() => {
-    fetchFromJsonDb(0, range)
+    const ddd: IConjugacionSettings = congationService.getConutatyionSetting()
+
+    const predicate: (a: ConjugatedVerb) => boolean = (a: ConjugatedVerb) => {
+      return ddd.tenses.some(tense => 
+        tense.mode.name === a.mode && tense.name === a.tense
+      );
+    }
+
+    fetchFromJsonDb(0, ddd.verbsTopLimit )
       .then((data: VerbEntry[]) => {
 
         let selectedVerb = pickRandom(data);
 
-        const modes = Object.getOwnPropertyNames(selectedVerb).filter(it => it !== "verbo");
-        const mode = pickRandom(modes)
-        const modeData = selectedVerb[mode as keyof VerbEntry] as Conjugations;
+        const allConjugatedVerbs: ConjugatedVerb[] = flatMapVerbEntry(selectedVerb)
+        .filter(it=> predicate(it));
+        
+        let selectedData = pickRandom(allConjugatedVerbs);
 
-
-        const tense = pickRandom(Object.getOwnPropertyNames(modeData))
-
-        const tenseData = modeData[tense]
-        console.log(tenseData)
-        const persons = Object.getOwnPropertyNames(tenseData);
-
-        const pe = pickRandom(persons);
-
-
-        let selectedData = new ConjugatedVerb(selectedVerb.verbo, mode, tense, pe, tenseData[pe]);
 
         setSelected(selectedData)
         setLoading(false);

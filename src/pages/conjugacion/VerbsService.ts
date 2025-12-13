@@ -30,11 +30,36 @@ export class ConjugatedVerb {
   ) {}
 }
 
+export function flatMapVerbEntry(verbEntry: VerbEntry): ConjugatedVerb[] {
+  const modes = Object.getOwnPropertyNames(verbEntry).filter(it => it !== "verbo");
+  
+  return modes.flatMap(mode => {
+    const modeData = verbEntry[mode as keyof VerbEntry] as Conjugations;
+    const tenses = Object.getOwnPropertyNames(modeData);
+    
+    return tenses.flatMap(tense => {
+      const tenseData = modeData[tense];
+      const persons = Object.getOwnPropertyNames(tenseData);
+      
+      return persons.map(person => 
+        new ConjugatedVerb(
+          verbEntry.verbo,
+          mode,
+          tense,
+          person,
+          tenseData[person]
+        )
+      );
+    });
+  });
+}
+
 interface FetchProperties {
   skip: number;
   take: number;
   pages: number[];
 }
+
 export function getFetchPages(start: number, end: number): FetchProperties {
   let firstPage = Math.floor(start / 100);
   let lastPage = Math.ceil(end / 100);

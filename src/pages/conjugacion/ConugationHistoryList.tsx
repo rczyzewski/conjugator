@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 
 import service, { ConjugactionHistoryVerb } from "./ConjugactionHistory";
 
+import { RiStarSFill, RiStarSLine } from "react-icons/ri";
+
 export default function ConjugationHistoryList(): JSX.Element {
 
     const refresh = () => { console.log("refresh") }
@@ -51,7 +53,9 @@ export default function ConjugationHistoryList(): JSX.Element {
                     {items.map((it, index) => (
                         <Row key={index}>
                             <Col><Link to={ "/single/"+ it.infinitivo }> {it.infinitivo}</Link></Col>
-                            <Col>{it.answer}, {it.mode}</Col>
+                            <Col>{it.answer}, 
+                            {it.mode},  { [... new Array(5)].map((_, index)=>  index <=it.stars? <RiStarSFill/>: <RiStarSLine/>  ) }
+                            </Col>
                         </Row>
 
                     ))
