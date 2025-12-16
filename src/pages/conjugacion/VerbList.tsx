@@ -1,8 +1,10 @@
 import {useEffect, useState, useRef, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
-import  fetchFromJsonDb, { VerbEntry } from './VerbsService';
+import fetchFromJsonDb, { VerbEntry } from './VerbsService';
 import InfiniteScroll from "react-infinite-scroll-component";
-import {  Col, Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Col';
+
 import  Row from 'react-bootstrap/Row'
 import { Link } from 'react-router-dom';
 export default function VerbList(): JSX.Element {

@@ -2,10 +2,10 @@ import { ChangeEvent, JSX, useEffect, useState } from "react";
 import HeaderComponent from "../../components/HeaderComponent";
 
 import Col from 'react-bootstrap/Col';
-import Container from "react-bootstrap/esm/Container";
-import Row from "react-bootstrap/esm/Row";
-import Form from "react-bootstrap/esm/Form";
-import FormRange from "react-bootstrap/esm/FormRange";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Form from "react-bootstrap/Form";
+import FormRange from "react-bootstrap/FormRange";
 import congationService, { IConjugacionSettings } from "./ConjugactionSettingsService";
 import { Tense, tenses } from "./Tenses";
 

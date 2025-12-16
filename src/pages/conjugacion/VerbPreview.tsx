@@ -1,7 +1,7 @@
 import { useEffect, useState, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
 import fetchFromJsonDb, { VerbEntry, Conjugations } from './VerbsService';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'

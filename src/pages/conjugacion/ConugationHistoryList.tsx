@@ -1,7 +1,8 @@
 import {useEffect, useState, useRef, JSX } from 'react';
 import HeaderComponent from '../../components/HeaderComponent';
 import InfiniteScroll from "react-infinite-scroll-component";
-import {  Col, Container } from 'react-bootstrap';
+import   Col from 'react-bootstrap/Col';
+import Container  from 'react-bootstrap/Container';
 import  Row from 'react-bootstrap/Row'
 import { Link } from 'react-router-dom';
 

@@ -1,12 +1,10 @@
 import { useEffect, useState, JSX, DragEvent } from 'react';
-import HeaderComponent from '../../components/HeaderComponent';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import { PUBLIC_URL } from '../conjugacion/VerbsService';
 
 
 interface GameDefinition {
-    text: string[]
+    myText: string[]
 }
 
 class GameState {
@@ -56,7 +54,7 @@ export function getWords(prefix: string, str: string): Array<string | MissingWor
 }
 
 
-export default function FillMissingWords(): JSX.Element {
+export default function FillMissingWords({ myText  }: GameDefinition): JSX.Element {
 
     const [gameState, setGameState] = useState<GameState | null>()
     const [currentMissingWord, setCurrentMissingWord] = useState<MissingWord | null>()
@@ -94,29 +92,19 @@ export default function FillMissingWords(): JSX.Element {
 
     useEffect(() => {
 
-        fetch(url)
-            .then((res) => {
-                if (!res.ok) throw new Error(`Error en ${url}`);
-                return res.json() as Promise<GameDefinition>;
-            })
-            .then(it => {
-
-                let paragraphs = it.text.map((paraph, index) =>
+                let paragraphs = myText.map((paraph, index) =>
                     getWords(`p${index}`, paraph));
 
                 let state = paragraphs.flatMap(it => it).filter(it => it instanceof MissingWord)
                     .map(it => it as MissingWord);
 
                 let word_assignment = new Map<string, MissingWord>(state.map(it => [it.key, it]))
-                setGameState(new GameState(it.text, paragraphs, word_assignment))
+                setGameState(new GameState(myText, paragraphs, word_assignment))
 
-            })
-    }, [])
+    }, [myText])
 
-    const url = PUBLIC_URL + `/exercises/loremipsum.json`;
 
     return (<>
-        <HeaderComponent></HeaderComponent>
 
         <Container>
             {

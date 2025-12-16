@@ -2,7 +2,7 @@ import { JSX } from "react";
 import HeaderComponent from "../components/HeaderComponent";
 import Container from 'react-bootstrap/Container';
 import { Link } from "react-router-dom";
-import {Nav} from 'react-bootstrap';
+import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
 function HomePage(): JSX.Element {
 
@@ -11,18 +11,23 @@ function HomePage(): JSX.Element {
         <Container>
             <p>
                 This site is deployed thanks to github, it's source code is also hosted in github:
-                <br/>
+                <br />
                 <Link to="https://github.com/rczyzewski/conjugator">https://github.com/rczyzewski/conjugator</Link>
             </p>
-            <p> Let's play the game!<br/>
+            <p> Let's play the game!<br />
                 <Button>
                     <Nav.Link href="/conjugator/?/game/sw001">10 MostPopular</Nav.Link>
                 </Button>
             </p>
 
-            <p> Are you ready to learn new exciting vocabulary with the context? <br/>
+            <p> Are you ready to learn new exciting vocabulary with the context? <br />
                 <Button>
                     <Nav.Link href="/conjugator/?/game/vocab">Vocabulary</Nav.Link>
+                </Button>
+            </p>
+            <p> The real fun is when you share your exercises with others!<br />
+                <Button>
+                    <Nav.Link href="/conjugator/?/game/editor">Create</Nav.Link>
                 </Button>
             </p>
         </Container>
