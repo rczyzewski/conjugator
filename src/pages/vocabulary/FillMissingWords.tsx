@@ -4,14 +4,20 @@ import Container from 'react-bootstrap/Container';
 
 
 interface GameDefinition {
-    myText: string[]
+    paragraphs: string[]
 }
 
 class GameState {
     constructor(public readonly text: string[],
         public readonly paragraphs: Array<Array<MissingWord | string>>,
-        public readonly state: Map<string, MissingWord>
+        public readonly state: Map<string, MissingWord>,
+        public readonly shuffled: MissingWord[]
     ) { }
+
+    get withoutAnsers(): MissingWord[] {
+        return this.shuffled
+            .filter(it => !this.shuffled.some(d => d.answer == it))
+    }
 }
 
 class MissingWord {
@@ -24,6 +30,9 @@ const handleDragOver = (e: any) => {
     e.preventDefault()
 };
 
+function shuffle<T>(array: T[]): T[] {
+    return [...array].sort(() => Math.random() - 0.5);
+}
 
 export function getWords(prefix: string, str: string): Array<string | MissingWord> {
 
@@ -54,7 +63,7 @@ export function getWords(prefix: string, str: string): Array<string | MissingWor
 }
 
 
-export default function FillMissingWords({ myText  }: GameDefinition): JSX.Element {
+export default function FillMissingWords({ paragraphs: myText  }: GameDefinition): JSX.Element {
 
     const [gameState, setGameState] = useState<GameState | null>()
     const [currentMissingWord, setCurrentMissingWord] = useState<MissingWord | null>()
@@ -71,35 +80,46 @@ export default function FillMissingWords({ myText  }: GameDefinition): JSX.Eleme
         return <p> {parts.map(it => renderMissingWord(it))} </p>
     }
 
-    function renderMissingWord(missingWord: MissingWord | string): JSX.Element {
+    function renderMissingWord(missingWord: MissingWord | string, verify : boolean = true): JSX.Element {
         if (missingWord instanceof MissingWord)
-            return <><span style={{ backgroundColor: "#AAAAAA" }}
+        { 
+            if ( verify  && missingWord.answer ) {
+           return  <Button className='m-1' variant={ (missingWord.answer.original === missingWord.original)? "success": "danger"} >{missingWord.answer.original}</Button>
 
-                onDrop={(e: DragEvent) => handleDrop(e, missingWord)}
-                onDragOver={(e) => handleDragOver(e)}
-            >
 
-                {missingWord.answer && <>{missingWord.answer.original}</>}
-                {missingWord.answer == null &&
-                    <> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</>}
+            }
+            else {
+                return <>
+                    <span style={{ backgroundColor: "#AAAAAA" }}
 
-            </span></>
-        { }
+                        onDrop={(e: DragEvent) => handleDrop(e, missingWord)}
+                        onDragOver={(e) => handleDragOver(e)}
+                    >
+                        {missingWord.answer && <><Button className='m-1' >{missingWord.answer.original}</Button></>}
+                        {missingWord.answer == null &&
+                            <> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</>}
 
-        return <span>{missingWord}</span>
+                    </span>
+                </>
+            }
+        } else {
+            return <span>{missingWord}</span>
+        }
     }
 
 
     useEffect(() => {
 
-                let paragraphs = myText.map((paraph, index) =>
+                const paragraphs = myText.map((paraph, index) =>
                     getWords(`p${index}`, paraph));
 
-                let state = paragraphs.flatMap(it => it).filter(it => it instanceof MissingWord)
+                const state = paragraphs.flatMap(it => it).filter(it => it instanceof MissingWord)
                     .map(it => it as MissingWord);
 
-                let word_assignment = new Map<string, MissingWord>(state.map(it => [it.key, it]))
-                setGameState(new GameState(myText, paragraphs, word_assignment))
+                const word_assignment = new Map<string, MissingWord>(state.map(it => [it.key, it]))
+                const unordered = shuffle([...word_assignment.values()] );
+
+                setGameState(new GameState(myText, paragraphs, word_assignment, unordered))
 
     }, [myText])
 
@@ -107,12 +127,16 @@ export default function FillMissingWords({ myText  }: GameDefinition): JSX.Eleme
     return (<>
 
         <Container>
-            {
+
+                {
                 gameState &&
 
-                [...gameState.state.values()]
-                    .map(it => <><Button draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button> &nbsp;</>)
+                    gameState.withoutAnsers
+                    .map(it => <><Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button></>)
             }
+
+            { gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert'>Check</Button>  }
+
             <hr />
             {gameState &&
                 gameState.paragraphs.map(parts => renderParagraph(parts))}

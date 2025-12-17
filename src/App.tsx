@@ -21,7 +21,7 @@ function App() {
         <Route path='/all-verbs' element={<VerbList/>} />
         <Route path='/setup' element={<ConjugationsSettings/>} />
         <Route path='/game/sw001' element={<VerbQuiz typed={false} />} />
-        <Route path='/game/vocab' element={<FillMissingWords  myText={[test]}/>} />
+        <Route path='/game/vocab' element={<FillMissingWords  paragraphs={[test]}/>} />
        <Route path='/game/history' element={<ConjugationHistoryList/>} />
        <Route path='/game/editor' element={<CodeEditor myMarkdown={test}/>} />
       </Routes>

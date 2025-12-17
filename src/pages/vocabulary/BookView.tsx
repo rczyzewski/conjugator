@@ -18,7 +18,7 @@ export default function BookView({ book }: { book: Book }) {
   
               if (block.type === 'exercise') {
                 return (
-               <FillMissingWords myText={block.content}/>
+               <FillMissingWords paragraphs={block.content}/>
                 )
               }
             })}
