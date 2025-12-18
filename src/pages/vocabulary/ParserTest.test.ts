@@ -16,7 +16,7 @@ describe("VerbsService", () => {
   it("Testing getting URLs", async () => {
     const md = `## Title
 
-:::exercise
+:::exercise[dddd]{h=333}
     Hola mundo
 :::
 
@@ -29,8 +29,6 @@ text
 
     const transformed = await processor.run(tree)
 
-    console.log("tree", tree);
-    console.log("transfomred:", transformed);
     expect(transformed).exist
   });
 });

@@ -63,7 +63,7 @@ export function getWords(prefix: string, str: string): Array<string | MissingWor
 }
 
 
-export default function FillMissingWords({ paragraphs: myText  }: GameDefinition): JSX.Element {
+export default function FillMissingWords({ paragraphs: text }: GameDefinition): JSX.Element {
 
     const [gameState, setGameState] = useState<GameState | null>()
     const [currentMissingWord, setCurrentMissingWord] = useState<MissingWord | null>()
@@ -84,23 +84,20 @@ export default function FillMissingWords({ paragraphs: myText  }: GameDefinition
         if (missingWord instanceof MissingWord)
         { 
             if ( verify  && missingWord.answer ) {
-           return  <Button className='m-1' variant={ (missingWord.answer.original === missingWord.original)? "success": "danger"} >{missingWord.answer.original}</Button>
+           return  <Button className='p-1 m-1' variant={ (missingWord.answer.original === missingWord.original)? "success": "danger"} >{missingWord.answer.original}</Button>
 
 
             }
             else {
-                return <>
-                    <span style={{ backgroundColor: "#AAAAAA" }}
-
+                return <span 
                         onDrop={(e: DragEvent) => handleDrop(e, missingWord)}
-                        onDragOver={(e) => handleDragOver(e)}
-                    >
-                        {missingWord.answer && <><Button className='m-1' >{missingWord.answer.original}</Button></>}
-                        {missingWord.answer == null &&
-                            <> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</>}
-
+                        onDragOver={(e) => handleDragOver(e)} >
+                        {missingWord.answer && <><Button className='p-1 m-1' >{missingWord.answer.original}</Button></>}
+                        {missingWord.answer == null && <Button className='p-1 m-1 btn-outline-secondary' variant={"light"} >
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </Button> }
                     </span>
-                </>
             }
         } else {
             return <span>{missingWord}</span>
@@ -110,7 +107,7 @@ export default function FillMissingWords({ paragraphs: myText  }: GameDefinition
 
     useEffect(() => {
 
-                const paragraphs = myText.map((paraph, index) =>
+                const paragraphs = text.map((paraph, index) =>
                     getWords(`p${index}`, paraph));
 
                 const state = paragraphs.flatMap(it => it).filter(it => it instanceof MissingWord)
@@ -119,27 +116,19 @@ export default function FillMissingWords({ paragraphs: myText  }: GameDefinition
                 const word_assignment = new Map<string, MissingWord>(state.map(it => [it.key, it]))
                 const unordered = shuffle([...word_assignment.values()] );
 
-                setGameState(new GameState(myText, paragraphs, word_assignment, unordered))
+                setGameState(new GameState(text, paragraphs, word_assignment, unordered))
 
-    }, [myText])
+    }, [text])
 
 
     return (<>
+        <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
+            { gameState && gameState.withoutAnsers
+                    .map(it => <><Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button></>) }
 
-        <Container>
+            {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert'>Check</Button>}
 
-                {
-                gameState &&
-
-                    gameState.withoutAnsers
-                    .map(it => <><Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button></>)
-            }
-
-            { gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert'>Check</Button>  }
-
-            <hr />
-            {gameState &&
-                gameState.paragraphs.map(parts => renderParagraph(parts))}
+            {gameState && gameState.paragraphs.map(parts => renderParagraph(parts))}
         </Container>
     </>)
 }
