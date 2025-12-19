@@ -165,7 +165,6 @@ export default function CodeEditor({ myMarkdown }: { myMarkdown: string }) {
 
   useEffect(() => {
     renderBook(code);
-    var keys = Object.keys(localStorage);
   }, []);
 
   return (
