@@ -39,9 +39,11 @@ export function astToBook(tree: Root): Book {
 
     // Ejercicio
     if (node.type.toString() === 'exercise' ) {
+      const data = (node as any).data ?? {}
       currentChapter.blocks.push({
         type: 'exercise',
-       attributes: {}, 
+       attributes: data.hProperties ?? {}, 
+       instructions: data.instructions,
         content: extractTextForExercise(node),
       })
     }

@@ -25,13 +25,9 @@ export const test = `
 
 Pone las palabras en lugar donde partenecen
 
-:::exercise[]{type=abc}
+:::exercise[Help the main character gain some more punds]{type=abc}
 El {mozo} del bar caminaba un poco {cojo} por el salón, donde el sol {abrasa} 
-desde primera hora.Cerca del {fregadero}, había dejado unas {golosinas} para
-los niños que dormían en la {litera} del fondo. Tenía {panza}, pero una {melena} 
-espesa y una sonrisa amplia en el {morro}.
-Su {lema} era claro: vivir con calma, aunque fuera {moroso} con el tiempo,
-y disfrutar de cada {nimiedad} que había {adquirido} con los años.
+desde primera hora.Cerca del {fregadero}, había dejado unas {golosinas}.
 :::
 
 ## Another book chapter

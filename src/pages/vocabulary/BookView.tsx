@@ -2,29 +2,46 @@ import { Book } from "./bookModel"
 import FillMissingWords from "./FillMissingWords";
 
 export default function BookView({ book }: { book: Book }) {
-    console.log(book);
-    return (
-      <div>
-        <h1>{book.title}</h1>
-  
-        {book.chapters.map((chapter, i) => (
-          <section key={i}>
-            <h2>{chapter.title}</h2>
-  
-            {chapter.blocks.map((block, j) => {
-              if (block.type === 'paragraph') {
-                return <p key={j}>{block.text}</p>
+  return (
+    <div>
+      <h1>{book.title}</h1>
+
+      {book.chapters.map((chapter, chapterIndex) => {
+        let exerciseCount = 0;
+        const chapterNumber = chapterIndex + 1;
+
+        return (
+          <section key={chapterIndex}>
+            <h2>{`${chapterNumber}. ${chapter.title}`}</h2>
+
+            {chapter.blocks.map((block, blockIndex) => {
+              if (block.type === "paragraph") {
+                return <p key={blockIndex}>{block.text}</p>;
               }
-  
-              if (block.type === 'exercise') {
+
+              if (block.type === "exercise") {
+                exerciseCount += 1;
+                const exerciseNumber = `${chapterNumber}.${exerciseCount}`;
+                const instructions = block.instructions
+                  ? `${exerciseNumber} ${block.instructions}`
+                  : exerciseNumber;
+
                 return (
-               <FillMissingWords paragraphs={block.content}/>
-                )
+                  <div key={blockIndex}>
+                    <FillMissingWords
+                      instructions={instructions}
+                      paragraphs={block.content}
+                    />
+                  </div>
+                );
               }
+
+              return null;
             })}
           </section>
-        ))}
-      </div>
-    )
-  }
+        );
+      })}
+    </div>
+  );
+}
   

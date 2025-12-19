@@ -19,6 +19,7 @@ export interface Book {
   
   export interface ExerciseBlock {
     type: 'exercise'
+    instructions?: string
     attributes: Record<string, string>
     content: string[]
   }

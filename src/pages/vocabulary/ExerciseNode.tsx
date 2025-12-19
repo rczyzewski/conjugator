@@ -22,6 +22,7 @@ export interface ExerciseInlineNode extends Node {
           data: {
             hName: 'exercise',
             hProperties: node.attributes || {},
+            instructions: node.label,
           },
           children: node.children ?? [],
         }

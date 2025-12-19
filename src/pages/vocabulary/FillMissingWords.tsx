@@ -5,14 +5,29 @@ import Container from 'react-bootstrap/Container';
 
 interface GameDefinition {
     paragraphs: string[]
+    instructions?: string
 }
 
 class GameState {
     constructor(public readonly text: string[],
         public readonly paragraphs: Array<Array<MissingWord | string>>,
         public readonly state: Map<string, MissingWord>,
-        public readonly shuffled: MissingWord[]
+        public readonly shuffled: MissingWord[],
     ) { }
+
+    static fromText(text: string[]): GameState {
+        const paragraphs = text.map((paraph, index) =>
+            getWords(`p${index}`, paraph));
+
+        const state = paragraphs.flatMap(it => it)
+            .filter(it => it instanceof MissingWord)
+            .map(it => it as MissingWord);
+
+        const word_assignment = new Map<string, MissingWord>(state.map(it => [it.key, it]))
+        const unordered = shuffle([...word_assignment.values()]);
+
+        return new GameState(text, paragraphs, word_assignment, unordered);
+    }
 
     get withoutAnsers(): MissingWord[] {
         return this.shuffled
@@ -63,11 +78,12 @@ export function getWords(prefix: string, str: string): Array<string | MissingWor
 }
 
 
-export default function FillMissingWords({ paragraphs: text }: GameDefinition): JSX.Element {
+export default function FillMissingWords({ paragraphs: text, instructions  :myIinstructions }: GameDefinition): JSX.Element {
 
     const [gameState, setGameState] = useState<GameState | null>()
     const [currentMissingWord, setCurrentMissingWord] = useState<MissingWord | null>()
-
+    const [ verify , setVerify] = useState<boolean>(false)
+    
     const handleDrop = (e: DragEvent, missingWord: MissingWord) => {
         console.log(e)
         console.log(currentMissingWord)
@@ -77,10 +93,10 @@ export default function FillMissingWords({ paragraphs: text }: GameDefinition): 
     };
 
     function renderParagraph(parts: Array<MissingWord | string>) {
-        return <p> {parts.map(it => renderMissingWord(it))} </p>
+        return <p> {parts.map(it => renderMissingWord(it, verify))} </p>
     }
 
-    function renderMissingWord(missingWord: MissingWord | string, verify : boolean = true): JSX.Element {
+    function renderMissingWord(missingWord: MissingWord | string, verify : boolean = false): JSX.Element {
         if (missingWord instanceof MissingWord)
         { 
             if ( verify  && missingWord.answer ) {
@@ -106,27 +122,20 @@ export default function FillMissingWords({ paragraphs: text }: GameDefinition): 
 
 
     useEffect(() => {
+        setGameState(GameState.fromText(text))
+    }, [text]) 
 
-                const paragraphs = text.map((paraph, index) =>
-                    getWords(`p${index}`, paraph));
-
-                const state = paragraphs.flatMap(it => it).filter(it => it instanceof MissingWord)
-                    .map(it => it as MissingWord);
-
-                const word_assignment = new Map<string, MissingWord>(state.map(it => [it.key, it]))
-                const unordered = shuffle([...word_assignment.values()] );
-
-                setGameState(new GameState(text, paragraphs, word_assignment, unordered))
-
-    }, [text])
 
 
     return (<>
         <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
-            { gameState && gameState.withoutAnsers
-                    .map(it => <><Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button></>) }
+            <nav className="navbar navbar-light bg-light justify-content-between">
+                <span className="navbar-brand">{myIinstructions?myIinstructions:"Drag the words to the right spots"}</span>
+            {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert' onClick={()=>setVerify(true)}>Check</Button>}
+            </nav>
+            {gameState && gameState.withoutAnsers
+                .map(it => <><Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button></>)}
 
-            {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert'>Check</Button>}
 
             {gameState && gameState.paragraphs.map(parts => renderParagraph(parts))}
         </Container>
