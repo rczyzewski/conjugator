@@ -1,0 +1,65 @@
+import { useState, JSX } from 'react';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Form from 'react-bootstrap/Form';
+
+interface VerifyExerciseProps {
+    instructions?: string;
+    items: string[];
+}
+
+export default function VerifyExercise({ instructions, items }: VerifyExerciseProps): JSX.Element {
+    const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
+    const [verifyMode, setVerifyMode] = useState<boolean>(false);
+
+    const handleToggle = (index: number) => {
+        if (verifyMode) return; // Don't allow changes in verify mode
+        
+        setCheckedItems(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(index)) {
+                newSet.delete(index);
+            } else {
+                newSet.add(index);
+            }
+            return newSet;
+        });
+    };
+
+    return (
+        <Container className="border" style={{ backgroundColor: "#FAFAFA" }}>
+            <Nav className="navbar navbar-light bg-light justify-content-between">
+                <span className="navbar-brand">
+                    {instructions || "Select the correct statements"}
+                </span>
+                {items.length > 0 && (
+                    <Button 
+                        variant="primary" 
+                        onClick={() => setVerifyMode(true)}
+                        disabled={verifyMode}
+                    >
+                        Check
+                    </Button>
+                )}
+            </Nav>
+            <div className="p-3">
+                {items.map((item, index) => {
+                    const isChecked = checkedItems.has(index);
+                    return (
+                        <Form.Check
+                            key={index}
+                            type="switch"
+                            id={`verify-item-${index}`}
+                            label={item}
+                            checked={isChecked}
+                            onChange={() => handleToggle(index)}
+                            disabled={verifyMode}
+                            className="mb-2"
+                        />
+                    );
+                })}
+            </div>
+        </Container>
+    );
+}

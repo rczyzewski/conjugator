@@ -1,6 +1,7 @@
 import { useEffect, useState, JSX, DragEvent } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
 
 
 interface GameDefinition {
@@ -129,10 +130,10 @@ export default function FillMissingWords({ paragraphs: text, instructions  :myIi
 
     return (<>
         <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
-            <nav className="navbar navbar-light bg-light justify-content-between">
-                <span className="navbar-brand">{myIinstructions?myIinstructions:"Drag the words to the right spots"}</span>
-            {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert' onClick={()=>setVerify(true)}>Check</Button>}
-            </nav>
+            <Nav className="navbar navbar-light bg-light justify-content-between">
+                <span className="navbar-brand">{myIinstructions ? myIinstructions : "Drag the words to the right spots"}</span>
+                {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert' onClick={() => setVerify(true)}>Check</Button>}
+            </Nav>
             {gameState && gameState.withoutAnsers
                 .map(it => <><Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button></>)}
 

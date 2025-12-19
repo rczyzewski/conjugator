@@ -11,6 +11,8 @@ export interface Book {
   export type Block =
     | ParagraphBlock
     | ExerciseBlock
+    | ConjugationBlock
+    | VerifyBlock
   
   export interface ParagraphBlock {
     type: 'paragraph'
@@ -19,6 +21,21 @@ export interface Book {
   
   export interface ExerciseBlock {
     type: 'exercise'
+    instructions?: string
+    attributes: Record<string, string>
+    content: string[]
+  }
+//TODO: paragraph/exercise/conjugaction should be enum
+
+  export interface ConjugationBlock {
+    type: 'conjugaction'
+    instructions?: string
+    attributes: Record<string, string>
+    content: string[]
+  }
+
+  export interface VerifyBlock {
+    type: 'verify'
     instructions?: string
     attributes: Record<string, string>
     content: string[]

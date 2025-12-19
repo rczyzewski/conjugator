@@ -1,5 +1,7 @@
 import { Book } from "./bookModel"
 import FillMissingWords from "./FillMissingWords";
+import VerbConjugateExercise from "./VerbConjugateExercise";
+import VerifyExercise from "./VerifyExercise";
 
 export default function BookView({ book }: { book: Book }) {
   return (
@@ -31,6 +33,38 @@ export default function BookView({ book }: { book: Book }) {
                     <FillMissingWords
                       instructions={instructions}
                       paragraphs={block.content}
+                    />
+                  </div>
+                );
+              }
+
+              if (block.type === "conjugaction") {
+                const title = block.instructions
+                  ? `${chapterNumber}.${exerciseCount + 1} ${block.instructions}`
+                  : `${chapterNumber}.${exerciseCount + 1}`;
+
+                exerciseCount += 1;
+
+                return (
+                  <div key={blockIndex}>
+                      <VerbConjugateExercise title={title} words={block.content} tenses={[block.attributes.tenses]}></VerbConjugateExercise>
+
+                  </div>
+                );
+              }
+
+              if (block.type === "verify") {
+                exerciseCount += 1;
+                const exerciseNumber = `${chapterNumber}.${exerciseCount}`;
+                const instructions = block.instructions
+                  ? `${exerciseNumber} ${block.instructions}`
+                  : exerciseNumber;
+
+                return (
+                  <div key={blockIndex}>
+                    <VerifyExercise
+                      instructions={instructions}
+                      items={block.content}
                     />
                   </div>
                 );

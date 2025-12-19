@@ -23,48 +23,34 @@ export const test = `
 
 ## Repaso de las palabras
 
-Pone las palabras en lugar donde partenecen
 
-:::exercise[Help the main character gain some more punds]{type=abc}
-El {mozo} del bar caminaba un poco {cojo} por el salón, donde el sol {abrasa} 
-desde primera hora.Cerca del {fregadero}, había dejado unas {golosinas}.
+Figure out where the missing word should be 
+
+:::exercise[put words in the right spots]
+Tras el {fortuito} encuentro, quedó un leve {menoscabo} en su ánimo. No fue una {nimiedad}, sino un {desvarío} que dejó {secuelas}. Aun así, mantuvo un gesto {altivo}, comió de forma {frugal} y evitó cualquier {carcajada}. En sus ojos brilló un débil {fulgor}, mientras la {escarcha} cubría la calle.
 :::
 
-## Another book chapter
+Now let's train a litle bit conjugaction
 
-Here is a paragraph that explain something about something elese or whatever
-
-:::exercise
-El {mozo} del hostal despertó temprano, aunque el calor ya {abrasa}ba 
-desde el amanecer. Caminaba algo {cojo} por el pasillo, con cuidado de no despertar a los huéspedes que dormían en la {litera} del fondo. 
-En la cocina, junto al {fregadero}, dejó una bolsa de {golosinas} para los niños, 
-mientras se secaba la frente con una bayeta.
-
-Tenía algo de {panza}, pero también una gran {melena} que le caía por la nuca y un {morro} siempre 
-dispuesto a sonreír. Su {lema} era sencillo: vivir sin prisas y no preocuparse por las {nimiedad}es. 
-Aunque a veces era un poco {moroso} con el alquiler, decía que todo lo importante ya lo había {adquirido}: 
-tranquilidad, tiempo y buen humor.
-
-Al final del día, se sentó en una silla, notando un leve dolor en la {nuca}, y pensó que, 
-pese al cansancio, no cambiaría su vida por ninguna otra.
+:::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
+* ser
+* estar
+* tener
+* comer
+* vivir
+* leer
+* hablar
+* escribir
 :::
 
-## Another book chapter
+Now let's play true or false
 
-:::exercise
-El calor {abrasa}ba el {tórax} y la {nuca} de los viajeros que llegaban al hostal al mediodía. 
-En el pasillo, un hombre algo {cojo} se apoyaba en la pared, con dolor en el {costado} y la {ingle}, 
-consecuencia de una caída {fortuita} semanas atrás.
-
-Dormía en una {litera} antigua, junto a un {catre} mal colocado que siempre {mengua}ba el espacio 
-de la habitación. Aun así, no se quejaba por {nimiedad}es. Su {lema} era aceptar cada {menoscabo} 
-con calma y sin {desvarío}.
-
-Por la noche, mientras limpiaba el {fregadero} con una {bayeta}, pensó en las cosas que había {adquirido} 
-con los años: resistencia, silencio y una extraña paz {diáfana}, pese a las {secuelas} que el 
-tiempo deja en el cuerpo.
-:::
-
+::::verify[find true or false statments]{property1=333, property2=value2}
+  [x] Perros son mejor que los gtos.
+  [x] La piedra gana tijeras.
+  [x] Tijeras ganan papel.
+  [ ] Piedra gana papel
+::::
 
 `;
 /**
