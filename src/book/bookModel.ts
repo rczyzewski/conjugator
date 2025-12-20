@@ -13,6 +13,8 @@ export interface Book {
     | ExerciseBlock
     | ConjugationBlock
     | VerifyBlock
+    | ListBlock
+    | TableBlock
   
   export interface ParagraphBlock {
     type: 'paragraph'
@@ -39,5 +41,17 @@ export interface Book {
     instructions?: string
     attributes: Record<string, string>
     content: string[]
+  }
+
+  export interface ListBlock {
+    type: 'list'
+    ordered: boolean
+    items: string[]
+  }
+
+  export interface TableBlock {
+    type: 'table'
+    headers: string[]
+    rows: string[][]
   }
   

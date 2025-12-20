@@ -1,7 +1,8 @@
 import { Book } from "./bookModel"
-import FillMissingWords from "./FillMissingWords";
-import VerbConjugateExercise from "./VerbConjugateExercise";
-import VerifyExercise from "./VerifyExercise";
+import FillMissingWords from "../pages/vocabulary/FillMissingWords";
+import VerbConjugateExercise from "../pages/vocabulary/VerbConjugateExercise";
+import VerifyExercise from "../pages/vocabulary/VerifyExercise";
+import Table from "react-bootstrap/Table";
 
 export default function BookView({ book }: { book: Book }) {
   return (
@@ -67,6 +68,49 @@ export default function BookView({ book }: { book: Book }) {
                       items={block.content}
                     />
                   </div>
+                );
+              }
+
+              if (block.type === "list") {
+                if (block.ordered) {
+                  return (
+                    <ol key={blockIndex}>
+                      {block.items.map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ol>
+                  );
+                } else {
+                  return (
+                    <ul key={blockIndex}>
+                      {block.items.map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ul>
+                  );
+                }
+              }
+
+              if (block.type === "table") {
+                return (
+                  <Table key={blockIndex} striped bordered hover>
+                    <thead>
+                      <tr>
+                        {block.headers.map((header, headerIndex) => (
+                          <th key={headerIndex}>{header}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {block.rows.map((row, rowIndex) => (
+                        <tr key={rowIndex}>
+                          {row.map((cell, cellIndex) => (
+                            <td key={cellIndex}>{cell}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
                 );
               }
 

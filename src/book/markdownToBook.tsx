@@ -1,6 +1,27 @@
 import { Root, Literal} from 'mdast'
 import { Book, Chapter } from './bookModel'
 
+import remarkGfm from 'remark-gfm'
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkExercise from "./ExerciseNode";
+import remarkDirective from "remark-directive";
+
+
+export default async function  markdownToBook(markdown: string): Promise<Book> {
+
+    const processor = unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkDirective)
+      .use(remarkExercise);
+
+    const tree = processor.parse(markdown);
+    const transformedTree = await processor.run(tree);
+
+   return   astToBook(transformedTree as Root);
+}
+
 export function astToBook(tree: Root): Book {
   const book: Book = {
     title: '',
@@ -65,6 +86,24 @@ export function astToBook(tree: Root): Book {
         attributes: data.hProperties ?? {},
         instructions: data.instructions,
         content: extractTaskListItems(node),
+      })
+    }
+
+    // Listas
+    if (node.type === 'list') {
+      currentChapter.blocks.push({
+        type: 'list',
+        ordered: node.ordered || false,
+        items: extractListItemsFromNode(node),
+      })
+    }
+
+    // Tablas
+    if (node.type === 'table') {
+      currentChapter.blocks.push({
+        type: 'table',
+        headers: extractTableHeaders(node),
+        rows: extractTableRows(node),
       })
     }
   }
@@ -140,4 +179,51 @@ function extractTaskListItems(node: any): string[] {
   }
   
   return result
+}
+
+function extractListItemsFromNode(node: any): string[] {
+  if (!Array.isArray(node.children)) return []
+  return node.children
+    .filter((li: any) => li.type === 'listItem')
+    .map((li: any) => {
+      // Extract text from all children of list item
+      const paragraphs = li.children?.filter((c: any) => c.type === 'paragraph') || []
+      if (paragraphs.length > 0) {
+        return paragraphs
+          .map((p: any) => extractText(p))
+          .join(' ')
+          .trim()
+      }
+      return extractFromParagraph(li).trim()
+    })
+    .filter((text: string) => text.length > 0)
+}
+
+function extractTableHeaders(node: any): string[] {
+  if (!node.children) return []
+  const tableHead = node.children.find((child: any) => child.type === 'tableHead')
+  if (!tableHead || !tableHead.children) return []
+  
+  const headerRow = tableHead.children[0]
+  if (!headerRow || !headerRow.children) return []
+  
+  return headerRow.children
+    .filter((cell: any) => cell.type === 'tableCell')
+    .map((cell: any) => extractText(cell).trim())
+}
+
+function extractTableRows(node: any): string[][] {
+  if (!node.children) return []
+  
+  const tableBody = node.children.find((child: any) => child.type === 'tableBody')
+  if (!tableBody || !tableBody.children) return []
+  
+  return tableBody.children
+    .filter((row: any) => row.type === 'tableRow')
+    .map((row: any) => {
+      if (!row.children) return []
+      return row.children
+        .filter((cell: any) => cell.type === 'tableCell')
+        .map((cell: any) => extractText(cell).trim())
+    })
 }

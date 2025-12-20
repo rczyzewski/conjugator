@@ -8,20 +8,40 @@ import  Button  from "react-bootstrap/Button"
 import  Col  from "react-bootstrap/Col"
 import  Container from "react-bootstrap/Container"
 import  Row from "react-bootstrap/Row"
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkExercise from "./ExerciseNode";
-import remarkDirective from "remark-directive";
 import HeaderComponent from "../../components/HeaderComponent";
-import BookView from "./BookView";
-import { astToBook } from "./astToBook";
-import { Root } from "mdast";
-import { Book } from "./bookModel";
+import BookView from "../../book/BookView";
+import { Book } from "../../book/bookModel";
+import markdownToBook from "../../book/markdownToBook";
 
 export const test = `
 # Here comes title - title is optional
 
 ## Repaso de las palabras
+
+
+1. first element
+2. second element
+
+
+* element with asterisk
+* element with asterisk
+
++ element with plus 
++ element with plus
+
+
+- list with minus
+- list with minus
+
+[ ] todo element
+[ ] todo element
+
+
+
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Cell 1   | Cell 2   | Cell 3   |
+| Cell 4   | Cell 5   | Cell 6   |
 
 
 Figure out where the missing word should be 
@@ -81,24 +101,13 @@ export function download(
 }
 
 export default function CodeEditor({ myMarkdown }: { myMarkdown: string }) {
+  
   async function renderBook(code: string) {
-    const processor = unified()
-      .use(remarkParse)
-      .use(remarkDirective)
-      .use(remarkExercise);
-
-    const tree = processor.parse(code);
-    const transformedTree = await processor.run(tree);
-
-    console.log(transformedTree);
-
-    //   if ( transformedTree typeof Root)
-    const book = astToBook(transformedTree as Root);
+    const book = await markdownToBook(code)
     setBook(book);
   }
 
   const onChange = React.useCallback(async (val: string) => {
-    // console.log('val:', val);
     setCode(val);
     renderBook(val);
   }, []);

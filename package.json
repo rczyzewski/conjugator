@@ -7,10 +7,6 @@
     "@codemirror/lang-markdown": "^6.5.0",
     "@codemirror/language-data": "^6.5.2",
     "@uiw/react-codemirror": "^4.25.4",
-    "unified": "^11.0.5",
-    "remark-directive": "^4.0.0",
-    "remark-parse": "^11.0.0",
-    "remark-stringify": "^11.0.0",
     "bootstrap": "^5.3.8",
     "idb": "^8.0.3",
     "react": "19.1.0",
@@ -19,6 +15,11 @@
     "react-icons": "^5.5.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^7.9.6",
+    "remark-directive": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

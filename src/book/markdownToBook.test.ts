@@ -1,13 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkDirective from "remark-directive";
-import remarkExercise from "./ExerciseNode";
-import { astToBook } from "./astToBook";
-import type { Root } from "mdast";
+import markdownToBook from "./markdownToBook";
 
 describe("ParserTest", () => {
-
   it("parses conjugaction directive with properties into book model", async () => {
     const md = `## Title
 
@@ -26,15 +20,7 @@ describe("ParserTest", () => {
 text
 `;
 
-    const processor = unified()
-      .use(remarkParse)
-      .use(remarkDirective)
-      .use(remarkExercise);
-
-    const tree = processor.parse(md) as Root;
-    const transformed = (await processor.run(tree)) as Root;
-
-    const book = astToBook(transformed);
+    const book = await markdownToBook(md);
 
     expect(book.chapters.length).toBe(1);
     expect(book.chapters[0].title).toBe("Title");
@@ -77,15 +63,7 @@ Hola mundo
 text
 `;
 
-    const processor = unified()
-      .use(remarkParse)
-      .use(remarkDirective)
-      .use(remarkExercise);
-
-    const tree = processor.parse(md) as Root;
-    const transformed = (await processor.run(tree)) as Root;
-
-    const book = astToBook(transformed);
+    const book = await markdownToBook(md);
 
     expect(book.chapters.length).toBe(1);
     expect(book.chapters[0].title).toBe("Title");
@@ -110,7 +88,6 @@ text
     }
   });
 
-
   it("parses verify exercise directive with label and attributes into book model", async () => {
     const md = `## Title
 
@@ -123,15 +100,7 @@ text
 
 `;
 
-    const processor = unified()
-      .use(remarkParse)
-      .use(remarkDirective)
-      .use(remarkExercise);
-
-    const tree = processor.parse(md) as Root;
-    const transformed = (await processor.run(tree)) as Root;
-
-    const book = astToBook(transformed);
+    const book = await markdownToBook(md);
 
     expect(book.chapters.length).toBe(1);
     expect(book.chapters[0].title).toBe("Title");
@@ -148,5 +117,118 @@ text
     expect(verifyBlock.attributes.property1).toBe("333");
     expect(verifyBlock.attributes.property2).toBe("value2");
     expect(verifyBlock.content.length).toBeGreaterThan(0);
+  });
+
+  it("parses unordered list into book model", async () => {
+    const md = `## Title
+
+* First item
+* Second item
+* Third item
+
+text
+`;
+
+    const book = await markdownToBook(md);
+
+    expect(book.chapters.length).toBe(1);
+    expect(book.chapters[0].title).toBe("Title");
+
+    const blocks = book.chapters[0].blocks;
+    expect(blocks.length).toBe(2);
+
+    const listBlock = blocks[0];
+    if (listBlock.type !== "list") {
+      throw new Error("First block is not a list block");
+    }
+
+    expect(listBlock.ordered).toBe(false);
+    expect(listBlock.items).toEqual([
+      "First item",
+      "Second item",
+      "Third item",
+    ]);
+
+    const paragraphBlock = blocks[1];
+    expect(paragraphBlock.type).toBe("paragraph");
+    if (paragraphBlock.type === "paragraph") {
+      expect(paragraphBlock.text).toBe("text");
+    }
+  });
+
+  it("parses ordered list into book model", async () => {
+    const md = `## Title
+
+1. First item
+2. Second item
+3. Third item
+
+text
+`;
+
+    const book = await markdownToBook(md);
+
+    expect(book.chapters.length).toBe(1);
+    expect(book.chapters[0].title).toBe("Title");
+
+    const blocks = book.chapters[0].blocks;
+    expect(blocks.length).toBe(2);
+
+    const listBlock = blocks[0];
+    if (listBlock.type !== "list") {
+      throw new Error("First block is not a list block");
+    }
+
+    expect(listBlock.ordered).toBe(true);
+    expect(listBlock.items).toEqual([
+      "First item",
+      "Second item",
+      "Third item",
+    ]);
+
+    const paragraphBlock = blocks[1];
+    expect(paragraphBlock.type).toBe("paragraph");
+    if (paragraphBlock.type === "paragraph") {
+      expect(paragraphBlock.text).toBe("text");
+    }
+  });
+
+  it("parses table into book model", async () => {
+    const md = `## Title
+
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Cell 1   | Cell 2   | Cell 3   |
+| Cell 4   | Cell 5   | Cell 6   |
+
+text
+`;
+
+    const book = await markdownToBook(md);
+
+    expect(book.chapters.length).toBe(1);
+    expect(book.chapters[0].title).toBe("Title");
+
+    const blocks = book.chapters[0].blocks;
+    expect(blocks.length).toBe(2);
+
+    const tableBlock = blocks[0];
+    if (tableBlock.type !== "table") {
+      throw new Error("First block is not a table block");
+    }
+
+    if (tableBlock.type === "table") {
+      expect(tableBlock.headers).toEqual(["Header 1", "Header 2", "Header 3"]);
+      expect(tableBlock.rows).toEqual([
+        ["Cell 1", "Cell 2", "Cell 3"],
+        ["Cell 4", "Cell 5", "Cell 6"],
+      ]);
+    }
+
+    const paragraphBlock = blocks[1];
+    expect(paragraphBlock.type).toBe("paragraph");
+    if (paragraphBlock.type === "paragraph") {
+      expect(paragraphBlock.text).toBe("text");
+    }
   });
 });
