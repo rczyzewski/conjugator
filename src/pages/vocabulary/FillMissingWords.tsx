@@ -52,7 +52,7 @@ function shuffle<T>(array: T[]): T[] {
 
 export function getWords(prefix: string, str: string): Array<string | MissingWord> {
 
-    let reg = /{([a-zA-Z]+)}/
+    let reg = /{([^{}]+)}/
     const ret: Array<string | MissingWord> = []
     let current = str;
     let counter =  0

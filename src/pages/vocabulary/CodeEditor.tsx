@@ -184,13 +184,14 @@ export default function CodeEditor({ myMarkdown }: { myMarkdown: string }) {
                 backgroundColor: isDragging ? "#f8f9fa" : "#fff",
                 transition: "all 0.3s ease",
                 cursor: "pointer",
+                display: "none"
               }}
               onClick={() => document.getElementById("fileInput")?.click()}
             >
               {isDragging ? (
                 <span className="text-primary fw-bold">Drop the file here</span>
               ) : (
-                <span className="text-muted">
+                <span className="text-muted" >
                   Drag & drop a markdown file here, or click to upload
                 </span>
               )}
