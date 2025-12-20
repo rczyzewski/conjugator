@@ -1,4 +1,4 @@
-import { Root, Literal} from 'mdast'
+import { Root, Literal, Table, List, Paragraph} from 'mdast'
 import { Book, Chapter } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
@@ -75,7 +75,7 @@ export function astToBook(tree: Root): Book {
         type: 'conjugaction',
         attributes: data.hProperties ?? {},
         instructions: data.instructions,
-        content: extractListItems(node),
+        content: extractListItemsForConjugaction(node),
       })
     }
 
@@ -111,13 +111,13 @@ export function astToBook(tree: Root): Book {
 
   return book
 }
-function extractText(node: any): string {
+function extractText(node: Paragraph): string {
   return node.children
     ?.map((c: any) => c.value ?? '')
     .join('') ?? ''
 }
 
-function extractFromParagraph(node: any): string {
+function extractFromParagraph(node: Paragraph): string {
   return node.children
     ?.flatMap((t:any)=>t.children)
     .map((c: any) => c.value ?? '')
@@ -130,7 +130,7 @@ function extractTextForExercise(node: any): string[] {
       .map((c:Literal) => c.value ?? '')
   }
 
-function extractListItems(node: any): string[] {
+function extractListItemsForConjugaction(node: any): string[] {
   if (!Array.isArray(node.children)) return []
   return node.children.flatMap((child: any) => {
     if (child.type === 'list') {
@@ -156,7 +156,7 @@ function extractTaskListItems(node: any): string[] {
         const paragraphs = li.children?.filter((c: any) => c.type === 'paragraph') || []
         if (paragraphs.length > 0) {
           const text = paragraphs
-            .map((p: any) => extractText(p))
+            .map((p: any) => extractText(p as Paragraph))
             .join(' ')
             .trim()
           if (text.length > 0) {
@@ -182,7 +182,7 @@ function extractTaskListItems(node: any): string[] {
   return result
 }
 
-function extractListItemsFromNode(node: any): string[] {
+function extractListItemsFromNode(node: List): string[] {
   if (!Array.isArray(node.children)) return []
   return node.children
     .filter((li: any) => li.type === 'listItem')
@@ -201,7 +201,8 @@ function extractListItemsFromNode(node: any): string[] {
 }
 
 
-function extractTableRows(node: any): string[][] {
+function extractTableRows(node: Table): string[][] {
+  
   if (!node.children) return []
   
   return [...node.children]

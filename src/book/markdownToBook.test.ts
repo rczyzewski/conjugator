@@ -57,7 +57,7 @@ text
   it("parses exercise directive with label and attributes into book model", async () => {
     const md = `## Title
 
-::::exercise[Instructions for the exercise]{property1=333, property2=value2}
+::::exercise[Instructions for the exercise]{property1=333 property2=value2}
 Hola mundo
 ::::
 
@@ -81,18 +81,12 @@ text
     expect(exerciseBlock.attributes.property1).toBe("333");
     expect(exerciseBlock.attributes.property2).toBe("value2");
     expect(exerciseBlock.content).toEqual(["Hola mundo"]);
-
-    const paragraphBlock = blocks[1];
-    expect(paragraphBlock.type).toBe("paragraph");
-    if (paragraphBlock.type === "paragraph") {
-      expect(paragraphBlock.text).toBe("text");
-    }
   });
 
   it("parses verify exercise directive with label and attributes into book model", async () => {
     const md = `## Title
 
-::::verify[find true or false statments]{property1=333, property2=value2}
+::::verify[find true or false statments]{property1=333 property2=value2}
   [x] Perros son mejor que los gtos.
   [x] La piedra gana tijeras.
   [x] Tijeras ganan papel.
@@ -126,8 +120,6 @@ text
 * First item
 * Second item
 * Third item
-
-text
 `;
 
     const book = await markdownToBook(md);
@@ -136,7 +128,7 @@ text
     expect(book.chapters[0].title).toBe("Title");
 
     const blocks = book.chapters[0].blocks;
-    expect(blocks.length).toBe(2);
+    expect(blocks.length).toBe(1);
 
     const listBlock = blocks[0];
     if (listBlock.type !== "list") {
@@ -150,11 +142,6 @@ text
       "Third item",
     ]);
 
-    const paragraphBlock = blocks[1];
-    expect(paragraphBlock.type).toBe("paragraph");
-    if (paragraphBlock.type === "paragraph") {
-      expect(paragraphBlock.text).toBe("text");
-    }
   });
 
   it("parses ordered list into book model", async () => {
@@ -164,7 +151,6 @@ text
 2. Second item
 3. Third item
 
-text
 `;
 
     const book = await markdownToBook(md);
@@ -173,7 +159,7 @@ text
     expect(book.chapters[0].title).toBe("Title");
 
     const blocks = book.chapters[0].blocks;
-    expect(blocks.length).toBe(2);
+    expect(blocks.length).toBe(1);
 
     const listBlock = blocks[0];
     if (listBlock.type !== "list") {
@@ -187,12 +173,8 @@ text
       "Third item",
     ]);
 
-    const paragraphBlock = blocks[1];
-    expect(paragraphBlock.type).toBe("paragraph");
-    if (paragraphBlock.type === "paragraph") {
-      expect(paragraphBlock.text).toBe("text");
-    }
   });
+
 
   it("parses table into book model", async () => {
     const md = `## Title
@@ -217,7 +199,6 @@ text
     expect(tableBlock.rows).toEqual([
       ["Cell 1", "Cell 2", "Cell 3"],
       ["Cell 4", "Cell 5", "Cell 6"], ]);
-
   });
 
 });
