@@ -1,9 +1,11 @@
 
 import { useEffect, useState, JSX } from 'react';
+import fetchFromJsonDb, { ConjugatedVerb, flatMapVerbEntry, pickRandom, VerbEntry } from '../conjugacion/VerbsService';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
-import fetchFromJsonDb, { ConjugatedVerb, flatMapVerbEntry, pickRandom, VerbEntry } from '../conjugacion/VerbsService';
-import Button from 'react-bootstrap/esm/Button';
 
 
 interface GameDefinition {
@@ -42,9 +44,21 @@ export default function VerbConjugateExercise({ title: title, words: words, tens
                 <span className="navbar-brand">{title}</span>
                 <Button>Check</Button>
             </Nav>
-            <ul>
-                {gameState && gameState.map(it => <li key={it.infinitivo}>{it.infinitivo} {it.mode} {it.tense}<input></input> </li>)}
-            </ul>
+
+            {gameState && gameState.map(it =>
+                <Form.Group className="row" key={it.infinitivo}>
+                    <Form.Label for="inputEmail3" className="col-sm-2 col-form-label">{it.infinitivo}</Form.Label>
+                    <Col >
+                        <Form.Control type="email" className="form-control" id="inputEmail3" />
+                    </Col>
+                    <Col>{it.answer}</Col>
+                    <Col>
+                        <Form.Text className="text-muted">
+                            {it.mode} {it.tense} {it.person}
+                        </Form.Text>
+                    </Col>
+                </Form.Group>
+            )}
         </Container>
     </>)
 }
