@@ -100,10 +100,11 @@ export function astToBook(tree: Root): Book {
 
     // Tablas
     if (node.type === 'table') {
+        const rows = extractTableRows(node);
       currentChapter.blocks.push({
         type: 'table',
-        headers: extractTableHeaders(node),
-        rows: extractTableRows(node),
+        headers: rows[0],
+        rows: rows.slice(1),
       })
     }
   }
@@ -199,26 +200,11 @@ function extractListItemsFromNode(node: any): string[] {
     .filter((text: string) => text.length > 0)
 }
 
-function extractTableHeaders(node: any): string[] {
-  if (!node.children) return []
-  const tableHead = node.children.find((child: any) => child.type === 'tableHead')
-  if (!tableHead || !tableHead.children) return []
-  
-  const headerRow = tableHead.children[0]
-  if (!headerRow || !headerRow.children) return []
-  
-  return headerRow.children
-    .filter((cell: any) => cell.type === 'tableCell')
-    .map((cell: any) => extractText(cell).trim())
-}
 
 function extractTableRows(node: any): string[][] {
   if (!node.children) return []
   
-  const tableBody = node.children.find((child: any) => child.type === 'tableBody')
-  if (!tableBody || !tableBody.children) return []
-  
-  return tableBody.children
+  return [...node.children]
     .filter((row: any) => row.type === 'tableRow')
     .map((row: any) => {
       if (!row.children) return []

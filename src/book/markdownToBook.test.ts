@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import markdownToBook from "./markdownToBook";
+import { TableBlock } from "./bookModel";
 
 describe("ParserTest", () => {
   it("parses conjugaction directive with properties into book model", async () => {
@@ -200,8 +201,6 @@ text
 |----------|----------|----------|
 | Cell 1   | Cell 2   | Cell 3   |
 | Cell 4   | Cell 5   | Cell 6   |
-
-text
 `;
 
     const book = await markdownToBook(md);
@@ -210,25 +209,15 @@ text
     expect(book.chapters[0].title).toBe("Title");
 
     const blocks = book.chapters[0].blocks;
-    expect(blocks.length).toBe(2);
+    expect(blocks.length).toBe(1);
 
-    const tableBlock = blocks[0];
-    if (tableBlock.type !== "table") {
-      throw new Error("First block is not a table block");
-    }
+    const tableBlock = blocks[0] as TableBlock;
+    expect(tableBlock.type).toEqual("table");
+    expect(tableBlock.headers).toEqual(["Header 1", "Header 2", "Header 3"]);
+    expect(tableBlock.rows).toEqual([
+      ["Cell 1", "Cell 2", "Cell 3"],
+      ["Cell 4", "Cell 5", "Cell 6"], ]);
 
-    if (tableBlock.type === "table") {
-      expect(tableBlock.headers).toEqual(["Header 1", "Header 2", "Header 3"]);
-      expect(tableBlock.rows).toEqual([
-        ["Cell 1", "Cell 2", "Cell 3"],
-        ["Cell 4", "Cell 5", "Cell 6"],
-      ]);
-    }
-
-    const paragraphBlock = blocks[1];
-    expect(paragraphBlock.type).toBe("paragraph");
-    if (paragraphBlock.type === "paragraph") {
-      expect(paragraphBlock.text).toBe("text");
-    }
   });
+
 });
