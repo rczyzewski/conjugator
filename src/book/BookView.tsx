@@ -4,6 +4,9 @@ import VerbConjugateExercise from "../pages/vocabulary/VerbConjugateExercise";
 import VerifyExercise from "../pages/vocabulary/VerifyExercise";
 import Table from "react-bootstrap/Table";
 
+import ListGroup from 'react-bootstrap/ListGroup';
+
+
 export default function BookView({ book }: { book: Book }) {
   return (
     <div>
@@ -72,23 +75,9 @@ export default function BookView({ book }: { book: Book }) {
               }
 
               if (block.type === "list") {
-                if (block.ordered) {
-                  return (
-                    <ol key={blockIndex}>
-                      {block.items.map((item, itemIndex) => (
-                        <li key={itemIndex}>{item}</li>
-                      ))}
-                    </ol>
-                  );
-                } else {
-                  return (
-                    <ul key={blockIndex}>
-                      {block.items.map((item, itemIndex) => (
-                        <li key={itemIndex}>{item}</li>
-                      ))}
-                    </ul>
-                  );
-                }
+                return <ListGroup  numbered={block.ordered} className="p-2">
+                  {block.items.map((item, itemIndex) => (<ListGroup.Item key={itemIndex} as="li">{item}</ListGroup.Item>))}
+                </ListGroup>
               }
 
               if (block.type === "table") {

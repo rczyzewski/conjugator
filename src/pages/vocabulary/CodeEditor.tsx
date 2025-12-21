@@ -26,15 +26,16 @@ export const test = `
 * element with asterisk
 * element with asterisk
 
-+ element with plus 
-+ element with plus
+- element with plus 
+- element with plus
 
 
-- list with minus
-- list with minus
++ list with minus
++ list with minus
 
-[ ] todo element
-[ ] todo element
+
+- [ ] todo element
+- [ ] todo element
 
 
 
@@ -66,10 +67,10 @@ Now let's train a litle bit conjugaction
 Now let's play true or false
 
 ::::verify[find true or false statments]{property1=333, property2=value2}
-  [x] Perros son mejor que los gtos.
-  [x] La piedra gana tijeras.
-  [x] Tijeras ganan papel.
-  [ ] Piedra gana papel
+- [x] Perros son mejor que los gtos.
+- [x] La piedra gana tijeras.
+- [x] Tijeras ganan papel.
+- [ ] Piedra gana papel
 ::::
 
 `;

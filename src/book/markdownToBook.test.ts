@@ -83,14 +83,37 @@ text
     expect(exerciseBlock.content).toEqual(["Hola mundo"]);
   });
 
+  it("parses verify task list", async () => {
+    const md = `## Title
+
+-  [x] Perros son mejor que los gtos.
+-  [x] La piedra gana tijeras.
+-  [x] Tijeras ganan papel.
+-  [ ] Piedra gana papel
+
+`;
+
+    const book = await markdownToBook(md);
+
+    expect(book.chapters.length).toBe(1);
+    expect(book.chapters[0].title).toBe("Title");
+
+    const blocks = book.chapters[0].blocks;
+    expect(blocks.length).toBe(1);
+
+    const verifyBlock = blocks[0];
+    
+    console.log(verifyBlock)
+    
+  });
   it("parses verify exercise directive with label and attributes into book model", async () => {
     const md = `## Title
 
 ::::verify[find true or false statments]{property1=333 property2=value2}
-  [x] Perros son mejor que los gtos.
-  [x] La piedra gana tijeras.
-  [x] Tijeras ganan papel.
-  [ ] Piedra gana papel
+-  [x] Perros son mejor que los gtos.
+-  [x] La piedra gana tijeras.
+-  [x] Tijeras ganan papel.
+-  [ ] Piedra gana papel
 ::::
 
 `;
@@ -112,6 +135,9 @@ text
     expect(verifyBlock.attributes.property1).toBe("333");
     expect(verifyBlock.attributes.property2).toBe("value2");
     expect(verifyBlock.content.length).toBeGreaterThan(0);
+
+    //TODO: add more checks
+    
   });
 
   it("parses unordered list into book model", async () => {
