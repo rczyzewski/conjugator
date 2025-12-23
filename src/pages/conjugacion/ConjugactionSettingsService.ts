@@ -1,7 +1,5 @@
 import { Mode, Tense, tenses } from "./Tenses";
 
-export const PUBLIC_URL = "https://rczyzewski.github.io/conjugator";
-
 const SETTINGS_KEY= "conjugactionSetup";
 
 export interface IConjugacionSettings{
