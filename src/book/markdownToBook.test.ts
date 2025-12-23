@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import markdownToBook from "./markdownToBook";
-import { TableBlock } from "./bookModel";
+import { IListBlock, ITableBlock, ListItemBlock, ParagraphBlock } from "./bookModel";
 
 describe("ParserTest", () => {
   it("parses conjugaction directive with properties into book model", async () => {
@@ -80,13 +80,17 @@ text
     expect(exerciseBlock.instructions).toBe("Instructions for the exercise");
     expect(exerciseBlock.attributes.property1).toBe("333");
     expect(exerciseBlock.attributes.property2).toBe("value2");
-    expect(exerciseBlock.content).toEqual(["Hola mundo"]);
+    expect(exerciseBlock.content).toEqual([new ParagraphBlock("Hola mundo")]);
   });
 
   it("parses verify task list", async () => {
     const md = `## Title
 
 -  [x] Perros son mejor que los gtos.
+   Here is a continuation
+   
+   Here is another
+
 -  [x] La piedra gana tijeras.
 -  [x] Tijeras ganan papel.
 -  [ ] Piedra gana papel
@@ -132,9 +136,9 @@ text
     }
 
     expect(verifyBlock.instructions).toBe("find true or false statments");
-    expect(verifyBlock.attributes.property1).toBe("333");
-    expect(verifyBlock.attributes.property2).toBe("value2");
-    expect(verifyBlock.content.length).toBeGreaterThan(0);
+    expect(verifyBlock.items.length).toBeGreaterThan(0);
+
+
 
     //TODO: add more checks
     
@@ -144,8 +148,10 @@ text
     const md = `## Title
 
 * First item
+  Some Item
+
+  Another Item
 * Second item
-* Third item
 `;
 
     const book = await markdownToBook(md);
@@ -156,27 +162,30 @@ text
     const blocks = book.chapters[0].blocks;
     expect(blocks.length).toBe(1);
 
-    const listBlock = blocks[0];
+    const listBlock = blocks[0] as IListBlock;
     if (listBlock.type !== "list") {
       throw new Error("First block is not a list block");
     }
 
     expect(listBlock.ordered).toBe(false);
     expect(listBlock.items).toEqual([
-      "First item",
-      "Second item",
-      "Third item",
+      new ListItemBlock(
+        [
+          new ParagraphBlock("First item\nSome Item"),
+          new ParagraphBlock("Another Item"),
+        ],
+        null
+      ),
+      new ListItemBlock([new ParagraphBlock("Second item")], null),
     ]);
-
   });
 
   it("parses ordered list into book model", async () => {
     const md = `## Title
 
 1. First item
-2. Second item
-3. Third item
 
+2. Second item
 `;
 
     const book = await markdownToBook(md);
@@ -193,13 +202,37 @@ text
     }
 
     expect(listBlock.ordered).toBe(true);
-    expect(listBlock.items).toEqual([
-      "First item",
-      "Second item",
-      "Third item",
+    //expect(listBlock.items.map(e=>e.text)).toEqual([
+    expect(listBlock.items)
+    .toEqual([
+      new ListItemBlock(
+        [new ParagraphBlock("First item")], 
+        null
+      ),
+
+      new ListItemBlock([new ParagraphBlock("Second item")], null),
     ]);
 
   });
+
+
+  it("parses table into book model", async () => {
+    const md = `## Title
+
+>
+> Here is quote
+> Here is quote
+> Here is quote
+>
+`;
+
+    const book = await markdownToBook(md);
+
+    expect(book.chapters.length).toBe(1);
+    expect(book.chapters[0].title).toBe("Title");
+
+  });
+
 
 
   it("parses table into book model", async () => {
@@ -219,7 +252,7 @@ text
     const blocks = book.chapters[0].blocks;
     expect(blocks.length).toBe(1);
 
-    const tableBlock = blocks[0] as TableBlock;
+    const tableBlock = blocks[0] as ITableBlock;
     expect(tableBlock.type).toEqual("table");
     expect(tableBlock.headers).toEqual(["Header 1", "Header 2", "Header 3"]);
     expect(tableBlock.rows).toEqual([

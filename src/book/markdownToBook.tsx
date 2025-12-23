@@ -1,10 +1,10 @@
-import { Root, Literal, Table, List, Paragraph} from 'mdast'
-import { Book, Chapter } from './bookModel'
+import { Literal, Table, List, Paragraph,  Parent, Node} from 'mdast'
+import { Book, Block, Chapter, ListItemBlock, ParagraphBlock } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
 import remarkParse from "remark-parse";
-import remarkExercise from "./ExerciseNode";
+import { remarkExerciseDirective  }from "./ExerciseNode";
 import remarkDirective from "remark-directive";
 
 
@@ -14,15 +14,48 @@ export default async function  markdownToBook(markdown: string): Promise<Book> {
       .use(remarkParse)
       .use(remarkGfm)
       .use(remarkDirective)
-      .use(remarkExercise);
+      .use(remarkExerciseDirective);
 
     const tree = processor.parse(markdown);
     const transformedTree = await processor.run(tree);
 
-   return   astToBook(transformedTree as Root);
+   return  astToBook(transformedTree as Parent);
 }
 
-export function astToBook(tree: Root): Book {
+export function remarkToBook(node: Node): Block {
+  if (node.type == 'paragraph') {
+    const ddd = extractText(node as Paragraph)
+    return new ParagraphBlock(ddd);
+  }
+  if (node.type === "verify") {
+    const dd = node as List;
+    return {
+      type: 'verify',
+      instructions :"none",
+      items: extractListItemsFromNode(dd),
+    }
+  }
+  if (node.type === "list") {
+    const dd = node as List;
+    return {
+      type: 'list',
+      ordered: dd.ordered || false,
+      items: extractListItemsFromNode(dd),
+    }
+  }
+  return new ParagraphBlock("someTextNewList");
+}
+export function toInnerTypes(tree: Parent): Block[] {
+
+  return tree.children.map(it => remarkToBook(it))
+
+}
+
+function extractListItemsFromNode(node: List): ListItemBlock[] {
+  return  node.children.map(it=> new ListItemBlock(toInnerTypes(it), it.checked))
+}
+
+export function astToBook(tree: Parent): Book {
   const book: Book = {
     title: '',
     chapters: [],
@@ -65,7 +98,7 @@ export function astToBook(tree: Root): Book {
         type: 'exercise',
        attributes: data.hProperties ?? {}, 
        instructions: data.instructions,
-        content: extractTextForExercise(node),
+        content: [ new ParagraphBlock( extractTextForExercise(node).join())] 
       })
     }
 
@@ -81,11 +114,12 @@ export function astToBook(tree: Root): Book {
 
     if (node.type.toString() === 'verify' ) {
       const data = (node as any).data ?? {}
+       
+       
       currentChapter.blocks.push({
         type: 'verify',
-        attributes: data.hProperties ?? {},
         instructions: data.instructions,
-        content: extractTaskListItems(node),
+        items: (node as any).children.map((it: Node) => remarkToBook(it)),
       })
     }
 
@@ -111,6 +145,7 @@ export function astToBook(tree: Root): Book {
 
   return book
 }
+
 function extractText(node: Paragraph): string {
   return node.children
     ?.map((c: any) => c.value ?? '')
@@ -142,7 +177,7 @@ function extractListItemsForConjugaction(node: any): string[] {
   })
 }
 
-function extractTaskListItems(node: any): string[] {
+export function extractTaskListItems(node: any): string[] {
   if (!Array.isArray(node.children)) return []
   
   const result: string[] = []
@@ -182,23 +217,6 @@ function extractTaskListItems(node: any): string[] {
   return result
 }
 
-function extractListItemsFromNode(node: List): string[] {
-  if (!Array.isArray(node.children)) return []
-  return node.children
-    .filter((li: any) => li.type === 'listItem')
-    .map((li: any) => {
-      // Extract text from all children of list item
-      const paragraphs = li.children?.filter((c: any) => c.type === 'paragraph') || []
-      if (paragraphs.length > 0) {
-        return paragraphs
-          .map((p: any) => extractText(p))
-          .join(' ')
-          .trim()
-      }
-      return extractFromParagraph(li).trim()
-    })
-    .filter((text: string) => text.length > 0)
-}
 
 
 function extractTableRows(node: Table): string[][] {

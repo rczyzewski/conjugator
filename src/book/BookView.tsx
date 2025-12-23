@@ -1,10 +1,11 @@
-import { Book } from "./bookModel"
+import { Book }  from "./bookModel"
 import FillMissingWords from "../pages/vocabulary/FillMissingWords";
 import VerbConjugateExercise from "../pages/vocabulary/VerbConjugateExercise";
 import VerifyExercise from "../pages/vocabulary/VerifyExercise";
 import Table from "react-bootstrap/Table";
 
-import ListGroup from 'react-bootstrap/ListGroup';
+import { renderBlock } from "./BookDisplayHelpers";
+
 
 
 export default function BookView({ book }: { book: Book }) {
@@ -21,9 +22,6 @@ export default function BookView({ book }: { book: Book }) {
             <h2>{`${chapterNumber}. ${chapter.title}`}</h2>
 
             {chapter.blocks.map((block, blockIndex) => {
-              if (block.type === "paragraph") {
-                return <p key={blockIndex}>{block.text}</p>;
-              }
 
               if (block.type === "exercise") {
                 exerciseCount += 1;
@@ -68,17 +66,16 @@ export default function BookView({ book }: { book: Book }) {
                   <div key={blockIndex}>
                     <VerifyExercise
                       instructions={instructions}
-                      items={block.content}
+                      items={block.items[0]}
                     />
                   </div>
                 );
               }
 
-              if (block.type === "list") {
-                return <ListGroup  numbered={block.ordered} className="p-2">
-                  {block.items.map((item, itemIndex) => (<ListGroup.Item key={itemIndex} as="li">{item}</ListGroup.Item>))}
-                </ListGroup>
+              if (block.type === "paragraph" || block.type=="list") {
+               return renderBlock(block) 
               }
+
 
               if (block.type === "table") {
                 return (

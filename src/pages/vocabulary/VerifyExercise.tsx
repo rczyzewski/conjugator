@@ -3,10 +3,14 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Form from 'react-bootstrap/Form';
+import { IListItemBlock } from '../../book/bookModel';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/esm/Col';
+import { renderBlock } from '../../book/BookDisplayHelpers';
 
 interface VerifyExerciseProps {
     instructions?: string;
-    items: string[];
+    items: IListItemBlock;
 }
 
 export default function VerifyExercise({ instructions, items }: VerifyExerciseProps): JSX.Element {
@@ -33,7 +37,7 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
                 <span className="navbar-brand">
                     {instructions || "Select the correct statements"}
                 </span>
-                {items.length > 0 && (
+                {items && (
                     <Button 
                         variant="primary" 
                         onClick={() => setVerifyMode(true)}
@@ -44,19 +48,28 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
                 )}
             </Nav>
             <div className="p-3">
-                {items.map((item, index) => {
+                {items.items
+                .map((it : any)=> it as IListItemBlock)
+                .map((item, index) => {
                     const isChecked = checkedItems.has(index);
                     return (
-                        <Form.Check
-                            key={index}
-                            type="switch"
-                            id={`verify-item-${index}`}
-                            label={item}
-                            checked={isChecked}
-                            onChange={() => handleToggle(index)}
-                            disabled={verifyMode}
-                            className="mb-2"
-                        />
+                        <Row>
+                            <Col className="col-1">
+                                <Form.Check
+                                    key={index}
+                                    type="switch"
+                                    id={`verify-item-${index}`}
+                                    checked={isChecked}
+                                    onChange={() => handleToggle(index)}
+
+                                    disabled={verifyMode}
+                                    className="mb-2"
+                                />
+                            </Col>
+                            <Col> 
+                                {item.items.map(it => renderBlock(it))} 
+                            </Col>
+                        </Row>
                     );
                 })}
             </div>

@@ -24,7 +24,7 @@
   },
   "scripts": {
     "dev": "vite --base=/conjugator",
-    "build": "tsc -b && vite build --base=/conjugator",
+    "build": "tsc -b && vite build --base=https://rczyzewski.github.io/conjugator/",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",

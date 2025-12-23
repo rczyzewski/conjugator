@@ -2,10 +2,11 @@ import { useEffect, useState, JSX, DragEvent } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
+import { ParagraphBlock } from '../../book/bookModel';
 
 
 interface GameDefinition {
-    paragraphs: string[]
+    paragraphs: ParagraphBlock[]
     instructions?: string
 }
 
@@ -123,7 +124,7 @@ export default function FillMissingWords({ paragraphs: text, instructions  :myIi
 
 
     useEffect(() => {
-        setGameState(GameState.fromText(text))
+        setGameState(GameState.fromText(text.map(e=>e.text)))
     }, [text]) 
 
 

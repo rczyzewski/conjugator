@@ -9,47 +9,61 @@ export interface Book {
   }
   
   export type Block =
-    | ParagraphBlock
-    | ExerciseBlock
-    | ConjugationBlock
-    | VerifyBlock
-    | ListBlock
-    | TableBlock
+    | IParagraphBlock
+    | IExerciseBlock
+    | IConjugationBlock
+    | IVerifyBlock
+    | IListBlock
+    | ITableBlock
   
-  export interface ParagraphBlock {
+  export interface IParagraphBlock {
     type: 'paragraph'
     text: string
   }
+
+  export class ParagraphBlock implements IParagraphBlock{
+    public readonly type = "paragraph";
+    constructor(public readonly text: string){}
+  }
   
-  export interface ExerciseBlock {
+  export interface IExerciseBlock {
     type: 'exercise'
     instructions?: string
     attributes: Record<string, string>
-    content: string[]
+    content: IParagraphBlock[]
   }
-//TODO: paragraph/exercise/conjugaction should be enum
 
-  export interface ConjugationBlock {
+  export interface IConjugationBlock {
     type: 'conjugaction'
     instructions?: string
     attributes: Record<string, string>
     content: string[]
   }
 
-  export interface VerifyBlock {
+  export interface IVerifyBlock {
     type: 'verify'
     instructions?: string
-    attributes: Record<string, string>
-    content: string[]
+    items: IListItemBlock[]
   }
 
-  export interface ListBlock {
+
+
+  export interface IListItemBlock{
+    checked: boolean | null |undefined
+    items: Block[]
+  }
+
+  export class ListItemBlock implements IListItemBlock{
+    constructor(public readonly items: Block[], public readonly checked : boolean|null | undefined ){}
+  }
+
+  export interface IListBlock {
     type: 'list'
     ordered: boolean
-    items: string[]
+    items: IListItemBlock[]
   }
 
-  export interface TableBlock {
+  export interface ITableBlock {
     type: 'table'
     headers: string[]
     rows: string[][]

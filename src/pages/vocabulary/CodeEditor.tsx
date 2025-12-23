@@ -24,14 +24,14 @@ export const test = `
 
 
 * element with asterisk
+  * other element
 * element with asterisk
 
-- element with plus 
-- element with plus
-
-
-+ list with minus
-+ list with minus
+>
+> Here is quote
+> Here is quote
+> Here is quote
+>
 
 
 - [ ] todo element

@@ -3,7 +3,7 @@ import { Plugin } from "unified";
 import type { Parent } from "unist";
 import { visit } from "unist-util-visit";
 
-const remarkExerciseDirective: Plugin = () => {
+export const remarkExerciseDirective: Plugin = () => {
   return (tree) => {
     visit(
       tree,
@@ -12,8 +12,8 @@ const remarkExerciseDirective: Plugin = () => {
         if (!parent || index === null) return;
         if (
           node.name !== "exercise" &&
-          node.name !== "conjugaction" &&
-          node.name !== "verify"
+          node.name !== "conjugaction"  &&
+          node.name !== "verify" 
         )
           return;
 
@@ -52,4 +52,4 @@ const remarkExerciseDirective: Plugin = () => {
   };
 };
 
-export default remarkExerciseDirective;
+
