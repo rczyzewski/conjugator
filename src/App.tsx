@@ -9,6 +9,8 @@ import NotFound from './pages/NotFound';
 import VerbPreview from './pages/conjugacion/VerbPreview';
 import ConjugationHistoryList from './pages/conjugacion/ConugationHistoryList';
 import CodeEditor , { test }from './pages/vocabulary/CodeEditor';
+import CoursePage from './pages/SpanishCoursePage';
+import BookLoader from './book/BookLoader';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path='/game/sw001' element={<VerbQuiz typed={false} />} />
        <Route path='/game/history' element={<ConjugationHistoryList/>} />
        <Route path='/game/editor' element={<CodeEditor myMarkdown={test}/>} />
+       <Route path='/course/01' element={<CoursePage />} />
+       <Route path='/course/:course/chapter/:chapter' element={<BookLoader/>} />
       </Routes>
     </div>
   );

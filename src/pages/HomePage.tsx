@@ -20,9 +20,9 @@ function HomePage(): JSX.Element {
                 </Button>
             </p>
 
-            <p> Are you ready to learn new exciting vocabulary with the context? <br />
+            <p> Join the full spanish course<br />
                 <Button>
-                    <Nav.Link href="/conjugator/?/game/vocab">Vocabulary</Nav.Link>
+                    <Nav.Link href="/conjugator/?/course/01">Spanish Course</Nav.Link>
                 </Button>
             </p>
             <p> The real fun is when you share your exercises with others!<br />
