@@ -17,8 +17,7 @@ export default function VerbPreview(): JSX.Element {
 
     useEffect(() => {
         fetchFromJsonDb(0, 1000, (a: VerbEntry) => a.verbo === params.verb)
-            .then(it => it[0]!)
-            .then(it => { console.log(it); return it })
+            .then(it => it[0])
             .then(it => setSelectedVerb(it))
 
     }, [])
@@ -27,9 +26,6 @@ export default function VerbPreview(): JSX.Element {
 
         const modeData = verbEntry[mode as keyof VerbEntry] as Conjugations;
         const verb = modeData[tiempo as keyof Conjugations] ;
-
-;
-
 
         return <Col className='col-2'>
                 <Card>

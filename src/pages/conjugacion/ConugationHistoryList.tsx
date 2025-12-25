@@ -51,11 +51,11 @@ export default function ConjugationHistoryList(): JSX.Element {
                     <h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>
                 }
             >
-                    {items.map((it, index) => (
-                        <Row key={index}>
-                            <Col><Link to={ "/single/"+ it.infinitivo }> {it.infinitivo}</Link></Col>
-                            <Col>{it.answer}, 
-                            {it.mode},  { [... new Array(5)].map((_, index)=>  index <=it.stars? <RiStarSFill/>: <RiStarSLine/>  ) }
+                    {items.map(it => (
+                        <Row key={it.infinitivo}>
+                            <Col><Link to={"/single/" + it.infinitivo}> {it.infinitivo}</Link></Col>
+                            <Col>{it.answer},
+                                {it.mode},  {[... new Array(5)].map((_, index) => index <= it.stars ? <RiStarSFill key={null} /> : <RiStarSLine key={null} />)}
                             </Col>
                         </Row>
 

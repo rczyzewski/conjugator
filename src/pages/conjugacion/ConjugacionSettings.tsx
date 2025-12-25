@@ -68,9 +68,9 @@ export default function ConjugationsSettings(): JSX.Element {
                     <Form >
                         <Form.Label  >Tenses to be Trained:</Form.Label>
 
-                        {tenses.map((it, index) =>
+                        {tenses.map(it =>
                             <Form.Check
-                                key={index}
+                                key={it.fullName}
                                 checked={settings.tenses.some(i => i.id === it.id)}
                                 onChange={handleSwitchOn}
                                 name="tense"

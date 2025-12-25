@@ -45,7 +45,7 @@ function VerbQuiz({ typed = false }: VerbListProps): JSX.Element {
   const [error, setError] = useState<string | null>(null);
 
   const [state, setState] = useState<"open" | "evaluation">("open")
-  const [conjugatedVerb, setSelected] = useState<ConjugatedVerb | null>(null)
+  const [conjugatedVerb, setConjugatedVerb] = useState<ConjugatedVerb | null>(null)
   const [response, setResponse] = useState<true | false | null>(null);
 
   const answerRef = useRef<HTMLInputElement>(null)
@@ -102,7 +102,7 @@ function VerbQuiz({ typed = false }: VerbListProps): JSX.Element {
         let selectedData = pickRandom(allConjugatedVerbs);
 
 
-        setSelected(selectedData)
+        setConjugatedVerb(selectedData)
         setLoading(false);
 
       })

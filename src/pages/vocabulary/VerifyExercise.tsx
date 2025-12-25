@@ -9,11 +9,14 @@ import Col from 'react-bootstrap/esm/Col';
 import { renderBlock } from '../../book/BookDisplayHelpers';
 
 interface VerifyExerciseProps {
-    instructions?: string;
-    items: IListItemBlock;
+    readonly instructions?: string;
+    readonly items: IListItemBlock;
 }
 
 export default function VerifyExercise({ instructions, items }: VerifyExerciseProps): JSX.Element {
+
+    console.log(items)
+
     const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
     const [verifyMode, setVerifyMode] = useState<boolean>(false);
 
@@ -52,8 +55,7 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
                 .map((it : any)=> it as IListItemBlock)
                 .map((item, index) => {
                     const isChecked = checkedItems.has(index);
-                    return (
-                        <Row>
+                    return <Row>
                             <Col className="col-1">
                                 <Form.Check
                                     key={index}
@@ -70,7 +72,6 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
                                 {item.items.map(it => renderBlock(it))} 
                             </Col>
                         </Row>
-                    );
                 })}
             </div>
         </Container>

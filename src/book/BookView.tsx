@@ -8,10 +8,10 @@ import { renderBlock } from "./BookDisplayHelpers";
 
 
 
-export default function BookView({ book }: { book: Book }) {
+export default function BookView({ book }: { readonly book: Book }) {
   return (
     <div>
-      <h1>{book.title}</h1>
+      <h2>{book.title}</h2>
 
       {book.chapters.map((chapter, chapterIndex) => {
         let exerciseCount = 0;
@@ -19,7 +19,7 @@ export default function BookView({ book }: { book: Book }) {
 
         return (
           <section key={chapterIndex}>
-            <h2>{`${chapterNumber}. ${chapter.title}`}</h2>
+            <h3>{`${chapterNumber}. ${chapter.title}`}</h3>
 
             {chapter.blocks.map((block, blockIndex) => {
 

@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 
 import { PUBLIC_URL } from "../pages/conjugacion/VerbsService";
 import HeaderComponent from "../components/HeaderComponent";
+import Container from "react-bootstrap/esm/Container";
 
 export default function BookLoader(): JSX.Element {
   const [book, setBook] = useState<Book | null>(null)
@@ -31,9 +32,10 @@ export default function BookLoader(): JSX.Element {
 
   return (
     <>
-      <HeaderComponent/>
-     { book?book.toString() : "Empty"} 
-      {book ? <BookView book={book} /> : <Spinner animation="border" size="sm" />}
+      <HeaderComponent />
+      <Container>
+        {book ? <BookView book={book} /> : <Spinner animation="border" size="sm" />}
+      </Container>
     </>
   );
 

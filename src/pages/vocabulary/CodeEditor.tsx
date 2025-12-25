@@ -42,8 +42,8 @@ export function download(
   }, 200);
 }
 
-export default function CodeEditor({ myMarkdown }: { myMarkdown: string }) {
-  
+export default function CodeEditor({ myMarkdown }: { readonly myMarkdown: string }) {
+
   async function renderBook(code: string) {
     const book = await markdownToBook(code)
     setBook(book);

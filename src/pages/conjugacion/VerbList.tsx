@@ -51,8 +51,8 @@ export default function VerbList(): JSX.Element {
                     <h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>
                 }
             >
-                    {items.map((it, index) => (
-                        <Row key={index}>
+                    {items.map(it => (
+                        <Row key={it.verbo}>
                             <Col><Link to={ "/single/"+ it.verbo }> {it.verbo}</Link></Col>
                         </Row>
 
