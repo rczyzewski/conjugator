@@ -54,7 +54,6 @@ export default function ConjugationsSettings(): JSX.Element {
     if (!settings) { return <h1>Loading </h1> }
     console.log(settings)
     return <>
-
         <HeaderComponent />
         <Container>
             <Row className="justify-content-center my-5">
@@ -88,5 +87,4 @@ export default function ConjugationsSettings(): JSX.Element {
             </Row>
         </Container>
     </>
-    return <><Container>Loading configuration</Container></>
 }

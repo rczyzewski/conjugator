@@ -1,14 +1,7 @@
 import service, { ConjugactionHistoryVerb } from "./ConjugactionHistory";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 
 describe("VerbsService", () => {
-  beforeEach(() => {
-    // globalThis.fetch = vi.fn();
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
 
   it("Testing getting URLs", async () => {
 

@@ -16,7 +16,7 @@ interface GameDefinition {
 
 
 
-export default function VerbConjugateExercise({ title: title, words: words, tenses: tenses }: GameDefinition): JSX.Element {
+export default function VerbConjugateExercise({ title, words, tenses }: GameDefinition): JSX.Element {
 
     const [gameState, setGameState] = useState<ConjugatedVerb[] | null>()
 
@@ -38,28 +38,27 @@ export default function VerbConjugateExercise({ title: title, words: words, tens
         , [words, tenses])
 
 
-    return (<>
-        <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
-            <Nav className=" navbar-light bg-light justify-content-between">
-                <span className="navbar-brand">{title}</span>
-                <Button>Check</Button>
-            </Nav>
+    return <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
+        <Nav className=" navbar-light bg-light justify-content-between">
+            <span className="navbar-brand">{title}</span>
+            <Button>Check</Button>
+        </Nav>
 
-            {gameState && gameState.map(it =>
-                <Form.Group className="row" key={it.infinitivo}>
-                    <Form.Label for="inputEmail3" className="col-sm-2 col-form-label">{it.infinitivo}</Form.Label>
-                    <Col >
-                        <Form.Control type="email" className="form-control" id="inputEmail3" />
-                    </Col>
-                    <Col>{it.answer}</Col>
-                    <Col>
-                        <Form.Text className="text-muted">
-                            {it.mode} {it.tense} {it.person}
-                        </Form.Text>
-                    </Col>
-                </Form.Group>
-            )}
-        </Container>
-    </>)
+        {gameState && gameState.map(it =>
+            <Form.Group className="row" key={it.infinitivo}>
+                <Form.Label for="inputEmail3" className="col-sm-2 col-form-label">{it.infinitivo}</Form.Label>
+                <Col >
+                    <Form.Control type="email" className="form-control" id="inputEmail3" />
+                </Col>
+                <Col>{it.answer}</Col>
+                <Col>
+                    <Form.Text className="text-muted">
+                        {it.mode} {it.tense} {it.person}
+                    </Form.Text>
+                </Col>
+            </Form.Group>
+        )}
+    </Container>
+    
 }
 

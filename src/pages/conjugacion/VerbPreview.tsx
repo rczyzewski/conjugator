@@ -12,14 +12,14 @@ export default function VerbPreview(): JSX.Element {
 
     let params = useParams();
 
-    const [conjugatedVerb, setSelected] = useState<VerbEntry | null>(null)
+    const [selectedVerb, setSelectedVerb] = useState<VerbEntry | null>(null)
 
 
     useEffect(() => {
         fetchFromJsonDb(0, 1000, (a: VerbEntry) => a.verbo === params.verb)
             .then(it => it[0]!)
             .then(it => { console.log(it); return it })
-            .then(it => setSelected(it))
+            .then(it => setSelectedVerb(it))
 
     }, [])
 
@@ -31,8 +31,7 @@ export default function VerbPreview(): JSX.Element {
 ;
 
 
-        return <>
-            <Col className='col-2'>
+        return <Col className='col-2'>
                 <Card>
                     <Card.Body>
                         <Card.Title> {tiempo}</Card.Title>
@@ -44,7 +43,6 @@ export default function VerbPreview(): JSX.Element {
                     </Card.Body>
                 </Card>
             </Col>
-        </>
     }
 
     return (
@@ -56,19 +54,19 @@ export default function VerbPreview(): JSX.Element {
                     <Col><Container><hr /><h4>indicativo</h4></Container></Col>
                 </Row>
                 <Row>
-                    {conjugatedVerb && tiempos.filter(it => it[0] === "indicativo").map(it => conjugacionView(conjugatedVerb, ...it))}
+                    {selectedVerb && tiempos.filter(it => it[0] === "indicativo").map(it => conjugacionView(selectedVerb, ...it))}
                 </Row>
                 <Row>
                     <Col><Container><hr /><h4>subjuntivo</h4></Container></Col>
                 </Row>
                 <Row>
-                    {conjugatedVerb && tiempos.filter(it => it[0] === "subjuntivo").map(it => conjugacionView(conjugatedVerb, ...it))}
+                    {selectedVerb && tiempos.filter(it => it[0] === "subjuntivo").map(it => conjugacionView(selectedVerb, ...it))}
                 </Row>
                 <Row>
                     <Col><Container><hr /><h4>imperativo</h4></Container></Col>
                 </Row>
                 <Row>
-                    {conjugatedVerb && tiempos.filter(it => it[0] === "imperativo").map(it => conjugacionView(conjugatedVerb, ...it))}
+                    {selectedVerb && tiempos.filter(it => it[0] === "imperativo").map(it => conjugacionView(selectedVerb, ...it))}
                 </Row>
             </Container>
 

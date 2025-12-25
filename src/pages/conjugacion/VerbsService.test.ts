@@ -1,15 +1,8 @@
 import fetchFromJsonDb, { getFetchPages } from "./VerbsService"
-import { describe, it, expect, vi, beforeEach , afterEach} from "vitest";
+import { describe, it, expect } from "vitest";
 
 
 describe("VerbsService", () => {
-  beforeEach(() => {
-   // globalThis.fetch = vi.fn();
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks()
-  });
 
 it("Testing getting URLs", ()=>{
   expect( getFetchPages(0,100)).toStrictEqual({ skip: 0, take: 100, pages: [1]})

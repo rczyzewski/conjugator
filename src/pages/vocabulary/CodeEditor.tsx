@@ -123,7 +123,7 @@ export default function CodeEditor({ myMarkdown }: { myMarkdown: string }) {
         </Row>
         <Row className="mb-3">
           <Col >
-            <div
+            <Container
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onDrop={onDrop}
@@ -146,7 +146,7 @@ export default function CodeEditor({ myMarkdown }: { myMarkdown: string }) {
                   Drag & drop a markdown file here, or click to upload
                 </span>
               )}
-            </div>
+            </Container>
           </Col>
         </Row>
         <Row>

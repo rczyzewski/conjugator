@@ -110,7 +110,7 @@ export default function FillMissingWords({ paragraphs: text, instructions  :myIi
                 return <span 
                         onDrop={(e: DragEvent) => handleDrop(e, missingWord)}
                         onDragOver={(e) => handleDragOver(e)} >
-                        {missingWord.answer && <><Button className='p-1 m-1' >{missingWord.answer.original}</Button></>}
+                        {missingWord.answer && <Button className='p-1 m-1' >{missingWord.answer.original}</Button>}
                         {missingWord.answer == null && <Button className='p-1 m-1 btn-outline-secondary' variant={"light"} >
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -129,18 +129,17 @@ export default function FillMissingWords({ paragraphs: text, instructions  :myIi
 
 
 
-    return (<>
-        <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
-            <Nav className="navbar navbar-light bg-light justify-content-between">
-                <span className="navbar-brand">{myIinstructions ? myIinstructions : "Drag the words to the right spots"}</span>
-                {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert' onClick={() => setVerify(true)}>Check</Button>}
-            </Nav>
-            {gameState && gameState.withoutAnsers
-                .map(it => <><Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button></>)}
+    return <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
+        <Nav className="navbar navbar-light bg-light justify-content-between">
+            <span className="navbar-brand">{myIinstructions}</span>
+            {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert' onClick={() => setVerify(true)}>Check</Button>}
+        </Nav>
+        {gameState && gameState.withoutAnsers
+            .map(it => <Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button>)}
 
 
-            {gameState && gameState.paragraphs.map(parts => renderParagraph(parts))}
-        </Container>
-    </>)
+        {gameState && gameState.paragraphs.map(parts => renderParagraph(parts))}
+    </Container>
+    
 }
 
