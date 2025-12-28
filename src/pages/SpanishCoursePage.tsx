@@ -7,7 +7,7 @@ import Image from 'react-bootstrap/Image';
 import { Link } from "react-router-dom";
 
 
-function BookPresentation({ url , bookLocation, children}: {readonly url: string, readonly bookLocation: string, readonly children: JSX.Element} ): JSX.Element{
+function BookPresentation({ url , bookLocation, children}: {readonly url: string, readonly bookLocation: string, children: JSX.Element} ): JSX.Element{
             return <Row className="border p-1 m-1">
                 <Col className="col-2"> 
                     <Container>

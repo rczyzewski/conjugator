@@ -16,14 +16,27 @@ export interface Book {
     | IListBlock
     | ITableBlock
   
+
+export  interface ParagraphText{
+  text:string;
+  }
+
+ export  class TextRegular implements ParagraphText{
+    constructor( public readonly text: string){}
+  }
+
+ export  class TextStrong{
+    constructor( public readonly text: string){}
+  }
+  
   export interface IParagraphBlock {
     type: 'paragraph'
-    text: string
+    text: ParagraphText[]
   }
 
   export class ParagraphBlock implements IParagraphBlock{
     public readonly type = "paragraph";
-    constructor(public readonly text: string){}
+    constructor(public readonly text:  ParagraphText[]){}
   }
   
   export interface IExerciseBlock {
@@ -65,7 +78,7 @@ export interface Book {
 
   export interface ITableBlock {
     type: 'table'
-    headers: string[]
-    rows: string[][]
+    headers: ParagraphText[]
+    rows: ParagraphText[][]
   }
   

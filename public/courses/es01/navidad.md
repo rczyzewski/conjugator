@@ -1,5 +1,8 @@
 
 ## Navidad - tradiciones
+
+Sumérgete en *una* experiencia lingüística y cultural única diseñada especialmente para aprender español de una forma divertida, significativa y 100 % orientada a la Navidad. Este curso combina vocabulario temático, ejercicios prácticos y contenidos auténticos relacionados con la cultura hispana durante las fiestas, para que no solo estudies el idioma, sino que lo vivas.
+
 :::exercise[put words in the right spots]
 En España, la {Nochebuena} es una celebración muy importante: las familias se reúnen, preparan una gran {cena} con marisco, cordero o pollo, y muchas personas van a la {iglesia} para la misa del gallo a medianoche. La mesa siempre está llena de {dulces}, como turrón, mazapán y polvorones, y los niños comen chocolates mientras esperan con ilusión.
 

@@ -35,7 +35,7 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
     };
 
     return (
-        <Container className="border" style={{ backgroundColor: "#FAFAFA" }}>
+        <Container className="border m-2" style={{ backgroundColor: "#FAFAFA" }}>
             <Nav className="navbar navbar-light bg-light justify-content-between">
                 <span className="navbar-brand">
                     {instructions || "Select the correct statements"}

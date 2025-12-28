@@ -9,9 +9,9 @@ import Container from 'react-bootstrap/Container';
 
 
 interface GameDefinition {
-    title: string
-    words: string[]
-    tenses: string[]
+    readonly title: string
+    readonly words: string[]
+    readonly tenses: string[]
 }
 
 
@@ -22,7 +22,7 @@ export default function VerbConjugateExercise({ title, words, tenses }: GameDefi
 
     useEffect(() => {
 
-        fetchFromJsonDb(0, 100)
+        fetchFromJsonDb(0, 2000)
             .then((data: VerbEntry[]) => {
                 const selectedVerbs = data.filter((it: VerbEntry) => words.some(v => v === it.verbo))
 
@@ -38,7 +38,7 @@ export default function VerbConjugateExercise({ title, words, tenses }: GameDefi
         , [words, tenses])
 
 
-    return <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
+    return <Container className="border m-2" style={{ backgroundColor: "#FAFAFA" }} >
         <Nav className=" navbar-light bg-light justify-content-between">
             <span className="navbar-brand">{title}</span>
             <Button>Check</Button>

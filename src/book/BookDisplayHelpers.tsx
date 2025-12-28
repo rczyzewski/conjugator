@@ -1,4 +1,4 @@
-import { IListBlock, Block, IListItemBlock, IParagraphBlock } from "./bookModel"
+import { IListBlock, Block, IListItemBlock, IParagraphBlock, TextRegular } from "./bookModel"
 import ListGroup from 'react-bootstrap/ListGroup';
 
 export function renderListView(block: IListBlock) {
@@ -27,7 +27,11 @@ export function renderBlock(block: Block) {
 }
 
 export function renderParagraph(block: IParagraphBlock) {
-    return <p> {block.text}</p>
+      const  a =  block.text.map(it => (it instanceof TextRegular) ?  <span>{it.text}</span> : <span className="h3">{it.text}</span>)    
+    return <p> 
+        {a}
+       </p>
+        
 
 
 }

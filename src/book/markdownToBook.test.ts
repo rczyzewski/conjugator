@@ -1,8 +1,19 @@
 import { describe, it, expect } from "vitest";
 import markdownToBook from "./markdownToBook";
-import { IListBlock, ITableBlock, ListItemBlock, ParagraphBlock } from "./bookModel";
+import { IListBlock, ITableBlock, ListItemBlock, ParagraphBlock, TextRegular } from "./bookModel";
+import { TestScheduler } from "rxjs/testing";
 
 describe("ParserTest", () => {
+  it("dd", async () => {
+    const md = `## Chapter
+
+Title **text** 
+
+`;
+    //const ll = "![foo](train.jpg)";
+    const abc = " __abc__"
+    const book = await markdownToBook(abc);
+  });
   it("parses conjugaction directive with properties into book model", async () => {
     const md = `## Title
 
@@ -80,7 +91,7 @@ text
     expect(exerciseBlock.instructions).toBe("Instructions for the exercise");
     expect(exerciseBlock.attributes.property1).toBe("333");
     expect(exerciseBlock.attributes.property2).toBe("value2");
-    expect(exerciseBlock.content).toEqual([new ParagraphBlock("Hola mundo")]);
+    expect(exerciseBlock.content).toEqual([new ParagraphBlock([ new TextRegular("Hola mundo")])]);
   });
 
   it("parses verify task list", async () => {
@@ -171,12 +182,12 @@ text
     expect(listBlock.items).toEqual([
       new ListItemBlock(
         [
-          new ParagraphBlock("First item\nSome Item"),
-          new ParagraphBlock("Another Item"),
+          new ParagraphBlock([new TextRegular("First item\nSome Item")]),
+          new ParagraphBlock([new TextRegular("Another Item")]),
         ],
         null
       ),
-      new ListItemBlock([new ParagraphBlock("Second item")], null),
+      new ListItemBlock([new ParagraphBlock([new TextRegular("Second item")])], null),
     ]);
   });
 
@@ -206,11 +217,11 @@ text
     expect(listBlock.items)
     .toEqual([
       new ListItemBlock(
-        [new ParagraphBlock("First item")], 
+        [new ParagraphBlock([new TextRegular("First item")])], 
         null
       ),
 
-      new ListItemBlock([new ParagraphBlock("Second item")], null),
+      new ListItemBlock([new ParagraphBlock([new TextRegular("Second item")])], null),
     ]);
 
   });

@@ -124,12 +124,13 @@ export default function FillMissingWords({ paragraphs: text, instructions  :myIi
 
 
     useEffect(() => {
-        setGameState(GameState.fromText(text.map(e=>e.text)))
+      //TODO: revert an fix
+      //  setGameState(GameState.fromText(text.map(e=>e.text)))
     }, [text]) 
 
 
 
-    return <Container className="border" style={{ backgroundColor: "#FAFAFA" }} >
+    return <Container className="border m-2" style={{ backgroundColor: "#FAFAFA" }} >
         <Nav className="navbar navbar-light bg-light justify-content-between">
             <span className="navbar-brand">{myIinstructions}</span>
             {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert' onClick={() => setVerify(true)}>Check</Button>}

@@ -2,7 +2,7 @@ import { Book }  from "./bookModel"
 import FillMissingWords from "../pages/vocabulary/FillMissingWords";
 import VerbConjugateExercise from "../pages/vocabulary/VerbConjugateExercise";
 import VerifyExercise from "../pages/vocabulary/VerifyExercise";
-import Table from "react-bootstrap/Table";
+//import Table from "react-bootstrap/Table";
 
 import { renderBlock } from "./BookDisplayHelpers";
 
@@ -77,28 +77,28 @@ export default function BookView({ book }: { readonly book: Book }) {
               }
 
 
-              if (block.type === "table") {
-                return (
-                  <Table key={blockIndex} striped bordered hover>
-                    <thead>
-                      <tr>
-                        {block.headers.map((header, headerIndex) => (
-                          <th key={headerIndex}>{header}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {block.rows.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                          {row.map((cell, cellIndex) => (
-                            <td key={cellIndex}>{cell}</td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                );
-              }
+              // if (block.type === "table") {
+              //   return (
+              //     <Table key={blockIndex} striped bordered hover>
+              //       <thead>
+              //         <tr>
+              //           {block.headers.map((header, headerIndex) => (
+              //             <th key={headerIndex}>{header}</th>
+              //           ))}
+              //         </tr>
+              //       </thead>
+              //       <tbody>
+              //         {block.rows.map((row, rowIndex) => (
+              //           <tr key={rowIndex}>
+              //             {row.map((cell, cellIndex) => (
+              //               <td key={cellIndex}>{cell}</td>
+              //             ))}
+              //           </tr>
+              //         ))}
+              //       </tbody>
+              //     </Table>
+              //   );
+              // }
 
               return null;
             })}

@@ -1,5 +1,5 @@
-import { Literal, Table, List, Paragraph,  Parent, Node} from 'mdast'
-import { Book, Block, Chapter, ListItemBlock, ParagraphBlock } from './bookModel'
+import { Literal, Table, List, Paragraph,  Parent, Node, PhrasingContent} from 'mdast'
+import { Book, Block, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
@@ -43,12 +43,11 @@ export function remarkToBook(node: Node): Block {
       items: extractListItemsFromNode(dd),
     }
   }
-  return new ParagraphBlock("someTextNewList");
+  return new ParagraphBlock([new TextRegular("someTextNewList")]);
 }
+
 export function toInnerTypes(tree: Parent): Block[] {
-
   return tree.children.map(it => remarkToBook(it))
-
 }
 
 function extractListItemsFromNode(node: List): ListItemBlock[] {
@@ -92,15 +91,15 @@ export function astToBook(tree: Parent): Book {
     }
 
     // Ejercicio
-    if (node.type.toString() === 'exercise' ) {
-      const data = (node as any).data ?? {}
-      currentChapter.blocks.push({
-        type: 'exercise',
-       attributes: data.hProperties ?? {}, 
-       instructions: data.instructions,
-        content: [ new ParagraphBlock( extractTextForExercise(node).join())] 
-      })
-    }
+    // if (node.type.toString() === 'exercise' ) {
+    //   const data = (node as any).data ?? {}
+    //   currentChapter.blocks.push({
+    //     type: 'exercise',
+    //    attributes: data.hProperties ?? {}, 
+    //    instructions: data.instructions,
+    //     content: [ new ParagraphBlock( extractTextForExercise(node).join())] 
+    //   })
+    // }
 
     if (node.type.toString() === 'conjugaction' ) {
       const data = (node as any).data ?? {}
@@ -133,102 +132,103 @@ export function astToBook(tree: Parent): Book {
     }
 
     // Tablas
-    if (node.type === 'table') {
-        const rows = extractTableRows(node);
-      currentChapter.blocks.push({
-        type: 'table',
-        headers: rows[0],
-        rows: rows.slice(1),
-      })
-    }
+    // if (node.type === 'table') {
+    //     const rows = extractTableRows(node);
+    //   currentChapter.blocks.push({
+    //     type: 'table',
+    //     headers: rows[0],
+    //     rows: rows.slice(1),
+    //   })
+    //}
+    // 
+
   }
 
   return book
 }
 
-function extractText(node: Paragraph): string {
+function extractText(node: Paragraph): ParagraphText[] {
   return node.children
-    ?.map((c: any) => c.value ?? '')
-    .join('') ?? ''
+    .map(it => {
+     const ddd  = (it as any).value ?? ''
+      if (it.type === "strong") {
+        return new TextStrong(ddd);
+      }
+      return new TextRegular(ddd)
+    })
 }
 
-function extractFromParagraph(node: Paragraph): string {
-  return node.children
-    ?.flatMap((t:any)=>t.children)
-    .map((c: any) => c.value ?? '')
-    .join('') ?? ''
-}
 
-function extractTextForExercise(node: any): string[] {
-    return node.children
-      .flatMap((it: any ) =>it.children)
-      .map((c:Literal) => c.value ?? '')
-  }
 
 function extractListItemsForConjugaction(node: any): string[] {
+
+  function extractTextForExercise(node: any): string[] {
+    return node.children
+      .flatMap((it: any) => it.children)
+      .map((c: Literal) => c.value ?? '')
+  }
+
   if (!Array.isArray(node.children)) return []
   return node.children.flatMap((child: any) => {
     if (child.type === 'list') {
       return child.children
         .filter((li: any) => li.type === 'listItem')
-        .map((li: any) => extractFromParagraph(li));
+        .map((li: any) => extractTextForExercise(li));
     }
     return [];
   })
 }
 
-export function extractTaskListItems(node: any): string[] {
-  if (!Array.isArray(node.children)) return []
+// export function extractTaskListItems(node: any): string[] {
+//   if (!Array.isArray(node.children)) return []
   
-  const result: string[] = []
+//   const result: string[] = []
   
-  for (const child of node.children) {
-    // Task lists are parsed as 'list' nodes
-    if (child.type === 'list') {
-      const listItems = child.children?.filter((li: any) => li.type === 'listItem') || []
-      for (const li of listItems) {
-        // Extract text from paragraph nodes within list items
-        const paragraphs = li.children?.filter((c: any) => c.type === 'paragraph') || []
-        if (paragraphs.length > 0) {
-          const text = paragraphs
-            .map((p: any) => extractText(p as Paragraph))
-            .join(' ')
-            .trim()
-          if (text.length > 0) {
-            result.push(text)
-          }
-        } else {
-          // Fallback: try to extract text directly from list item children
-          const text = extractFromParagraph(li).trim()
-          if (text.length > 0) {
-            result.push(text)
-          }
-        }
-      }
-    } else if (child.type === 'paragraph') {
-      // Handle if children are directly paragraphs (fallback)
-      const text = extractText(child).trim()
-      if (text.length > 0) {
-        result.push(text)
-      }
-    }
-  }
+//   for (const child of node.children) {
+//     // Task lists are parsed as 'list' nodes
+//     if (child.type === 'list') {
+//       const listItems = child.children?.filter((li: any) => li.type === 'listItem') || []
+//       for (const li of listItems) {
+//         // Extract text from paragraph nodes within list items
+//         const paragraphs = li.children?.filter((c: any) => c.type === 'paragraph') || []
+//         if (paragraphs.length > 0) {
+//           const text = paragraphs
+//             .map((p: any) => extractText(p as Paragraph))
+//             .join(' ')
+//             .trim()
+//           if (text.length > 0) {
+//             result.push(text)
+//           }
+//         } else {
+//           // Fallback: try to extract text directly from list item children
+//           const text = extractFromParagraph(li).trim()
+//           if (text.length > 0) {
+//             result.push(text)
+//           }
+//         }
+//       }
+//     } else if (child.type === 'paragraph') {
+//       // Handle if children are directly paragraphs (fallback)
+//       result.push(
+//           extractText(child).map(it=>it.text).join(""))
+//     }
+//   }
   
-  return result
-}
+//   return result
+// }
 
 
 
-function extractTableRows(node: Table): string[][] {
+// function extractTableRows(node: Table): string[][] {
   
-  if (!node.children) return []
+//   if (!node.children) return []
   
-  return [...node.children]
-    .filter((row: any) => row.type === 'tableRow')
-    .map((row: any) => {
-      if (!row.children) return []
-      return row.children
-        .filter((cell: any) => cell.type === 'tableCell')
-        .map((cell: any) => extractText(cell).trim())
-    })
-}
+//   return [...node.children]
+//     .filter((row: any) => row.type === 'tableRow')
+//     .map((row: any) => {
+//       if (!row.children) return []
+//       return row.children
+//         .filter((cell: any) => cell.type === 'tableCell')
+//         .map((cell: any) => extractText(cell).trim())
+//     })
+// }
