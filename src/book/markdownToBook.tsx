@@ -1,5 +1,5 @@
-import { Literal, Table, List, Paragraph,  Parent, Node, PhrasingContent} from 'mdast'
-import { Book, Block, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular } from './bookModel'
+import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, Code, TableCell, TableRow } from 'mdast'
+import { Book, Block, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
@@ -27,6 +27,13 @@ export function remarkToBook(node: Node): Block {
     const ddd = extractText(node as Paragraph)
     return new ParagraphBlock(ddd);
   }
+  if (node.type === "code") {
+     const ddd  = (node as any).value ?? ''
+    return {
+      type: 'code',
+      text: ddd
+    }
+  }
   if (node.type === "verify") {
     const dd = node as List;
     return {
@@ -42,6 +49,11 @@ export function remarkToBook(node: Node): Block {
       ordered: dd.ordered || false,
       items: extractListItemsFromNode(dd),
     }
+  }
+  if (node.type === "blockquote") {
+    const quoteNode = node as Blockquote
+
+    return { type: "blockquote", text: quoteNode.children.map(it => remarkToBook(it)) }
   }
   return new ParagraphBlock([new TextRegular("someTextNewList")]);
 }
@@ -90,16 +102,19 @@ export function astToBook(tree: Parent): Book {
       })
     }
 
-    // Ejercicio
-    // if (node.type.toString() === 'exercise' ) {
-    //   const data = (node as any).data ?? {}
-    //   currentChapter.blocks.push({
-    //     type: 'exercise',
-    //    attributes: data.hProperties ?? {}, 
-    //    instructions: data.instructions,
-    //     content: [ new ParagraphBlock( extractTextForExercise(node).join())] 
-    //   })
-    // }
+    if (node.type.toString() === 'exercise' ) {
+      const data = (node as any).data ?? {}
+
+      const children = (node as Parent).children.map(it=> remarkToBook(it));
+
+      currentChapter.blocks.push({
+        type: 'exercise',
+        attributes: data.hProperties ?? {},
+        instructions: data.instructions,
+        content: children
+      })
+    }
+
 
     if (node.type.toString() === 'conjugaction' ) {
       const data = (node as any).data ?? {}
@@ -121,6 +136,8 @@ export function astToBook(tree: Parent): Book {
         items: (node as any).children.map((it: Node) => remarkToBook(it)),
       })
     }
+    if  ( node.type=== "blockquote" || node.type ==="code")
+    {  currentChapter.blocks.push(remarkToBook(node))}
 
     // Listas
     if (node.type === 'list') {
@@ -131,34 +148,45 @@ export function astToBook(tree: Parent): Book {
       })
     }
 
-    // Tablas
-    // if (node.type === 'table') {
-    //     const rows = extractTableRows(node);
-    //   currentChapter.blocks.push({
-    //     type: 'table',
-    //     headers: rows[0],
-    //     rows: rows.slice(1),
-    //   })
-    //}
-    // 
+     //Tablas
+     if (node.type === 'table') {
+         const table  = node  as Table 
+         const allRows = table.children.map(it=> (it as TableRow))
+          .map(it=> it.children.map( d=> new ParagraphBlock(extractText(d))))
+       currentChapter.blocks.push({
+         type: 'table',
+         headers: allRows[0],
+         rows: allRows.slice(1)
+       })
+    }
 
   }
 
   return book
 }
 
-function extractText(node: Paragraph): ParagraphText[] {
+function extractText(node: Paragraph | TableCell): ParagraphText[] {
   return node.children
-    .map(it => {
+    .flatMap(it => {
      const ddd  = (it as any).value ?? ''
-      if (it.type === "strong") {
-        return new TextStrong(ddd);
+     console.log("#####",it.type);
+      if (it.type === "strong" || it.type === "emphasis" || it.type === "link"  ) {
+
+          return it.children.map(it=> extractLiteralText(it as Literal)).map(it=> new TextStrong(it));
+      }
+      if (it.type === "image"  ) {
+        return new TextRegular("image<" + ddd + ">")
+      }
+      if (it.type === "inlineCode"  ) {
+        return new TextInlineCode(ddd)
       }
       return new TextRegular(ddd)
     })
 }
 
-
+function extractLiteralText(node: Literal): string {
+return node.value ?? ''
+}
 
 function extractListItemsForConjugaction(node: any): string[] {
 
@@ -178,57 +206,3 @@ function extractListItemsForConjugaction(node: any): string[] {
     return [];
   })
 }
-
-// export function extractTaskListItems(node: any): string[] {
-//   if (!Array.isArray(node.children)) return []
-  
-//   const result: string[] = []
-  
-//   for (const child of node.children) {
-//     // Task lists are parsed as 'list' nodes
-//     if (child.type === 'list') {
-//       const listItems = child.children?.filter((li: any) => li.type === 'listItem') || []
-//       for (const li of listItems) {
-//         // Extract text from paragraph nodes within list items
-//         const paragraphs = li.children?.filter((c: any) => c.type === 'paragraph') || []
-//         if (paragraphs.length > 0) {
-//           const text = paragraphs
-//             .map((p: any) => extractText(p as Paragraph))
-//             .join(' ')
-//             .trim()
-//           if (text.length > 0) {
-//             result.push(text)
-//           }
-//         } else {
-//           // Fallback: try to extract text directly from list item children
-//           const text = extractFromParagraph(li).trim()
-//           if (text.length > 0) {
-//             result.push(text)
-//           }
-//         }
-//       }
-//     } else if (child.type === 'paragraph') {
-//       // Handle if children are directly paragraphs (fallback)
-//       result.push(
-//           extractText(child).map(it=>it.text).join(""))
-//     }
-//   }
-  
-//   return result
-// }
-
-
-
-// function extractTableRows(node: Table): string[][] {
-  
-//   if (!node.children) return []
-  
-//   return [...node.children]
-//     .filter((row: any) => row.type === 'tableRow')
-//     .map((row: any) => {
-//       if (!row.children) return []
-//       return row.children
-//         .filter((cell: any) => cell.type === 'tableCell')
-//         .map((cell: any) => extractText(cell).trim())
-//     })
-// }

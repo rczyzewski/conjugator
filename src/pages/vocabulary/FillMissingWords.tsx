@@ -2,39 +2,20 @@ import { useEffect, useState, JSX, DragEvent } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
-import { ParagraphBlock } from '../../book/bookModel';
+import { Block } from '../../book/bookModel';
+import { renderBlock } from '../../book/BookDisplayHelpers';
 
 
 interface GameDefinition {
-    paragraphs: ParagraphBlock[]
-    instructions?: string
+    readonly paragraphs: Block[]
+    readonly instructions?: string
 }
 
 class GameState {
-    constructor(public readonly text: string[],
-        public readonly paragraphs: Array<Array<MissingWord | string>>,
-        public readonly state: Map<string, MissingWord>,
-        public readonly shuffled: MissingWord[],
+    constructor(public readonly text: Block[]
     ) { }
 
-    static fromText(text: string[]): GameState {
-        const paragraphs = text.map((paraph, index) =>
-            getWords(`p${index}`, paraph));
 
-        const state = paragraphs.flatMap(it => it)
-            .filter(it => it instanceof MissingWord)
-            .map(it => it as MissingWord);
-
-        const word_assignment = new Map<string, MissingWord>(state.map(it => [it.key, it]))
-        const unordered = shuffle([...word_assignment.values()]);
-
-        return new GameState(text, paragraphs, word_assignment, unordered);
-    }
-
-    get withoutAnsers(): MissingWord[] {
-        return this.shuffled
-            .filter(it => !this.shuffled.some(d => d.answer == it))
-    }
 }
 
 class MissingWord {
@@ -80,7 +61,7 @@ export function getWords(prefix: string, str: string): Array<string | MissingWor
 }
 
 
-export default function FillMissingWords({ paragraphs: text, instructions  :myIinstructions }: GameDefinition): JSX.Element {
+export default function FillMissingWords({  paragraphs: text, instructions  :myIinstructions }: GameDefinition): JSX.Element {
 
     const [gameState, setGameState] = useState<GameState | null>()
     const [currentMissingWord, setCurrentMissingWord] = useState<MissingWord | null>()
@@ -125,7 +106,7 @@ export default function FillMissingWords({ paragraphs: text, instructions  :myIi
 
     useEffect(() => {
       //TODO: revert an fix
-      //  setGameState(GameState.fromText(text.map(e=>e.text)))
+        setGameState(new GameState(text));
     }, [text]) 
 
 
@@ -133,13 +114,9 @@ export default function FillMissingWords({ paragraphs: text, instructions  :myIi
     return <Container className="border m-2" style={{ backgroundColor: "#FAFAFA" }} >
         <Nav className="navbar navbar-light bg-light justify-content-between">
             <span className="navbar-brand">{myIinstructions}</span>
-            {gameState && gameState.withoutAnsers.length == 0 && <Button variant='alert' onClick={() => setVerify(true)}>Check</Button>}
         </Nav>
-        {gameState && gameState.withoutAnsers
-            .map(it => <Button className="p-1 m-1" draggable onDrag={() => setCurrentMissingWord(it)}>{it.original}</Button>)}
 
-
-        {gameState && gameState.paragraphs.map(parts => renderParagraph(parts))}
+        { gameState && gameState.text.map(it=> renderBlock(it)) }
     </Container>
     
 }

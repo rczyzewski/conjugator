@@ -15,13 +15,18 @@ export interface Book {
     | IVerifyBlock
     | IListBlock
     | ITableBlock
-  
+    | IQuoteBlock 
+    | ICodeBlock
 
 export  interface ParagraphText{
   text:string;
   }
 
  export  class TextRegular implements ParagraphText{
+    constructor( public readonly text: string){}
+  }
+
+ export  class TextInlineCode implements ParagraphText{
     constructor( public readonly text: string){}
   }
 
@@ -33,6 +38,15 @@ export  interface ParagraphText{
     type: 'paragraph'
     text: ParagraphText[]
   }
+  export interface ICodeBlock {
+    type: 'code'
+    text: string 
+  }
+
+  export interface IQuoteBlock {
+    type: 'blockquote'
+    text: Block[]
+  }
 
   export class ParagraphBlock implements IParagraphBlock{
     public readonly type = "paragraph";
@@ -43,7 +57,7 @@ export  interface ParagraphText{
     type: 'exercise'
     instructions?: string
     attributes: Record<string, string>
-    content: IParagraphBlock[]
+    content: Block[]
   }
 
   export interface IConjugationBlock {
@@ -78,7 +92,7 @@ export  interface ParagraphText{
 
   export interface ITableBlock {
     type: 'table'
-    headers: ParagraphText[]
-    rows: ParagraphText[][]
+    headers: ParagraphBlock[]
+    rows: ParagraphBlock[][]
   }
   
