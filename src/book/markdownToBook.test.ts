@@ -1,19 +1,36 @@
 import { describe, it, expect } from "vitest";
 import markdownToBook from "./markdownToBook";
-import { IListBlock, ITableBlock, ListItemBlock, ParagraphBlock, TextRegular } from "./bookModel";
-import { TestScheduler } from "rxjs/testing";
+import { IListBlock, ITableBlock, ListItemBlock, ParagraphBlock, TextRegular, TextStrong } from "./bookModel";
 
 describe("ParserTest", () => {
   it("dd", async () => {
     const md = `## Chapter
 
-Title **text** 
+
+
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Cell 1   | Cell 2   | Cell 3   |
+| Cell 4   | Cell 5   | Cell 6   | 
 
 `;
-    //const ll = "![foo](train.jpg)";
-    const abc = " __abc__"
-    const book = await markdownToBook(abc);
+    const book = await markdownToBook(md);
+    console.log(book);
   });
+
+  it("dd2", async () => {
+    const md = `## Chapter
+
+Title \`more\` [bar](url2)
+Some image![foo](/url "title")
+ 
+`;
+    const book = await markdownToBook(md);
+    console.log(book);
+  });
+
+
+
   it("parses conjugaction directive with properties into book model", async () => {
     const md = `## Title
 
@@ -45,7 +62,6 @@ text
       throw new Error("First block is not a conjugaction block");
     }
 
-    //expect(conjugationBlock.instructions).toBe("Instructions for the exercise");
     expect(conjugationBlock.attributes.tense).toBe("indicativo.presente");
     expect(conjugationBlock.content).toEqual([
       "ser",
@@ -69,7 +85,9 @@ text
     const md = `## Title
 
 ::::exercise[Instructions for the exercise]{property1=333 property2=value2}
-Hola mundo
+
+Hola mundo my name is **RAFA**
+
 ::::
 
 text
@@ -91,7 +109,7 @@ text
     expect(exerciseBlock.instructions).toBe("Instructions for the exercise");
     expect(exerciseBlock.attributes.property1).toBe("333");
     expect(exerciseBlock.attributes.property2).toBe("value2");
-    expect(exerciseBlock.content).toEqual([new ParagraphBlock([ new TextRegular("Hola mundo")])]);
+    expect(exerciseBlock.content).toEqual([new ParagraphBlock([ new TextRegular("Hola mundo my name is ") , new TextStrong("RAFA")])]);
   });
 
   it("parses verify task list", async () => {

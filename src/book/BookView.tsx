@@ -2,9 +2,8 @@ import { Book }  from "./bookModel"
 import FillMissingWords from "../pages/vocabulary/FillMissingWords";
 import VerbConjugateExercise from "../pages/vocabulary/VerbConjugateExercise";
 import VerifyExercise from "../pages/vocabulary/VerifyExercise";
-import Table from "react-bootstrap/Table";
 
-import { renderBlock, renderText } from "./BookDisplayHelpers";
+import { renderBlock } from "./BookDisplayHelpers";
 
 
 
@@ -79,8 +78,6 @@ export default function BookView({ book }: { readonly book: Book }) {
                 || block.type == "code") {
                 return renderBlock(block)
               }
-
-
 
               return null;
             })}

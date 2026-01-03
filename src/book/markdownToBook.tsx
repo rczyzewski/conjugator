@@ -1,4 +1,4 @@
-import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, Code, TableCell, TableRow } from 'mdast'
+import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell, TableRow } from 'mdast'
 import { Book, Block, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
@@ -34,14 +34,6 @@ export function remarkToBook(node: Node): Block {
       text: ddd
     }
   }
-  if (node.type === "verify") {
-    const dd = node as List;
-    return {
-      type: 'verify',
-      instructions :"none",
-      items: extractListItemsFromNode(dd),
-    }
-  }
   if (node.type === "list") {
     const dd = node as List;
     return {
@@ -50,11 +42,22 @@ export function remarkToBook(node: Node): Block {
       items: extractListItemsFromNode(dd),
     }
   }
+  if( node.type==="table"){
+         const table  = node  as Table 
+         const allRows = table.children.map(it=> (it as TableRow))
+          .map(it=> it.children.map( d=> new ParagraphBlock(extractText(d))))
+       return {
+         type: 'table',
+         headers: allRows[0],
+         rows: allRows.slice(1)
+       }
+      }
+
   if (node.type === "blockquote") {
     const quoteNode = node as Blockquote
-
     return { type: "blockquote", text: quoteNode.children.map(it => remarkToBook(it)) }
   }
+
   return new ParagraphBlock([new TextRegular("someTextNewList")]);
 }
 
@@ -94,13 +97,6 @@ export function astToBook(tree: Parent): Book {
 
     if (currentChapter == null) continue 
     
-    // Párrafo normal
-    if (node.type === 'paragraph') {
-      currentChapter.blocks.push({
-        type: 'paragraph',
-        text: extractText(node),
-      })
-    }
 
     if (node.type.toString() === 'exercise' ) {
       const data = (node as any).data ?? {}
@@ -136,29 +132,10 @@ export function astToBook(tree: Parent): Book {
         items: (node as any).children.map((it: Node) => remarkToBook(it)),
       })
     }
-    if  ( node.type=== "blockquote" || node.type ==="code")
+
+    if  ( node.type=== "blockquote" || node.type ==="code" || node.type==='paragraph' || node.type=='list' || node.type=='table')
     {  currentChapter.blocks.push(remarkToBook(node))}
 
-    // Listas
-    if (node.type === 'list') {
-      currentChapter.blocks.push({
-        type: 'list',
-        ordered: node.ordered || false,
-        items: extractListItemsFromNode(node),
-      })
-    }
-
-     //Tablas
-     if (node.type === 'table') {
-         const table  = node  as Table 
-         const allRows = table.children.map(it=> (it as TableRow))
-          .map(it=> it.children.map( d=> new ParagraphBlock(extractText(d))))
-       currentChapter.blocks.push({
-         type: 'table',
-         headers: allRows[0],
-         rows: allRows.slice(1)
-       })
-    }
 
   }
 

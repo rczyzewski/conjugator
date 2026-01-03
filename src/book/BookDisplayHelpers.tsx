@@ -1,8 +1,10 @@
 import { JSX } from "react";
 import { IListBlock, Block, IListItemBlock, IParagraphBlock, TextRegular, ParagraphText, TextInlineCode, TextStrong, IQuoteBlock, ICodeBlock, ITableBlock } from "./bookModel"
 import ListGroup from 'react-bootstrap/ListGroup';
-import Container from "react-bootstrap/esm/Container";
-import Table from "react-bootstrap/esm/Table";
+import Table from "react-bootstrap/Table";
+import Alert from 'react-bootstrap/Alert';
+import { BiInfoCircle } from "react-icons/bi";
+import { PiWarningLight } from "react-icons/pi";
 
 export function renderListView(block: IListBlock) {
     return <ListGroup numbered={block.ordered} className="p-2">
@@ -40,7 +42,10 @@ export function renderBlock(block: Block) {
 }
 function renderCode(a : ICodeBlock){
 
-    return <code><pre>{a.text}</pre></code>
+  return <Alert variant="warning">
+   <h3> <PiWarningLight/></h3>
+    <code><pre>{a.text}</pre></code>
+  </Alert>
 }
 
 
@@ -50,7 +55,9 @@ export function renderParagraph(block: IParagraphBlock) {
 }
 export function renderBlockQuote(block: IQuoteBlock) {
       
-     return <Container  style={{ backgroundColor: "AA1111"}}> <h3>This is Quote</h3>{ block.text.map(  renderBlock)     }</Container>
+     return <Alert className="fade alert alert-info show" style={{ backgroundColor: "AA1111"}}> 
+     <h3><BiInfoCircle></BiInfoCircle></h3>
+     { block.text.map(  renderBlock)     }</Alert>
         
 
 

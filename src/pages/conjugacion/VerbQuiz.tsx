@@ -11,7 +11,7 @@ import congationService, { IConjugacionSettings } from './ConjugactionSettingsSe
 
 
 interface VerbListProps {
-  typed: boolean;
+  readonly typed: boolean;
 }
 
 interface VerbEvaluation {
@@ -31,9 +31,7 @@ function VerbResponse({ correct, conjugatedVerb }: VerbResponseProps): JSX.Eleme
     </>
   }
   else {
-    return <>
-      <h1> {conjugatedVerb?.answer}</h1>
-    </>
+    return <h1> {conjugatedVerb?.answer}</h1>
 
   }
 
@@ -120,8 +118,7 @@ function VerbQuiz({ typed = false }: VerbListProps): JSX.Element {
     event.preventDefault();
     console.log(event);
     console.log(response)
-    setResponse((answerRef?.current?.value === conjugatedVerb?.answer) ? true : false)
-
+    setResponse(answerRef?.current?.value === conjugatedVerb?.answer)
   }
 
 
