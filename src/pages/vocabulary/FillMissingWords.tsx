@@ -2,17 +2,17 @@ import { useEffect, useState, JSX, DragEvent } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
-import { Block } from '../../book/bookModel';
+import { ContentBlock } from '../../book/bookModel';
 import { renderBlock } from '../../book/BookDisplayHelpers';
 
 
 interface GameDefinition {
-    readonly paragraphs: Block[]
+    readonly paragraphs: ContentBlock[]
     readonly instructions?: string
 }
 
 class GameState {
-    constructor(public readonly text: Block[]
+    constructor(public readonly text: ContentBlock[]
     ) { }
 
 
@@ -116,7 +116,7 @@ export default function FillMissingWords({  paragraphs: text, instructions  :myI
             <span className="navbar-brand">{myIinstructions}</span>
         </Nav>
 
-        { gameState && gameState.text.map(it=> renderBlock(it)) }
+        { gameState && gameState.text.map(renderBlock) }
     </Container>
     
 }

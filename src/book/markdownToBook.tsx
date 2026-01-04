@@ -1,5 +1,5 @@
-import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell, TableRow } from 'mdast'
-import { Book, Block, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode } from './bookModel'
+import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell } from 'mdast'
+import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
@@ -22,46 +22,36 @@ export default async function  markdownToBook(markdown: string): Promise<Book> {
    return  astToBook(transformedTree as Parent);
 }
 
-export function remarkToBook(node: Node): Block {
+export function remarkToBook(node: Node): ContentBlock {
   if (node.type == 'paragraph') {
     const ddd = extractText(node as Paragraph)
     return new ParagraphBlock(ddd);
   }
   if (node.type === "code") {
-     const ddd  = (node as any).value ?? ''
-    return {
-      type: 'code',
-      text: ddd
+     const code  = (node as any).value ?? ''
+    return  new CodeBlock(code)
     }
-  }
   if (node.type === "list") {
-    const dd = node as List;
-    return {
-      type: 'list',
-      ordered: dd.ordered || false,
-      items: extractListItemsFromNode(dd),
-    }
+    const listNode = node as List;
+    return new ListBlock(extractListItemsFromNode(listNode), listNode.ordered || false)
   }
   if( node.type==="table"){
          const table  = node  as Table 
-         const allRows = table.children.map(it=> (it as TableRow))
+         const allRows = table.children
           .map(it=> it.children.map( d=> new ParagraphBlock(extractText(d))))
-       return {
-         type: 'table',
-         headers: allRows[0],
-         rows: allRows.slice(1)
-       }
+
+         return  new TableBlock(allRows[0], allRows.slice(1) )
       }
 
   if (node.type === "blockquote") {
     const quoteNode = node as Blockquote
-    return { type: "blockquote", text: quoteNode.children.map(it => remarkToBook(it)) }
+    return new QuoteBlock(quoteNode.children.map(it => remarkToBook(it)))
   }
 
-  return new ParagraphBlock([new TextRegular("someTextNewList")]);
+  return new ParagraphBlock([new TextRegular("Unknown node" + node.type)]);
 }
 
-export function toInnerTypes(tree: Parent): Block[] {
+export function toInnerTypes(tree: Parent): ContentBlock[] {
   return tree.children.map(it => remarkToBook(it))
 }
 
@@ -133,8 +123,13 @@ export function astToBook(tree: Parent): Book {
       })
     }
 
-    if  ( node.type=== "blockquote" || node.type ==="code" || node.type==='paragraph' || node.type=='list' || node.type=='table')
-    {  currentChapter.blocks.push(remarkToBook(node))}
+    if (node.type === "blockquote"
+      || node.type === "code"
+      || node.type === 'paragraph'
+      || node.type === 'list'
+      || node.type === 'table') {
+      currentChapter.blocks.push(remarkToBook(node))
+    }
 
 
   }
@@ -166,20 +161,7 @@ return node.value ?? ''
 }
 
 function extractListItemsForConjugaction(node: any): string[] {
-
-  function extractTextForExercise(node: any): string[] {
-    return node.children
-      .flatMap((it: any) => it.children)
-      .map((c: Literal) => c.value ?? '')
-  }
-
-  if (!Array.isArray(node.children)) return []
-  return node.children.flatMap((child: any) => {
-    if (child.type === 'list') {
-      return child.children
-        .filter((li: any) => li.type === 'listItem')
-        .map((li: any) => extractTextForExercise(li));
-    }
-    return [];
-  })
+  return node.children.map(remarkToBook)
+    .flatMap((it:ContentBlock )=>it.getText())
+    .map((it: ParagraphText)=>it.text)
 }

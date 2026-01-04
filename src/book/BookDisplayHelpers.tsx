@@ -1,12 +1,12 @@
 import { JSX } from "react";
-import { IListBlock, Block, IListItemBlock, IParagraphBlock, TextRegular, ParagraphText, TextInlineCode, TextStrong, IQuoteBlock, ICodeBlock, ITableBlock } from "./bookModel"
+import {  TextRegular, ParagraphText, TextInlineCode, TextStrong,   ParagraphBlock, ListBlock, QuoteBlock, ListItemBlock, TableBlock, CodeBlock, ContentBlock } from "./bookModel"
 import ListGroup from 'react-bootstrap/ListGroup';
 import Table from "react-bootstrap/Table";
 import Alert from 'react-bootstrap/Alert';
 import { BiInfoCircle } from "react-icons/bi";
 import { PiWarningLight } from "react-icons/pi";
 
-export function renderListView(block: IListBlock) {
+export function renderListView(block: ListBlock) {
     return <ListGroup numbered={block.ordered} className="p-2">
         {block.items.map((item, itemIndex) => (<ListGroup.Item key={itemIndex} as="li">
             {
@@ -16,50 +16,47 @@ export function renderListView(block: IListBlock) {
     </ListGroup>
 }
 
-export function renderBlockView(block: IListItemBlock) {
+export function renderBlockView(block: ListItemBlock) {
     return block.items.map(it => renderBlock(it))
 }
 
-export function renderBlock(block: Block) {
-    if (block.type == "paragraph") {
+export function renderBlock(block: ContentBlock) {
+    if (block instanceof ParagraphBlock) {
         return renderParagraph(block )
     }
-    if (block.type == "list") {
+    if (block instanceof ListBlock) {
         return renderListView(block);
     }
-    if ( block.type == "blockquote")
+    if ( block instanceof QuoteBlock)
             return renderBlockQuote(block) 
     
-    if (block.type == "code") {
+    if (block instanceof CodeBlock) {
         return renderCode(block);
     }
-    if (block.type == "table") {
+    if (block instanceof TableBlock) {
         return renderTable(block);
     }
 
-    return <p>unable to display block of type: {block.type}</p>
+    return <p>unable to display block of type</p>
 
 }
-function renderCode(a : ICodeBlock){
+function renderCode(a : CodeBlock){
 
   return <Alert variant="warning">
    <h3> <PiWarningLight/></h3>
-    <code><pre>{a.text}</pre></code>
+    <code><pre>{a.code}</pre></code>
   </Alert>
 }
 
 
-export function renderParagraph(block: IParagraphBlock) {
-      
+export function renderParagraph(block: ParagraphBlock) {
      return <p> { block.text.map( renderText)     }</p>
 }
-export function renderBlockQuote(block: IQuoteBlock) {
-      
-     return <Alert className="fade alert alert-info show" style={{ backgroundColor: "AA1111"}}> 
-     <h3><BiInfoCircle></BiInfoCircle></h3>
-     { block.text.map(  renderBlock)     }</Alert>
-        
-
+export function renderBlockQuote(block: QuoteBlock) {
+  return <Alert className="fade alert alert-info show" style={{ backgroundColor: "AA1111" }}>
+    <h3><BiInfoCircle></BiInfoCircle></h3>
+    {block.text.map(renderBlock)}
+  </Alert>
 
 }
 
@@ -71,9 +68,7 @@ return <p>Don't know what to display { JSON.stringify(text)}</p>
 
 }
 
-export function renderTable(table: ITableBlock){
-
-
+export function renderTable(table: TableBlock){
                  return (
                    <Table  striped bordered hover>
                      <thead>

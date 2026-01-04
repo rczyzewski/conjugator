@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import markdownToBook from "./markdownToBook";
-import { IListBlock, ITableBlock, ListItemBlock, ParagraphBlock, TextRegular, TextStrong } from "./bookModel";
+import { ListBlock, ListItemBlock, ParagraphBlock, TableBlock, TextRegular, TextStrong } from "./bookModel";
 
 describe("ParserTest", () => {
   it("dd", async () => {
@@ -33,7 +33,6 @@ Some image![foo](/url "title")
 
   it("parses conjugaction directive with properties into book model", async () => {
     const md = `## Title
-
 
 ::::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
 * ser
@@ -75,10 +74,7 @@ text
     ]);
 
     const paragraphBlock = blocks[1];
-    expect(paragraphBlock.type).toBe("paragraph");
-    if (paragraphBlock.type === "paragraph") {
-      expect(paragraphBlock.text).toBe("text");
-    }
+    expect(paragraphBlock).toStrictEqual(new ParagraphBlock([new TextRegular("text")]));
   });
 
   it("parses exercise directive with label and attributes into book model", async () => {
@@ -191,7 +187,7 @@ text
     const blocks = book.chapters[0].blocks;
     expect(blocks.length).toBe(1);
 
-    const listBlock = blocks[0] as IListBlock;
+    const listBlock = blocks[0] as ListBlock;
     if (listBlock.type !== "list") {
       throw new Error("First block is not a list block");
     }
@@ -245,7 +241,7 @@ text
   });
 
 
-  it("parses table into book model", async () => {
+  it("parses quote into book model", async () => {
     const md = `## Title
 
 >
@@ -281,12 +277,13 @@ text
     const blocks = book.chapters[0].blocks;
     expect(blocks.length).toBe(1);
 
-    const tableBlock = blocks[0] as ITableBlock;
+    const tableBlock = blocks[0] as TableBlock;
     expect(tableBlock.type).toEqual("table");
-    expect(tableBlock.headers).toEqual(["Header 1", "Header 2", "Header 3"]);
+    expect(tableBlock.headers).toEqual(["Header 1","Header 2","Header 3"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])));
     expect(tableBlock.rows).toEqual([
-      ["Cell 1", "Cell 2", "Cell 3"],
-      ["Cell 4", "Cell 5", "Cell 6"], ]);
+      ["Cell 1", "Cell 2", "Cell 3"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])),
+      ["Cell 4", "Cell 5", "Cell 6"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])),
+       ]);
   });
 
 });

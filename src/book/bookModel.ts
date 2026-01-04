@@ -8,15 +8,18 @@ export interface Book {
     blocks: Block[]
   }
   
-  export type Block =
-    | IParagraphBlock
-    | IExerciseBlock
-    | IConjugationBlock
-    | IVerifyBlock
-    | IListBlock
-    | ITableBlock
-    | IQuoteBlock 
-    | ICodeBlock
+export interface BlockElement {
+  getText() : ParagraphText[]
+}
+
+export type ContentBlock  = ParagraphBlock | ListBlock | QuoteBlock | CodeBlock | TableBlock
+
+ export type Block =
+     | IExerciseBlock
+     | IConjugationBlock
+     | IVerifyBlock
+     | ContentBlock
+
 
 export  interface ParagraphText{
   text:string;
@@ -34,30 +37,26 @@ export  interface ParagraphText{
     constructor( public readonly text: string){}
   }
   
-  export interface IParagraphBlock {
-    type: 'paragraph'
-    text: ParagraphText[]
-  }
-  export interface ICodeBlock {
-    type: 'code'
-    text: string 
+
+export class CodeBlock implements  BlockElement{
+    public readonly type = "code";
+    constructor( public readonly code: string  ){}
+  getText(): ParagraphText[] {
+    return [ new TextInlineCode( this.code) ]
   }
 
-  export interface IQuoteBlock {
-    type: 'blockquote'
-    text: Block[]
-  }
-
-  export class ParagraphBlock implements IParagraphBlock{
+}
+  export class ParagraphBlock implements BlockElement{
     public readonly type = "paragraph";
     constructor(public readonly text:  ParagraphText[]){}
+    getText(): ParagraphText[] { return this.text }
   }
   
   export interface IExerciseBlock {
     type: 'exercise'
     instructions?: string
     attributes: Record<string, string>
-    content: Block[]
+    content: ContentBlock[]
   }
 
   export interface IConjugationBlock {
@@ -70,29 +69,45 @@ export  interface ParagraphText{
   export interface IVerifyBlock {
     type: 'verify'
     instructions?: string
-    items: IListItemBlock[]
+    items: ListItemBlock[]
+  }
+
+export class QuoteBlock implements BlockElement {
+  public readonly type = "blockquote";
+  constructor(public text: ContentBlock[]) {}
+
+  getText(): ParagraphText[] {
+    return this.text.flatMap((it) => it.getText());
+  }
+}
+
+  export class ListItemBlock implements  BlockElement{
+    constructor(public readonly items: ContentBlock[], public readonly checked : boolean|null | undefined ){}
+    getText(): ParagraphText[] {
+      return this.items.flatMap(it=> it.getText())
+    }
   }
 
 
-
-  export interface IListItemBlock{
-    checked: boolean | null |undefined
-    items: Block[]
+  export class ListBlock implements BlockElement{
+    public readonly type = "list";
+    constructor(public readonly items: ListItemBlock[], public readonly ordered : boolean = false){}
+    getText(): ParagraphText[] {
+      return  this.items.flatMap(it=> it.getText())
+    }
   }
 
-  export class ListItemBlock implements IListItemBlock{
-    constructor(public readonly items: Block[], public readonly checked : boolean|null | undefined ){}
-  }
+  export class TableBlock implements BlockElement{
+    public readonly type = "table";
+    constructor(
+      public readonly headers: ParagraphBlock[],
+      public readonly rows: ParagraphBlock[][]
+    ) {}
+    getText(): ParagraphText[] {
+      const fromHeader =  this.headers.flatMap(it=> it.getText())
+      const fromRows = this.rows.flatMap(it=>it).flatMap(it=> it.getText())
+      return  [ ...fromHeader, ...fromRows]
 
-  export interface IListBlock {
-    type: 'list'
-    ordered: boolean
-    items: IListItemBlock[]
-  }
-
-  export interface ITableBlock {
-    type: 'table'
-    headers: ParagraphBlock[]
-    rows: ParagraphBlock[][]
+    }
   }
   

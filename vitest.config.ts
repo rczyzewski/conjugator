@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [react()],
   test: {
     coverage: {
-      provider: 'v8' // or 'istanbul'
+      provider: 'v8', // or 'istanbul'
+      reporter: ['html', 'lcov', 'text', 'cobertura']
     },
     browser: {
       enabled: true,
