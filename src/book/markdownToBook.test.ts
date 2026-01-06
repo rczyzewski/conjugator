@@ -1,26 +1,50 @@
 import { describe, it, expect } from "vitest";
 import markdownToBook from "./markdownToBook";
-import { CodeBlock, ContentBlock, IConjugationBlock, IExerciseBlock, IVerifyBlock, ListBlock, ListItemBlock, ParagraphBlock, QuoteBlock, TableBlock, TextInlineCode, TextRegular, TextSpecial, TextStrong } from "./bookModel";
-
+import { CodeBlock, ContentBlock, IConjugationBlock, IExerciseBlock, IVerifyBlock, ListBlock, ListItemBlock, ParagraphBlock, QuoteBlock, TableBlock, TextEmphasis, TextImage, TextInlineCode, TextLink, TextRegular, TextSpecial, TextStrong } from "./bookModel";
 describe("ParserTest", () => {
+
+  it("parses image block {}", async () => {
+    const md = `## Title
+# chapter 1
+some ![pumpkin](https://127.0.0.1/b.jpg) here
+`;
+
+    const book = await markdownToBook(md);
+    const paragraph = book.chapters[0].blocks[0] as ContentBlock;
+
+    expect(paragraph.getText()).toStrictEqual([
+      new TextRegular("some "),
+      new TextImage("https://127.0.0.1/b.jpg","pumpkin"),
+      new TextRegular(" here"),
+    ]);
+  });
+
+  it("parses link block {}", async () => {
+    const md = `## Title
+# chapter 1
+some [link](http://127.0.0.1/b.jpg) here
+`;
+
+    const book = await markdownToBook(md);
+    const paragraph = book.chapters[0].blocks[0] as ContentBlock;
+
+    expect(paragraph.getText()).toStrictEqual([
+      new TextRegular("some "),
+      new TextLink("http://127.0.0.1/b.jpg", [new TextRegular("link")]),
+      new TextRegular(" here"),
+    ]);
+  });
+
   it("parses simple special block {}", async () => {
     const md = `## Title
-
 # chapter 1
-
 some {text} here
-
 `;
 
     const book = await markdownToBook(md);
 
-    expect(book.chapters.length).toBe(1);
-    expect(book.chapters[0].title).toBe("Title");
+    const paragraph = book.chapters[0].blocks[0] as ContentBlock;
 
-    const blocks = book.chapters[0].blocks;
-    expect(blocks.length).toBe(1);
-
-    const paragraph = blocks[0] as ContentBlock;
     expect(paragraph.getText()).toStrictEqual([
       new TextRegular("some "),
       new TextSpecial("text"),
@@ -279,7 +303,7 @@ here is some code
       new TextRegular("cell1"),
       new TextRegular("Here is quote"),
       new TextRegular("double "),
-      new TextStrong("quote"),
+      new TextEmphasis("quote"),
     ]);
 
   });

@@ -1,5 +1,5 @@
-import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell } from 'mdast'
-import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial } from './bookModel'
+import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell, Link, Image } from 'mdast'
+import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
@@ -140,16 +140,22 @@ export function astToBook(tree: Parent): Book {
   return book
 }
 
-function extractText(node: Paragraph | TableCell): ParagraphText[] {
+function extractText(node: Paragraph | TableCell | Link ): ParagraphText[] {
   return node.children
     .flatMap(it => {
      const content  = (it as any).value ?? ''
-      if (it.type === "strong" || it.type === "emphasis" || it.type === "link"  ) {
-
-          return it.children.map(it=> extractLiteralText(it as Literal)).map(it=> new TextStrong(it));
+      if (it.type === "strong") {
+        return it.children.map(it => extractLiteralText(it as Literal)).map(it => new TextStrong(it));
+      }
+      if (it.type === "link") {
+       const children =  extractText(it)
+        return new TextLink(it.url,  children)
+      }
+      if (it.type === "emphasis") {
+        return it.children.map(it => extractLiteralText(it as Literal)).map(it => new TextEmphasis(it))
       }
       if (it.type === "image"  ) {
-        return new TextRegular("image<" + content + ">")
+        return new TextImage(it.url, it.alt || undefined )
       }
 
       if (it.type === "inlineCode"  ) {
@@ -169,5 +175,5 @@ return node.value ?? ''
 function extractListItemsForConjugaction(node: any): string[] {
   return node.children.map(remarkToBook)
     .flatMap((it:ContentBlock )=>it.getText())
-    .map((it: ParagraphText)=>it.text)
+    .map((it: ParagraphText)=>it.toString())
 }

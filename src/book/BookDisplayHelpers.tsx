@@ -1,13 +1,14 @@
 import { JSX } from "react";
-import {  TextRegular, ParagraphText, TextInlineCode, TextStrong,   ParagraphBlock, ListBlock, QuoteBlock, ListItemBlock, TableBlock, CodeBlock, ContentBlock } from "./bookModel"
+import {  TextRegular, ParagraphText, TextInlineCode, TextStrong,   ParagraphBlock, ListBlock, QuoteBlock, ListItemBlock, TableBlock, CodeBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage } from "./bookModel"
 import ListGroup from 'react-bootstrap/ListGroup';
 import Table from "react-bootstrap/Table";
 import Alert from 'react-bootstrap/Alert';
 import { BiInfoCircle } from "react-icons/bi";
 import { PiWarningLight } from "react-icons/pi";
+import Button from "react-bootstrap/Button";
 
 
-export function renderBlock(block: ContentBlock): JSX.Element  {
+  export function renderBlock(block: ContentBlock): JSX.Element  {
     if (block instanceof ParagraphBlock) {
         return renderParagraph(block )
     }
@@ -30,6 +31,7 @@ export function renderBlock(block: ContentBlock): JSX.Element  {
     return <p>unable to display block of type</p>
 
 }
+
 function renderCode(a : CodeBlock){
 
   return <Alert variant="warning">
@@ -67,8 +69,14 @@ export function renderBlockQuote(block: QuoteBlock) {
 
 export function renderText(text: ParagraphText): JSX.Element{
     if( text instanceof TextRegular ) return <span>{text.text}</span>
+    if( text instanceof TextEmphasis ) return <i>{text.text}</i>
+    if( text instanceof TextImage ) return <img src={text.url} alt={text.text} />
     if( text instanceof TextInlineCode) return <code>{text.text}</code>
+    if( text instanceof TextLink) return <a href={text.url}>{text.children.map(it=>renderText(it))}</a>
     if( text instanceof TextStrong) return <span className="fw-bold">{text.text}</span>
+    if( text instanceof TextSpecial) 
+      return  <Button className='p-0 m-1' variant={"info"} >{text.text}</Button>
+
 return <p>Don't know what to display { JSON.stringify(text)}</p>
 
 }

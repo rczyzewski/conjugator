@@ -22,7 +22,6 @@ export type ContentBlock  = ParagraphBlock | ListBlock | QuoteBlock | CodeBlock 
 
 
 export  interface ParagraphText{
-  text:string;
   }
 
  export  class TextSpecial implements ParagraphText{
@@ -34,6 +33,22 @@ export  interface ParagraphText{
   }
 
  export  class TextInlineCode implements ParagraphText{
+    constructor( public readonly text: string){}
+  }
+
+ export  class TextLink{
+    constructor( public readonly url: string, 
+      public readonly children : ParagraphText[],
+      public readonly title? : string , 
+     ){
+    }
+  }
+
+ export class TextImage implements ParagraphText {
+   constructor(public readonly url: string, public readonly text?: string) {}
+ }
+
+ export  class TextEmphasis implements ParagraphText{
     constructor( public readonly text: string){}
   }
 

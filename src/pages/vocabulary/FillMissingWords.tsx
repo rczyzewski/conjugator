@@ -95,7 +95,9 @@ export default function FillMissingWords({  paragraphs: text, instructions  :myI
                         {missingWord.answer == null && <Button className='p-1 m-1 btn-outline-secondary' variant={"light"} >
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </Button> }
+                        </Button> 
+                        
+                        }
                     </span>
             }
         } else {
