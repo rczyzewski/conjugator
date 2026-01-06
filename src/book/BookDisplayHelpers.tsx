@@ -6,21 +6,8 @@ import Alert from 'react-bootstrap/Alert';
 import { BiInfoCircle } from "react-icons/bi";
 import { PiWarningLight } from "react-icons/pi";
 
-export function renderListView(block: ListBlock) {
-    return <ListGroup numbered={block.ordered} className="p-2">
-        {block.items.map((item, itemIndex) => (<ListGroup.Item key={itemIndex} as="li">
-            {
-                renderBlockView(item)
-            }
-        </ListGroup.Item>))}
-    </ListGroup>
-}
 
-export function renderBlockView(block: ListItemBlock) {
-    return block.items.map(it => renderBlock(it))
-}
-
-export function renderBlock(block: ContentBlock) {
+export function renderBlock(block: ContentBlock): JSX.Element  {
     if (block instanceof ParagraphBlock) {
         return renderParagraph(block )
     }
@@ -29,9 +16,12 @@ export function renderBlock(block: ContentBlock) {
     }
     if ( block instanceof QuoteBlock)
             return renderBlockQuote(block) 
-    
     if (block instanceof CodeBlock) {
         return renderCode(block);
+    }
+    
+    if (block instanceof ListItemBlock) {
+        return renderListItem(block);
     }
     if (block instanceof TableBlock) {
         return renderTable(block);
@@ -43,18 +33,33 @@ export function renderBlock(block: ContentBlock) {
 function renderCode(a : CodeBlock){
 
   return <Alert variant="warning">
-   <h3> <PiWarningLight/></h3>
-    <code><pre>{a.code}</pre></code>
+    <code>
+        <PiWarningLight size={25} className="mx-3" />
+        {a.code}
+    </code>
   </Alert>
 }
 
+export function renderListView(block: ListBlock) {
+    return <ListGroup numbered={block.ordered} className=" list-group-flush" style={{ listStyle: "square", listStyleType: "circle"}}>
+        {block.items.map((item, itemIndex) => (<ListGroup.Item key={itemIndex} className="m-0" as="li">
+            {
+                renderListItem(item)
+            }
+        </ListGroup.Item>))}
+    </ListGroup>
+}
+
+export function renderListItem(block: ListItemBlock) : JSX.Element  {
+    return <>{block.items.map(it => renderBlock(it))}</>
+}
 
 export function renderParagraph(block: ParagraphBlock) {
      return <p> { block.text.map( renderText)     }</p>
 }
 export function renderBlockQuote(block: QuoteBlock) {
-  return <Alert className="fade alert alert-info show" style={{ backgroundColor: "AA1111" }}>
-    <h3><BiInfoCircle></BiInfoCircle></h3>
+  return <Alert className="fade alert alert-info show" >
+    <BiInfoCircle size={25} className="mx-3" style={{float: "left"}}/>
     {block.text.map(renderBlock)}
   </Alert>
 

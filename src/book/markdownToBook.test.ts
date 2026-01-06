@@ -1,34 +1,32 @@
 import { describe, it, expect } from "vitest";
 import markdownToBook from "./markdownToBook";
-import { ListBlock, ListItemBlock, ParagraphBlock, TableBlock, TextRegular, TextStrong } from "./bookModel";
+import { CodeBlock, ContentBlock, IConjugationBlock, IExerciseBlock, IVerifyBlock, ListBlock, ListItemBlock, ParagraphBlock, QuoteBlock, TableBlock, TextInlineCode, TextRegular, TextSpecial, TextStrong } from "./bookModel";
 
 describe("ParserTest", () => {
-  it("dd", async () => {
-    const md = `## Chapter
+  it("parses simple special block {}", async () => {
+    const md = `## Title
 
+# chapter 1
 
-
-| Header 1 | Header 2 | Header 3 |
-|----------|----------|----------|
-| Cell 1   | Cell 2   | Cell 3   |
-| Cell 4   | Cell 5   | Cell 6   | 
+some {text} here
 
 `;
+
     const book = await markdownToBook(md);
-    console.log(book);
+
+    expect(book.chapters.length).toBe(1);
+    expect(book.chapters[0].title).toBe("Title");
+
+    const blocks = book.chapters[0].blocks;
+    expect(blocks.length).toBe(1);
+
+    const paragraph = blocks[0] as ContentBlock;
+    expect(paragraph.getText()).toStrictEqual([
+      new TextRegular("some "),
+      new TextSpecial("text"),
+      new TextRegular(" here"),
+    ]);
   });
-
-  it("dd2", async () => {
-    const md = `## Chapter
-
-Title \`more\` [bar](url2)
-Some image![foo](/url "title")
- 
-`;
-    const book = await markdownToBook(md);
-    console.log(book);
-  });
-
 
 
   it("parses conjugaction directive with properties into book model", async () => {
@@ -56,10 +54,7 @@ text
     const blocks = book.chapters[0].blocks;
     expect(blocks.length).toBe(2);
 
-    const conjugationBlock = blocks[0];
-    if (conjugationBlock.type !== "conjugaction") {
-      throw new Error("First block is not a conjugaction block");
-    }
+    const conjugationBlock = blocks[0] as IConjugationBlock;
 
     expect(conjugationBlock.attributes.tense).toBe("indicativo.presente");
     expect(conjugationBlock.content).toEqual([
@@ -97,15 +92,34 @@ text
     const blocks = book.chapters[0].blocks;
     expect(blocks.length).toBe(2);
 
-    const exerciseBlock = blocks[0];
-    if (exerciseBlock.type !== "exercise") {
-      throw new Error("First block is not an exercise block");
-    }
+    const exerciseBlock = blocks[0] as IExerciseBlock
 
     expect(exerciseBlock.instructions).toBe("Instructions for the exercise");
     expect(exerciseBlock.attributes.property1).toBe("333");
     expect(exerciseBlock.attributes.property2).toBe("value2");
     expect(exerciseBlock.content).toEqual([new ParagraphBlock([ new TextRegular("Hola mundo my name is ") , new TextStrong("RAFA")])]);
+  });
+
+  it("parses code block", async () => {
+    const md = `## Title
+\`\`\`
+here is some code
+\`\`\`
+
+`;
+
+    const book = await markdownToBook(md);
+
+    expect(book.chapters.length).toBe(1);
+    expect(book.chapters[0].title).toBe("Title");
+
+    const blocks = book.chapters[0].blocks;
+    expect(blocks.length).toBe(1);
+    const codeBlock = blocks[0] as CodeBlock
+
+    expect(codeBlock).toStrictEqual(new CodeBlock("here is some code")) ;
+    expect( codeBlock.getText()).toStrictEqual([new TextInlineCode("here is some code")])
+
   });
 
   it("parses verify task list", async () => {
@@ -155,14 +169,10 @@ text
     const blocks = book.chapters[0].blocks;
     expect(blocks.length).toBe(1);
 
-    const verifyBlock = blocks[0];
-    if (verifyBlock.type !== "verify") {
-      throw new Error("First block is not a verify block");
-    }
+    const verifyBlock = blocks[0] as IVerifyBlock
 
     expect(verifyBlock.instructions).toBe("find true or false statments");
     expect(verifyBlock.items.length).toBeGreaterThan(0);
-
 
 
     //TODO: add more checks
@@ -188,9 +198,6 @@ text
     expect(blocks.length).toBe(1);
 
     const listBlock = blocks[0] as ListBlock;
-    if (listBlock.type !== "list") {
-      throw new Error("First block is not a list block");
-    }
 
     expect(listBlock.ordered).toBe(false);
     expect(listBlock.items).toEqual([
@@ -221,13 +228,10 @@ text
     const blocks = book.chapters[0].blocks;
     expect(blocks.length).toBe(1);
 
-    const listBlock = blocks[0];
-    if (listBlock.type !== "list") {
-      throw new Error("First block is not a list block");
-    }
+    const listBlock = blocks[0] as ListBlock;
 
     expect(listBlock.ordered).toBe(true);
-    //expect(listBlock.items.map(e=>e.text)).toEqual([
+
     expect(listBlock.items)
     .toEqual([
       new ListItemBlock(
@@ -246,15 +250,37 @@ text
 
 >
 > Here is quote
-> Here is quote
-> Here is quote
+> * e1 
+>   * e1.1
+> * e2
+> \`\`\` 
+> Code
+>\`\`\`
+> | header |
+> |--------|
+> | cell1  |
+> Here is quote 
 >
+> > double *quote*
 `;
 
     const book = await markdownToBook(md);
 
     expect(book.chapters.length).toBe(1);
     expect(book.chapters[0].title).toBe("Title");
+    const quoteBlock = book.chapters[0].blocks[0] as QuoteBlock
+    expect(quoteBlock.getText()).toStrictEqual([
+      new TextRegular("Here is quote"),
+      new TextRegular("e1"),
+      new TextRegular("e1.1"),
+      new TextRegular("e2"),
+      new TextInlineCode("Code"),
+      new TextRegular("header"),
+      new TextRegular("cell1"),
+      new TextRegular("Here is quote"),
+      new TextRegular("double "),
+      new TextStrong("quote"),
+    ]);
 
   });
 
@@ -263,10 +289,10 @@ text
   it("parses table into book model", async () => {
     const md = `## Title
 
-| Header 1 | Header 2 | Header 3 |
-|----------|----------|----------|
-| Cell 1   | Cell 2   | Cell 3   |
-| Cell 4   | Cell 5   | Cell 6   |
+| Header 1 | Header 2 | 
+|----------|----------|
+| Cell 1   | Cell 2   |
+| Cell 4   | Cell 5   |
 `;
 
     const book = await markdownToBook(md);
@@ -279,11 +305,19 @@ text
 
     const tableBlock = blocks[0] as TableBlock;
     expect(tableBlock.type).toEqual("table");
-    expect(tableBlock.headers).toEqual(["Header 1","Header 2","Header 3"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])));
+    expect(tableBlock.headers).toEqual(["Header 1","Header 2"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])));
     expect(tableBlock.rows).toEqual([
-      ["Cell 1", "Cell 2", "Cell 3"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])),
-      ["Cell 4", "Cell 5", "Cell 6"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])),
+      ["Cell 1", "Cell 2"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])),
+      ["Cell 4", "Cell 5"].map(it=> new TextRegular(it)).map(it=> new ParagraphBlock([it])),
        ]);
+
+        expect(tableBlock.getText()).toStrictEqual(
+          ["Header 1", "Header 2", "Cell 1", "Cell 2", "Cell 4", "Cell 5"].map(
+            (it) => new TextRegular(it)
+          )
+        );
+
+
   });
 
 });

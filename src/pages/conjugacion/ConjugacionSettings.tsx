@@ -21,7 +21,6 @@ export default function ConjugationsSettings(): JSX.Element {
     function handleOnChange(e: ChangeEvent) {
         let value = (e.target as HTMLInputElement).value
         let name = (e.target as HTMLInputElement).name
-        console.log("dddd ", name, value)
         let tmpSettings = { ...settings, [name]: value } as IConjugacionSettings
         congationService.setConutatyionSetting(tmpSettings)
         setSettings(tmpSettings)

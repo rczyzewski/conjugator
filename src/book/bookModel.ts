@@ -25,6 +25,10 @@ export  interface ParagraphText{
   text:string;
   }
 
+ export  class TextSpecial implements ParagraphText{
+    constructor( public readonly text: string){}
+  }
+
  export  class TextRegular implements ParagraphText{
     constructor( public readonly text: string){}
   }

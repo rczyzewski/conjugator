@@ -10,6 +10,16 @@ import { PUBLIC_URL } from "../pages/conjugacion/VerbsService";
 import HeaderComponent from "../components/HeaderComponent";
 import Container from "react-bootstrap/esm/Container";
 
+export function fetchBook(url:string):Promise<string>{
+
+    return fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Error en ${url}`);
+        return res.text();
+      })
+
+
+}
 export default function BookLoader(): JSX.Element {
   const [book, setBook] = useState<Book | null>(null)
     let params = useParams();
@@ -19,12 +29,7 @@ export default function BookLoader(): JSX.Element {
   useEffect(() => {
 
     const url = `${PUBLIC_URL}/courses/${course}/${chapter}.md`
-
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Error en ${url}`);
-        return res.text();
-      })
+      fetchBook(url)
       .then((res) => markdownToBook(res))
       .then(res => setBook(res))
 

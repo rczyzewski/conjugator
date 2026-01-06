@@ -14,10 +14,10 @@ describe("VerbsService", () => {
       new Date()
     );
 
-    console.log(entry)
     await service.insert(entry);
     const a = await service.findInTimeRange();
     console.log("log from here", a);
+    //TODO: some assertions?
   });
 
   it("testing fetching", async () => {

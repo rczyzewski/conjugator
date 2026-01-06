@@ -5,7 +5,7 @@ import Nav from 'react-bootstrap/Nav';
 import Form from 'react-bootstrap/Form';
 import { ListItemBlock } from '../../book/bookModel';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/esm/Col';
+import Col from 'react-bootstrap/Col';
 import { renderBlock } from '../../book/BookDisplayHelpers';
 
 interface VerifyExerciseProps {
@@ -15,7 +15,6 @@ interface VerifyExerciseProps {
 
 export default function VerifyExercise({ instructions, items }: VerifyExerciseProps): JSX.Element {
 
-    console.log(items)
 
     const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
     const [verifyMode, setVerifyMode] = useState<boolean>(false);

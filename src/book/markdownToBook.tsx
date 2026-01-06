@@ -1,21 +1,24 @@
 import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell } from 'mdast'
-import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock } from './bookModel'
+import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import { remarkExerciseDirective  }from "./ExerciseNode";
 import remarkDirective from "remark-directive";
+import remarkSpecialText from './remark-special-text';
+
 
 
 export default async function  markdownToBook(markdown: string): Promise<Book> {
 
     const processor = unified()
       .use(remarkParse)
+      .use(remarkSpecialText)
       .use(remarkGfm)
       .use(remarkDirective)
       .use(remarkExerciseDirective);
-
+ 
     const tree = processor.parse(markdown);
     const transformedTree = await processor.run(tree);
 
@@ -24,8 +27,8 @@ export default async function  markdownToBook(markdown: string): Promise<Book> {
 
 export function remarkToBook(node: Node): ContentBlock {
   if (node.type == 'paragraph') {
-    const ddd = extractText(node as Paragraph)
-    return new ParagraphBlock(ddd);
+    const content = extractText(node as Paragraph)
+    return new ParagraphBlock(content);
   }
   if (node.type === "code") {
      const code  = (node as any).value ?? ''
@@ -140,19 +143,22 @@ export function astToBook(tree: Parent): Book {
 function extractText(node: Paragraph | TableCell): ParagraphText[] {
   return node.children
     .flatMap(it => {
-     const ddd  = (it as any).value ?? ''
-     console.log("#####",it.type);
+     const content  = (it as any).value ?? ''
       if (it.type === "strong" || it.type === "emphasis" || it.type === "link"  ) {
 
           return it.children.map(it=> extractLiteralText(it as Literal)).map(it=> new TextStrong(it));
       }
       if (it.type === "image"  ) {
-        return new TextRegular("image<" + ddd + ">")
+        return new TextRegular("image<" + content + ">")
       }
+
       if (it.type === "inlineCode"  ) {
-        return new TextInlineCode(ddd)
+        return new TextInlineCode(content)
       }
-      return new TextRegular(ddd)
+      if( it.type === "specialText"){
+          return new TextSpecial(content)
+      }
+      return new TextRegular(content)
     })
 }
 

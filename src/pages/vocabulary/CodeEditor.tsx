@@ -4,15 +4,16 @@ import CodeMirror from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
-import  Button  from "react-bootstrap/Button"
-import  Col  from "react-bootstrap/Col"
-import  Container from "react-bootstrap/Container"
-import  Row from "react-bootstrap/Row"
+import Button from "react-bootstrap/Button"
+import Col from "react-bootstrap/Col"
+import Container from "react-bootstrap/Container"
+import Row from "react-bootstrap/Row"
 import HeaderComponent from "../../components/HeaderComponent";
 import BookView from "../../book/BookView";
 import { Book } from "../../book/bookModel";
 import markdownToBook from "../../book/markdownToBook";
-
+import { fetchBook } from "../../book/BookLoader";
+import { PUBLIC_URL } from "../conjugacion/VerbsService";
 export const test = `
 `;
 /**
@@ -106,12 +107,15 @@ export default function CodeEditor({ myMarkdown }: { readonly myMarkdown: string
       <Container>
         <Row className="mb-3">
           <Col>
-            <Button>Load sample.</Button>{" "}
-            <Button onClick={() => download("fake", code)}>Download</Button>{" "}
-            <Button onClick={() => document.getElementById("fileInput")?.click()}>
-              Upload
-            </Button>{" "}
-            <Button onClick={() => setEditor(!editor)}>Toogle Editor</Button>
+            <Button className="m-1" onClick={async () => {
+              const url = `${PUBLIC_URL}/courses/sample/book_tutorial.md`
+              const bookRawContent = await fetchBook(url)
+              setCode(bookRawContent)
+              renderBook(bookRawContent)
+            }}>Load sample</Button>
+            <Button className="m-1" onClick={() => download("fake", code)}>Download</Button>
+            <Button className="m-1" onClick={() => document.getElementById("fileInput")?.click()}>Upload</Button>
+            <Button className="m-1" onClick={() => setEditor(!editor)}>Toogle Editor</Button>
             <input
               id="fileInput"
               type="file"
