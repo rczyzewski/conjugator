@@ -1,5 +1,5 @@
-import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell, Link, Image } from 'mdast'
-import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage } from './bookModel'
+import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell, Link } from 'mdast'
+import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage, YouTubeBlock } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
@@ -7,16 +7,19 @@ import remarkParse from "remark-parse";
 import { remarkExerciseDirective  }from "./ExerciseNode";
 import remarkDirective from "remark-directive";
 import remarkSpecialText from './remark-special-text';
-
-
+import remarkYoutube from './remark-youtube';
+import { YoutubeNode } from './youtube-node';
+import remarkFrontmatter from 'remark-frontmatter';
 
 export default async function  markdownToBook(markdown: string): Promise<Book> {
 
     const processor = unified()
       .use(remarkParse)
+      .use(remarkFrontmatter)
       .use(remarkSpecialText)
       .use(remarkGfm)
       .use(remarkDirective)
+      .use(remarkYoutube)
       .use(remarkExerciseDirective);
  
     const tree = processor.parse(markdown);
@@ -39,16 +42,20 @@ export function remarkToBook(node: Node): ContentBlock {
     return new ListBlock(extractListItemsFromNode(listNode), listNode.ordered || false)
   }
   if( node.type==="table"){
-         const table  = node  as Table 
-         const allRows = table.children
-          .map(it=> it.children.map( d=> new ParagraphBlock(extractText(d))))
+    const table = node as Table
+    const allRows = table.children
+      .map(it => it.children.map(d => new ParagraphBlock(extractText(d))))
 
-         return  new TableBlock(allRows[0], allRows.slice(1) )
-      }
+    return new TableBlock(allRows[0], allRows.slice(1))
+  }
 
   if (node.type === "blockquote") {
     const quoteNode = node as Blockquote
     return new QuoteBlock(quoteNode.children.map(it => remarkToBook(it)))
+  }
+  if (node.type === "youtube") {
+    const aaa = node as YoutubeNode;
+    return new YouTubeBlock(aaa.videoId)
   }
 
   return new ParagraphBlock([new TextRegular("Unknown node" + node.type)]);
@@ -71,6 +78,32 @@ export function astToBook(tree: Parent): Book {
   let currentChapter: Chapter | null = null
 
   for (const node of tree.children) {
+    // Handle YAML frontmatter
+    if (node.type === 'yaml') {
+      const yamlContent = (node as any).value || '';
+      console.log("Found YAML node:", yamlContent);
+      // Parse YAML to extract youtube.id
+      try {
+        // Simple YAML parsing for youtube.id
+        const youtubeMatch = yamlContent.match(/youtube:\s*\n\s*id:\s*(\S+)/);
+        if (youtubeMatch) {
+          const videoId = youtubeMatch[1];
+          // Create a default chapter if none exists
+          if (currentChapter == null) {
+            currentChapter = {
+              title: '',
+              blocks: [],
+            }
+            book.chapters.push(currentChapter)
+          }
+          currentChapter.blocks.push(new YouTubeBlock(videoId));
+        }
+      } catch (e) {
+        console.error("Error parsing YAML:", e);
+      }
+      continue;
+    }
+
     // Título del libro
     if (node.type === 'heading' && node.depth === 1) {
       
@@ -104,6 +137,14 @@ export function astToBook(tree: Parent): Book {
       })
     }
 
+    if ( node.type === 'youtube')
+    {
+      const aaa = node as YoutubeNode;
+      const b = new YouTubeBlock(aaa.videoId)
+      currentChapter.blocks.push(b)
+      console.log(node)
+
+    }
 
     if (node.type.toString() === 'conjugaction' ) {
       const data = (node as any).data ?? {}

@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import {  TextRegular, ParagraphText, TextInlineCode, TextStrong,   ParagraphBlock, ListBlock, QuoteBlock, ListItemBlock, TableBlock, CodeBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage } from "./bookModel"
+import {  TextRegular, ParagraphText, TextInlineCode, TextStrong,   ParagraphBlock, ListBlock, QuoteBlock, ListItemBlock, TableBlock, CodeBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage, YouTubeBlock } from "./bookModel"
 import ListGroup from 'react-bootstrap/ListGroup';
 import Table from "react-bootstrap/Table";
 import Alert from 'react-bootstrap/Alert';
@@ -12,6 +12,10 @@ import Button from "react-bootstrap/Button";
     if (block instanceof ParagraphBlock) {
         return renderParagraph(block )
     }
+      if(block instanceof YouTubeBlock) { 
+      const url = "https://www.youtube.com/embed/" + block.url;
+      return <iframe src={url}>Texto del vídeo</iframe>
+      }
     if (block instanceof ListBlock) {
         return renderListView(block);
     }

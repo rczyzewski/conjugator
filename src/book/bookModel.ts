@@ -12,8 +12,8 @@ export interface BlockElement {
   getText() : ParagraphText[]
 }
 
-export type ContentBlock  = ParagraphBlock | ListBlock | QuoteBlock | CodeBlock | TableBlock
-
+export type ContentBlock  = ParagraphBlock | ListBlock | QuoteBlock | CodeBlock | TableBlock |
+YouTubeBlock
  export type Block =
      | IExerciseBlock
      | IConjugationBlock
@@ -128,5 +128,15 @@ export class QuoteBlock implements BlockElement {
       return  [ ...fromHeader, ...fromRows]
 
     }
+  }
+  export class YouTubeBlock implements BlockElement{
+    public readonly type = "youtube";
+    constructor( public readonly url : string) {}
+
+    getText(): ParagraphText[] {
+        return []
+    }
+
+
   }
   

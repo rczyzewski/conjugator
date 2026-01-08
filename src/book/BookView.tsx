@@ -75,7 +75,8 @@ export default function BookView({ book }: { readonly book: Book }) {
                 || block.type == "list"
                 || block.type === "blockquote"
                 || block.type === "table"
-                || block.type == "code") {
+                || block.type == "code"
+                ||   block.type == "youtube") {
                 return renderBlock(block)
               }
 

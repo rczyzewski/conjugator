@@ -1,7 +1,42 @@
 import { describe, it, expect } from "vitest";
 import markdownToBook from "./markdownToBook";
-import { CodeBlock, ContentBlock, IConjugationBlock, IExerciseBlock, IVerifyBlock, ListBlock, ListItemBlock, ParagraphBlock, QuoteBlock, TableBlock, TextEmphasis, TextImage, TextInlineCode, TextLink, TextRegular, TextSpecial, TextStrong } from "./bookModel";
+import { CodeBlock, ContentBlock, IConjugationBlock, IExerciseBlock, IVerifyBlock, ListBlock, ListItemBlock, ParagraphBlock, QuoteBlock, TableBlock, TextEmphasis, TextImage, TextInlineCode, TextLink, TextRegular, TextSpecial, TextStrong, YouTubeBlock } from "./bookModel";
 describe("ParserTest", () => {
+  
+  it("parses fron part {}", async () => {
+    const md = `---
+title: Mi documento
+level: B1
+tags:
+  - grammar
+  - verbs
+youtube:
+  id: dQw4w9WgXcQ
+---
+
+# Contenido
+
+Texto normal…
+ 
+`;
+
+    const book = await markdownToBook(md);
+    const paragraph = book.chapters[0].blocks[0] as ContentBlock;
+
+  });
+
+
+  it("parses youtube top block {}", async () => {
+    const md = `## Title
+# chapter 1
+:::youtube[Texto]{#id width=560 height=315 start=30}
+`;
+
+    const book = await markdownToBook(md);
+    const paragraph = book.chapters[0].blocks[0] as ContentBlock;
+
+    expect(paragraph).toStrictEqual(new YouTubeBlock("id"));
+  });
 
   it("parses image block {}", async () => {
     const md = `## Title

@@ -1,5 +1,23 @@
 # Book creation tutorial
 
+## images/links and youtube
+
+:::youtube[Texto]{#dZHykzPzutw width=560 height=315 start=30} 
+:::
+
+> Some intro
+> :::youtube[Texto]{#iQBLXlXMiyQ width=560 height=315 start=30} 
+> :::
+
+* Youtube can also be a part of the list
+    *  HERE IS INNSR LIST
+        :::youtube[Texto]{#x5DoigP2DAE}
+
+
+![cat](https://source.roboflow.com/3HSoch3gd1RER6UGp21z3BLxMt13/0YNNUrBFXhnHHhQllJ6n/original.jpg)
+
+[la vanguardia](https://www.lavanguardia.com/)
+
 ## Basic text formating
 
 This is a paragraph. Paragraph might have *bold* text as well as a `higlighted` parts. 
