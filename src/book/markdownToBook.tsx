@@ -1,5 +1,5 @@
 import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell, Link } from 'mdast'
-import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage, YouTubeBlock } from './bookModel'
+import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage, YouTubeBlock, BookMetadata } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
@@ -10,6 +10,9 @@ import remarkSpecialText from './remark-special-text';
 import remarkYoutube from './remark-youtube';
 import { YoutubeNode } from './youtube-node';
 import remarkFrontmatter from 'remark-frontmatter';
+import { toString } from 'mdast-util-to-string';
+import { parse as yamlParse } from "yaml";
+
 
 export default async function  markdownToBook(markdown: string): Promise<Book> {
 
@@ -71,7 +74,8 @@ function extractListItemsFromNode(node: List): ListItemBlock[] {
 
 export function astToBook(tree: Parent): Book {
   const book: Book = {
-    title: '',
+
+    metadata: undefined,
     chapters: [],
   }
 
@@ -79,40 +83,20 @@ export function astToBook(tree: Parent): Book {
 
   for (const node of tree.children) {
     // Handle YAML frontmatter
-    if (node.type === 'yaml') {
-      const yamlContent = (node as any).value || '';
-      console.log("Found YAML node:", yamlContent);
-      // Parse YAML to extract youtube.id
+    if (node.type === 'yaml')
       try {
-        // Simple YAML parsing for youtube.id
-        const youtubeMatch = yamlContent.match(/youtube:\s*\n\s*id:\s*(\S+)/);
-        if (youtubeMatch) {
-          const videoId = youtubeMatch[1];
-          // Create a default chapter if none exists
-          if (currentChapter == null) {
-            currentChapter = {
-              title: '',
-              blocks: [],
-            }
-            book.chapters.push(currentChapter)
-          }
-          currentChapter.blocks.push(new YouTubeBlock(videoId));
-        }
+        const yamlContent = toString(node)
+        const ddd = yamlParse(yamlContent) as BookMetadata;
+        book.metadata = ddd
+
+     console.log(ddd)
+     
       } catch (e) {
         console.error("Error parsing YAML:", e);
       }
-      continue;
-    }
-
-    // Título del libro
-    if (node.type === 'heading' && node.depth === 1) {
-      
-      book.title =(  node.children[0] as Literal).value;
-       continue;
-    }
 
     // Capítulos
-    if (node.type === 'heading' && node.depth === 2) {
+    if (node.type === 'heading' ) {
       currentChapter = {
         title: (node.children[0] as Literal).value,
         blocks: [],

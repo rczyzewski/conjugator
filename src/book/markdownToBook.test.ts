@@ -6,12 +6,17 @@ describe("ParserTest", () => {
   it("parses fron part {}", async () => {
     const md = `---
 title: Mi documento
+author: John Smith
 level: B1
+description: | 
+    H
+    T
+category: 
+    - health
+    - food
 tags:
   - grammar
   - verbs
-youtube:
-  id: dQw4w9WgXcQ
 ---
 
 # Contenido
@@ -21,7 +26,15 @@ Texto normal…
 `;
 
     const book = await markdownToBook(md);
-    const paragraph = book.chapters[0].blocks[0] as ContentBlock;
+
+   expect(book.metadata).toStrictEqual({
+     title: "Mi documento",
+     author: "John Smith",
+     description: "H\nT\n",
+     level: "B1",
+     category: ["health", "food"],
+     tags: ["grammar", "verbs"],
+   });
 
   });
 

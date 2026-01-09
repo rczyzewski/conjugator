@@ -1,5 +1,16 @@
+
+export interface BookMetadata {
+  title: string
+  author: string
+  description: string
+  level: string
+  category: string[]
+  tags: string[]
+  file: string
+}
+
 export interface Book {
-    title: string
+    metadata?:  BookMetadata
     chapters: Chapter[]
   }
   

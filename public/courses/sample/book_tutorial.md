@@ -1,22 +1,23 @@
-# Book creation tutorial
+---
+title: Interactive Book Creation
+author: John Smith
+level: A1
+file: book_tutorial.md
+description: | 
+    This is an example, how to create an interactive books, at the 
+    same time it is a living example. It shows how to do basic text formating,
+    add images, youtube videos and links. Then it foucuses on creating a different
+    types of exercises. In the header you can see self explaining example
+    "metadata" about the book. 
+category: 
+    - book creation
+    - interactive book
+tags:
+  - teachers
+  - book
 
-## images/links and youtube
+---
 
-:::youtube[Texto]{#dZHykzPzutw width=560 height=315 start=30} 
-:::
-
-> Some intro
-> :::youtube[Texto]{#iQBLXlXMiyQ width=560 height=315 start=30} 
-> :::
-
-* Youtube can also be a part of the list
-    *  HERE IS INNSR LIST
-        :::youtube[Texto]{#x5DoigP2DAE}
-
-
-![cat](https://source.roboflow.com/3HSoch3gd1RER6UGp21z3BLxMt13/0YNNUrBFXhnHHhQllJ6n/original.jpg)
-
-[la vanguardia](https://www.lavanguardia.com/)
 
 ## Basic text formating
 
@@ -33,6 +34,40 @@ markup is not respected.
 > Within `quote` both highlighted text and **bold** text is respected.
 >
 
+## Images, Links, and YouTube Embeds
+
+This section explains how to include images, links, and YouTube videos in the document using standard Markdown and custom directives.
+
+### Images
+
+Images are included using standard Markdown syntax:
+
+![cat](https://source.roboflow.com/3HSoch3gd1RER6UGp21z3BLxMt13/0YNNUrBFXhnHHhQllJ6n/original.jpg)
+
+The text inside [] is the alternative text. The URL inside () points to the image source.
+
+### Links
+
+Links are also written using standard Markdown:
+
+[La Vanguardia](https://www.lavanguardia.com/)
+
+
+The text inside [] is the link label.The URL inside () is the destination.
+
+### YouTube Embeds
+
+YouTube videos can be embedded using the custom :::youtube directive.
+
+:::youtube[Text]{#dZHykzPzutw width=560 height=315}
+:::
+
+Text is the accessible label or description.
+The value after # is the YouTube video ID.
+
+Optional parameters:
+width and height define the iframe size.
+start defines the start time in seconds.
 
 ##  Working with lists
 

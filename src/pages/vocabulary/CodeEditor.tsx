@@ -113,7 +113,7 @@ export default function CodeEditor({ myMarkdown }: { readonly myMarkdown: string
               setCode(bookRawContent)
               renderBook(bookRawContent)
             }}>Load sample</Button>
-            <Button className="m-1" onClick={() => download("fake", code)}>Download</Button>
+            <Button className="m-1" onClick={() => download(book?.metadata?.file || 'book.md', code)}>Download</Button>
             <Button className="m-1" onClick={() => document.getElementById("fileInput")?.click()}>Upload</Button>
             <Button className="m-1" onClick={() => setEditor(!editor)}>Toogle Editor</Button>
             <input
