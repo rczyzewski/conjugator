@@ -6,13 +6,13 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import FormRange from "react-bootstrap/FormRange";
-import congationService, { IConjugacionSettings } from "./ConjugactionSettingsService";
+import congationService, { IConjugationSettings } from "./ConjugationSettingsService";
 import { Tense, tenses } from "./Tenses";
 
 export default function ConjugationsSettings(): JSX.Element {
 
 
-    let [settings, setSettings] = useState<IConjugacionSettings>();
+    let [settings, setSettings] = useState<IConjugationSettings>();
     useEffect(() => {
         let ddd = congationService.getConutatyionSetting()
         setSettings(ddd)
@@ -21,7 +21,7 @@ export default function ConjugationsSettings(): JSX.Element {
     function handleOnChange(e: ChangeEvent) {
         let value = (e.target as HTMLInputElement).value
         let name = (e.target as HTMLInputElement).name
-        let tmpSettings = { ...settings, [name]: value } as IConjugacionSettings
+        let tmpSettings = { ...settings, [name]: value } as IConjugationSettings
         congationService.setConutatyionSetting(tmpSettings)
         setSettings(tmpSettings)
 
@@ -43,7 +43,7 @@ export default function ConjugationsSettings(): JSX.Element {
                 selectedTenses = (settings.tenses || []).filter(it => it.id !== id)
 
             }
-            let newSettings = { ...settings, tenses: selectedTenses } as IConjugacionSettings
+            let newSettings = { ...settings, tenses: selectedTenses } as IConjugationSettings
             setSettings(newSettings)
             congationService.setConutatyionSetting(newSettings)
         }

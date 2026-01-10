@@ -132,13 +132,19 @@ For example:
 |word | definition|
 |-|-|
 |{year} | the time taken by the earth to make one revolution around the sun. |
+|{day} | 24 hours |
 :::
 
 
-:::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
-- recordar
-- visitar
-- oler
+:::conjugaction[Instructions for the exercise]
+```yaml
+tenses: 
+    - indicativo.presente
+verbs:
+    - recordar
+    - visitar
+    - oler
+```
 :::
 
 

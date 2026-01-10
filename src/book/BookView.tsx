@@ -9,9 +9,11 @@ import { renderBlock } from "./BookDisplayHelpers";
 
 export default function BookView({ book }: { readonly book: Book }) {
   return (
-    <div>
-      <h2>{book.title}</h2>
-
+    <>
+      <pre>
+        {JSON.stringify(book.metadata, null, 2)}
+      </pre>
+      <div>
       {book.chapters.map((chapter, chapterIndex) => {
         let exerciseCount = 0;
         const chapterNumber = chapterIndex + 1;
@@ -39,7 +41,7 @@ export default function BookView({ book }: { readonly book: Book }) {
                 );
               }
 
-              if (block.type === "conjugaction") {
+              if (block.type === "conjugation") {
                 const title = block.instructions
                   ? `${chapterNumber}.${exerciseCount + 1} ${block.instructions}`
                   : `${chapterNumber}.${exerciseCount + 1}`;
@@ -48,7 +50,7 @@ export default function BookView({ book }: { readonly book: Book }) {
 
                 return (
                   <div key={blockIndex}>
-                      <VerbConjugateExercise title={title} words={block.content} tenses={[block.attributes.tenses]}></VerbConjugateExercise>
+                      <VerbConjugateExercise title={title} words={block.verbs} tenses={block.tenses}></VerbConjugateExercise>
 
                   </div>
                 );
@@ -86,6 +88,7 @@ export default function BookView({ book }: { readonly book: Book }) {
         );
       })}
     </div>
+  </>
   );
 }
   

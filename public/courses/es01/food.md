@@ -37,15 +37,20 @@ Tras el {fortuito} encuentro, quedó un leve {menoscabo} en su ánimo. No fue un
 
 Now let's train a litle bit conjugaction
 
-:::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
-* ser
-* estar
-* tener
-* comer
-* vivir
-* leer
-* hablar
-* escribir
+:::conjugaction[Instructions for the exercise]
+```yaml
+tenses:
+  - indicativo.presente
+  - indicativo.condictional
+verbs:
+  - ser
+  - estar
+  - tener
+  - comer
+  - vivir
+  - leer
+  - hablar
+  - escribir
 :::
 
 Now let's play true or false

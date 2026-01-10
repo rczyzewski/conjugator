@@ -12,6 +12,8 @@ import { YoutubeNode } from './youtube-node';
 import remarkFrontmatter from 'remark-frontmatter';
 import { toString } from 'mdast-util-to-string';
 import { parse as yamlParse } from "yaml";
+import remarkConjugation from './remark-conjugation';
+import { ConjugationNode } from './conjugation-node';
 
 
 export default async function  markdownToBook(markdown: string): Promise<Book> {
@@ -23,6 +25,7 @@ export default async function  markdownToBook(markdown: string): Promise<Book> {
       .use(remarkGfm)
       .use(remarkDirective)
       .use(remarkYoutube)
+      .use(remarkConjugation)
       .use(remarkExerciseDirective);
  
     const tree = processor.parse(markdown);
@@ -130,13 +133,17 @@ export function astToBook(tree: Parent): Book {
 
     }
 
-    if (node.type.toString() === 'conjugaction' ) {
+    if (node.type === 'conjugation' ) {
+      const conjugation = node as ConjugationNode;
+
       const data = (node as any).data ?? {}
+
       currentChapter.blocks.push({
-        type: 'conjugaction',
+        type: "conjugation",
         attributes: data.hProperties ?? {},
         instructions: data.instructions,
-        content: extractListItemsForConjugaction(node),
+        verbs: conjugation.verbs,
+        tenses: conjugation.tenses
       })
     }
 
@@ -195,10 +202,4 @@ function extractText(node: Paragraph | TableCell | Link ): ParagraphText[] {
 
 function extractLiteralText(node: Literal): string {
 return node.value ?? ''
-}
-
-function extractListItemsForConjugaction(node: any): string[] {
-  return node.children.map(remarkToBook)
-    .flatMap((it:ContentBlock )=>it.getText())
-    .map((it: ParagraphText)=>it.toString())
 }

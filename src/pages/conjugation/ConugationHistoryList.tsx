@@ -6,7 +6,7 @@ import Container  from 'react-bootstrap/Container';
 import  Row from 'react-bootstrap/Row'
 import { Link } from 'react-router-dom';
 
-import service, { ConjugactionHistoryVerb } from "./ConjugactionHistory";
+import service, { ConjugationHistoryVerb } from "./ConjugationHistory";
 
 import { RiStarSFill, RiStarSLine } from "react-icons/ri";
 
@@ -14,7 +14,7 @@ export default function ConjugationHistoryList(): JSX.Element {
 
     const refresh = () => { console.log("refresh") }
 
-    const [items, setItems] = useState<ConjugactionHistoryVerb[]>([])
+    const [items, setItems] = useState<ConjugationHistoryVerb[]>([])
 
     const firstRender = useRef(true);
 

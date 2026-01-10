@@ -13,7 +13,7 @@ import Button from "react-bootstrap/Button";
         return renderParagraph(block )
     }
       if(block instanceof YouTubeBlock) { 
-      const url = "https://www.youtube.com/embed/" + block.url;
+      const url = "https://www.youtube.com/embed/" + block.videoId;
       return <iframe src={url}>Texto del vídeo</iframe>
       }
     if (block instanceof ListBlock) {

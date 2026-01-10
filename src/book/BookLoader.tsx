@@ -6,7 +6,7 @@ import BookView from "./BookView";
 import markdownToBook from "./markdownToBook";
 import { useParams } from "react-router-dom";
 
-import { PUBLIC_URL } from "../pages/conjugacion/VerbsService";
+import { PUBLIC_URL } from "../pages/conjugation/VerbsService";
 import HeaderComponent from "../components/HeaderComponent";
 import Container from "react-bootstrap/esm/Container";
 

@@ -90,10 +90,11 @@ export class CodeBlock implements  BlockElement{
   }
 
   export interface IConjugationBlock {
-    type: 'conjugaction'
-    instructions?: string
-    attributes: Record<string, string>
-    content: string[]
+    type: "conjugation";
+    instructions?: string;
+    attributes: Record<string, string>;
+    tenses: string[];
+    verbs: string[];
   }
 
   export interface IVerifyBlock {
@@ -142,12 +143,10 @@ export class QuoteBlock implements BlockElement {
   }
   export class YouTubeBlock implements BlockElement{
     public readonly type = "youtube";
-    constructor( public readonly url : string) {}
+    constructor( public readonly videoId : string) {}
 
     getText(): ParagraphText[] {
         return []
     }
-
-
   }
   

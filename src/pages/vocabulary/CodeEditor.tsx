@@ -13,7 +13,7 @@ import BookView from "../../book/BookView";
 import { Book } from "../../book/bookModel";
 import markdownToBook from "../../book/markdownToBook";
 import { fetchBook } from "../../book/BookLoader";
-import { PUBLIC_URL } from "../conjugacion/VerbsService";
+import { PUBLIC_URL } from "../conjugation/VerbsService";
 export const test = `
 `;
 /**

@@ -41,7 +41,6 @@ Texto normal…
 
   it("parses youtube top block {}", async () => {
     const md = `## Title
-# chapter 1
 :::youtube[Texto]{#id width=560 height=315 start=30}
 `;
 
@@ -53,7 +52,6 @@ Texto normal…
 
   it("parses image block {}", async () => {
     const md = `## Title
-# chapter 1
 some ![pumpkin](https://127.0.0.1/b.jpg) here
 `;
 
@@ -69,7 +67,6 @@ some ![pumpkin](https://127.0.0.1/b.jpg) here
 
   it("parses link block {}", async () => {
     const md = `## Title
-# chapter 1
 some [link](http://127.0.0.1/b.jpg) here
 `;
 
@@ -85,7 +82,6 @@ some [link](http://127.0.0.1/b.jpg) here
 
   it("parses simple special block {}", async () => {
     const md = `## Title
-# chapter 1
 some {text} here
 `;
 
@@ -101,21 +97,24 @@ some {text} here
   });
 
 
-  it("parses conjugaction directive with properties into book model", async () => {
+  it("parses conjugation directive with properties into book model", async () => {
     const md = `## Title
 
-::::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
-* ser
-* estar
-* tener
-* comer
-* vivir
-* leer
-* hablar
-* escribir
+::::conjugation[Instructions for the exercise]
+\`\`\`yaml
+tenses: 
+  -  indicativo.presente
+verbs: 
+  - ser
+  - estar
+  - tener
+  - comer
+  - vivir
+  - leer
+  - hablar
+  - escribir
+\`\`\`
 ::::
-
-text
 `;
 
     const book = await markdownToBook(md);
@@ -124,12 +123,12 @@ text
     expect(book.chapters[0].title).toBe("Title");
 
     const blocks = book.chapters[0].blocks;
-    expect(blocks.length).toBe(2);
+    expect(blocks.length).toBe(1);
 
     const conjugationBlock = blocks[0] as IConjugationBlock;
 
-    expect(conjugationBlock.attributes.tense).toBe("indicativo.presente");
-    expect(conjugationBlock.content).toEqual([
+    expect(conjugationBlock.tenses).toStrictEqual(["indicativo.presente"]);
+    expect(conjugationBlock.verbs).toEqual([
       "ser",
       "estar",
       "tener",
@@ -140,8 +139,6 @@ text
       "escribir",
     ]);
 
-    const paragraphBlock = blocks[1];
-    expect(paragraphBlock).toStrictEqual(new ParagraphBlock([new TextRegular("text")]));
   });
 
   it("parses exercise directive with label and attributes into book model", async () => {

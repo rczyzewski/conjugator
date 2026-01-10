@@ -1,6 +1,6 @@
 
 import { useEffect, useState, JSX } from 'react';
-import fetchFromJsonDb, { ConjugatedVerb, flatMapVerbEntry, pickRandom, VerbEntry } from '../conjugacion/VerbsService';
+import fetchFromJsonDb, { ConjugatedVerb, flatMapVerbEntry, pickRandom, VerbEntry } from '../conjugation/VerbsService';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';

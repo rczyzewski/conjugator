@@ -1,11 +1,11 @@
-import service, { ConjugactionHistoryVerb } from "./ConjugactionHistory";
+import service, { ConjugationHistoryVerb } from "./ConjugationHistory";
 import { describe, it, expect } from "vitest";
 
 describe("VerbsService", () => {
 
   it("Testing getting URLs", async () => {
 
-    const entry = new ConjugactionHistoryVerb(
+    const entry = new ConjugationHistoryVerb(
       "ir",
       "subjuntivo",
       "presente",

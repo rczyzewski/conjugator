@@ -37,22 +37,26 @@ Después cenamos y escuchamos antiguos {villancicos} mientras mi abuelo encendí
 Cuando dieron las doce, sonaron unas {campanas} de la iglesia del barrio y sentimos que la magia de la Navidad estaba en todas partes. Abrimos el primer {regalo} y encontramos una bufanda tejida a mano por mi abuela, que olía a lavanda y recuerdos. Yo cerré los ojos un momento y pensé que aquella noche había sido perfecta, como si la Navidad nunca hubiera terminado.
 :::
 
-:::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
-- riecordar
-- visitar
-- oler
-- compartir
-- traer
-- encender
-- pronunciar
-- escuchar
-- entonar
-- acercarse
-- calentar
-- envolver
-- abrir
-- descubrir
-- guardar
+:::conjugaction[Instructions for the exercise]
+```yaml
+tenses: 
+    - indicativo.presente
+verbs: 
+    - riecordar
+    - visitar
+    - oler
+    - compartir
+    - traer
+    - encender
+    - pronunciar
+    - escuchar
+    - entonar
+    - acercarse
+    - calentar
+    - envolver
+    - abrir
+    - descubrir
+    - guardar
 :::
 
 

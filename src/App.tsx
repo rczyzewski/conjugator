@@ -1,13 +1,13 @@
 import './App.css';
-import VerbQuiz from './pages/conjugacion/VerbQuiz';
+import VerbQuiz from './pages/conjugation/VerbQuiz';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import ConjugationsSettings from './pages/conjugacion/ConjugacionSettings';
-import VerbList from './pages/conjugacion/VerbList'
+import ConjugationsSettings from './pages/conjugation/ConjugationSettings';
+import VerbList from './pages/conjugation/VerbList'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NotFound from './pages/NotFound';
-import VerbPreview from './pages/conjugacion/VerbPreview';
-import ConjugationHistoryList from './pages/conjugacion/ConugationHistoryList';
+import VerbPreview from './pages/conjugation/VerbPreview';
+import ConjugationHistoryList from './pages/conjugation/ConugationHistoryList';
 import CodeEditor , { test }from './pages/vocabulary/CodeEditor';
 import CoursePage from './pages/SpanishCoursePage';
 import BookLoader from './book/BookLoader';

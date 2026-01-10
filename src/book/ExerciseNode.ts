@@ -12,7 +12,6 @@ export const remarkExerciseDirective: Plugin = () => {
         if (!parent || index === null) return;
         if (
           node.name !== "exercise" &&
-          node.name !== "conjugaction"  &&
           node.name !== "verify" 
         )
           return;

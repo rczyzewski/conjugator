@@ -46,7 +46,7 @@ const exerciseVerbQuiz : Book = await markdownToBook(
 # Test Book
 ## Chapter 1
 
-:::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
+:::conjugation[Instructions for the exercise]{tense=indicativo.presente}
 - riecordar
 - visitar
 - oler
