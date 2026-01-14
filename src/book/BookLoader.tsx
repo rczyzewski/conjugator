@@ -28,7 +28,9 @@ export default function BookLoader(): JSX.Element {
   
   useEffect(() => {
 
-    const url = `${PUBLIC_URL}/courses/${course}/${chapter}.md`
+    // BASE_URL-safe join (PUBLIC_URL may already include a trailing slash)
+    const base = PUBLIC_URL.endsWith("/") ? PUBLIC_URL.slice(0, -1) : PUBLIC_URL;
+    const url = `${base}/courses/${course}/${chapter}.md`
       fetchBook(url)
       .then((res) => markdownToBook(res))
       .then(res => setBook(res))
