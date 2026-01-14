@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach, test } from "vitest";
+import { expect, test } from "vitest";
 import BookView from "./BookView";
 import { Book } from "./bookModel";
 import markdownToBook from "./markdownToBook";
@@ -16,7 +16,7 @@ More content
 `);
 
 test('renders name', async () => {
-  const { getByText, getByRole } = await render(<BookView book={mockBook} />)
+  const { getByText } = await render(<BookView book={mockBook} />)
 
   await expect.element(getByText('Some content')).toBeInTheDocument()
   await expect.element(getByText('More content')).toBeInTheDocument()
@@ -34,7 +34,7 @@ En muchas casas el belén {aparecía} de pronto en el salón, y la familia {acom
 `
 )
 test('renders FillMissingWords', async () => {
-  const { getByText, getByRole,  } = await render(<BookView book={exerciseFillMissingWords} />)
+  const { getByText } = await render(<BookView book={exerciseFillMissingWords} />)
 
 
   await expect.element(getByText('Chapter 1')).toBeInTheDocument()
@@ -60,7 +60,7 @@ verbs:
 `
 )
 test('renders VerbConjugateExercise', async () => {
-  const { getByText, getByRole } = await render(<BookView book={exerciseVerbQuiz} />)
+  const { getByText } = await render(<BookView book={exerciseVerbQuiz} />)
 
   await expect.element(getByText('Chapter 1')).toBeInTheDocument()
   await expect.element(getByText('Check')).toBeInTheDocument()
@@ -83,7 +83,7 @@ const verifyBook : Book = await markdownToBook(
 `
 )
 test('renders VerifyExercise', async () => {
-  const { getByText, getByRole } = await render(<BookView book={verifyBook} />)
+  const { getByText } = await render(<BookView book={verifyBook} />)
 
   await expect.element(getByText('Chapter 1')).toBeInTheDocument()
  // await expect.element(getByText('diciembre.')).toBeInTheDocument()

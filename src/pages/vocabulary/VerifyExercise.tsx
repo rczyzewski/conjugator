@@ -20,8 +20,7 @@ interface VerifyExerciseProps {
 export default function VerifyExercise({ instructions, items }: VerifyExerciseProps): JSX.Element {
 
   const list = useMemo(() => {
-    const found = items.find((b) => b instanceof ListBlock);
-    return (found as ListBlock | undefined) ?? null;
+    return items.find((b): b is ListBlock => b instanceof ListBlock) ?? null;
   }, [items]);
 
   const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
@@ -59,7 +58,7 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
     return { total: graded.length, correct, perItem };
   }, [list, checkedItems]);
 
-  const rowVariant = (li: ListItemBlock, index: number): "success" | "danger" | undefined => {
+  const rowVariant = (_li: ListItemBlock, index: number): "success" | "danger" | undefined => {
     if (!verifyMode || !result) return undefined;
     const r = result.perItem[index];
     if (!r?.isKnown) return undefined;
@@ -91,20 +90,17 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
 
       <div className="p-3">
         {!list && <div className="text-muted">No verify list found.</div>}
-        {list &&
-          list.items.map((li, index) => {
+        {list?.items.map((li, index) => {
             const isChecked = checkedItems.has(index);
             const variant = rowVariant(li, index);
+            const rowKey = `verify-row-${li.getText().map((t: any) => t?.text ?? "").join("")}-${index}`;
+            let rowClass = "";
+            if (variant === "success") rowClass = "bg-success-subtle";
+            if (variant === "danger") rowClass = "bg-danger-subtle";
             return (
               <Row
-                key={`verify-row-${index}`}
-                className={`align-items-start mb-2 ${
-                  variant === "success"
-                    ? "bg-success-subtle"
-                    : variant === "danger"
-                      ? "bg-danger-subtle"
-                      : ""
-                }`}
+                key={rowKey}
+                className={`align-items-start mb-2 ${rowClass}`}
               >
                 <Col className="col-1">
                   <Form.Check
@@ -116,7 +112,12 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
                     className="mb-2"
                   />
                 </Col>
-                <Col>{li.items.map((b, i) => <span key={`v-${index}-${i}`}>{renderBlock(b)}</span>)}</Col>
+                <Col>
+                  {li.items.map((b, i) => {
+                    const key = `${(b as any).type ?? "b"}-${b.getText().map((t: any) => t?.text ?? "").join("")}-${i}`;
+                    return <span key={key}>{renderBlock(b)}</span>;
+                  })}
+                </Col>
                 {verifyMode && (
                   <Col className="col-auto">
                     {li.checked === null || li.checked === undefined ? (
@@ -146,9 +147,11 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
                 </div>
               </div>
               <ListGroup>
-                {result.perItem.map((r, idx) => (
+                {result.perItem.map((r, idx) => {
+                  const key = `sum-${r.item.getText().map((t: any) => t?.text ?? "").join("")}-${idx}`;
+                  return (
                   <ListGroup.Item
-                    key={`sum-${idx}`}
+                    key={key}
                     className="d-flex justify-content-between align-items-start"
                   >
                     <div className="me-3">
@@ -172,7 +175,8 @@ export default function VerifyExercise({ instructions, items }: VerifyExercisePr
                       </Badge>
                     )}
                   </ListGroup.Item>
-                ))}
+                  );
+                })}
               </ListGroup>
             </>
           )}
