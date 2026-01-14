@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff3cd"/>
+      <stop offset="1" stop-color="#ffe69c"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="70" fill="#fd7e14" opacity="0.25"/>
+  <circle cx="180" cy="200" r="90" fill="#198754" opacity="0.18"/>
+  <circle cx="520" cy="120" r="110" fill="#dc3545" opacity="0.14"/>
+  <text x="40" y="170" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="44" font-weight="700" fill="#212529">Comida</text>
+  <text x="40" y="215" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="22" fill="#495057">Vocabulario • ejercicios</text>
+</svg>
+

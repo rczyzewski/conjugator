@@ -1,0 +1,99 @@
+{
+  "courseId": "es01",
+  "generatedAt": "2026-01-14T20:26:07.701Z",
+  "chapters": [
+    {
+      "slug": "food",
+      "file": "food.md",
+      "title": "Comida - repaso de vocabulario",
+      "description": "Repaso práctico de vocabulario con listas, tablas y ejercicios interactivos.\nIncluye un ejercicio de “rellenar huecos” y práctica de conjugación para consolidar\nnuevas palabras en contexto.\n",
+      "level": "A2",
+      "category": [
+        "vocabulario",
+        "práctica guiada"
+      ],
+      "tags": [
+        "comida",
+        "vocabulario",
+        "repaso",
+        "ejercicios",
+        "rellenar huecos",
+        "conjugación"
+      ],
+      "image": "courses/es01/thumbs/food.svg",
+      "href": "/course/es01/chapter/food",
+      "updatedAt": "2026-01-14T19:59:23.348Z",
+      "hasContent": true
+    },
+    {
+      "slug": "health",
+      "file": "health.md",
+      "title": "Health",
+      "description": "Próximamente: vocabulario y situaciones reales para hablar de salud y bienestar en español.\nIncluye ejercicios prácticos (síntomas, hábitos, consulta médica) y repaso de gramática útil.\n",
+      "level": "A2",
+      "category": [
+        "vocabulario",
+        "comunicación",
+        "vida diaria"
+      ],
+      "tags": [
+        "salud",
+        "bienestar",
+        "consulta médica",
+        "hábitos",
+        "vocabulario"
+      ],
+      "image": "courses/es01/thumbs/health.svg",
+      "href": "/course/es01/chapter/health",
+      "updatedAt": "2026-01-14T19:59:23.348Z",
+      "hasContent": false
+    },
+    {
+      "slug": "navidad",
+      "file": "navidad.md",
+      "title": "Navidad - tradiciones",
+      "description": "Descubre tradiciones de Navidad en España con vocabulario temático y ejercicios en contexto.\nPractica con “rellenar huecos” y un bloque de conjugación (indicativo) basado en el texto.\n",
+      "level": "A2",
+      "category": [
+        "cultura",
+        "lectura",
+        "gramática"
+      ],
+      "tags": [
+        "navidad",
+        "españa",
+        "tradiciones",
+        "vocabulario",
+        "rellenar huecos",
+        "conjugación",
+        "indicativo"
+      ],
+      "image": "courses/es01/thumbs/navidad.svg",
+      "href": "/course/es01/chapter/navidad",
+      "updatedAt": "2026-01-14T19:59:23.348Z",
+      "hasContent": true
+    },
+    {
+      "slug": "subjuntivo",
+      "file": "subjuntivo.md",
+      "title": "Indicativo vs Subjuntivo - 14 frases",
+      "description": "Elige la forma correcta (indicativo o subjuntivo) y completa 14 frases.\nCada hueco incluye una pista con el infinitivo, por ejemplo: {llueva}[llover].\n",
+      "level": "B1",
+      "category": [
+        "gramática",
+        "subjuntivo"
+      ],
+      "tags": [
+        "indicativo",
+        "subjuntivo",
+        "frases",
+        "práctica",
+        "conjugación"
+      ],
+      "image": "courses/es01/thumbs/subjuntivo.svg",
+      "href": "/course/es01/chapter/subjuntivo",
+      "updatedAt": "2026-01-14T20:26:00.632Z",
+      "hasContent": true
+    }
+  ]
+}
