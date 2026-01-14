@@ -1,3 +1,26 @@
+---
+title: Navidad - tradiciones
+author: Rafa Cz.
+level: A2
+file: navidad.md
+image: courses/es01/thumbs/navidad.svg
+description: | 
+    Descubre tradiciones de Navidad en España con vocabulario temático y ejercicios en contexto.
+    Practica con “rellenar huecos” y un bloque de conjugación (indicativo) basado en el texto.
+category: 
+    - cultura
+    - lectura
+    - gramática
+tags:
+  - navidad
+  - españa
+  - tradiciones
+  - vocabulario
+  - rellenar huecos
+  - conjugación
+  - indicativo
+
+---
 
 ## Navidad - tradiciones
 

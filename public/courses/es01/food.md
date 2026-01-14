@@ -1,4 +1,25 @@
-# Here comes title - title is optional
+---
+title: Comida - repaso de vocabulario
+author: Rafa Cz.
+level: A2
+file: food.md
+image: courses/es01/thumbs/food.svg
+description: | 
+    Repaso práctico de vocabulario con listas, tablas y ejercicios interactivos.
+    Incluye un ejercicio de “rellenar huecos” y práctica de conjugación para consolidar
+    nuevas palabras en contexto.
+category: 
+    - vocabulario
+    - práctica guiada
+tags:
+  - comida
+  - vocabulario
+  - repaso
+  - ejercicios
+  - rellenar huecos
+  - conjugación
+
+---
 
 ## Repaso de las palabras
 

@@ -1,13 +1,17 @@
 import { visit } from 'unist-util-visit';
 import type { Plugin } from 'unified';
 import type { Text } from 'mdast';
-import type { SpecialText } from './special-text';
+import type { CluedText, SpecialText } from './special-text';
 
-const SPECIAL_RE = /\{([^}]+)\}/g;
+// Matches:
+// - {word}
+// - {word}[clue]
+const SPECIAL_RE = /\{([^}]+)\}(?:\[([^\]]+)\])?/g;
 
 declare module 'mdast' {
     interface PhrasingContentMap {
       specialText: SpecialText;
+      cluedText: CluedText;
     }
   }
 
@@ -31,12 +35,22 @@ const remarkSpecialText: Plugin = () => {
           });
         }
 
-        const specialNode: SpecialText = {
-          type: 'specialText',
-          value: match[1],
-        };
-
-        nodes.push(specialNode);
+        const word = match[1];
+        const clue = match[2];
+        if (clue) {
+          const cluedNode: CluedText = {
+            type: "cluedText",
+            value: word,
+            clue,
+          };
+          nodes.push(cluedNode);
+        } else {
+          const specialNode: SpecialText = {
+            type: "specialText",
+            value: word,
+          };
+          nodes.push(specialNode);
+        }
         lastIndex = match.index + match[0].length;
       }
 

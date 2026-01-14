@@ -5,4 +5,10 @@ export interface SpecialText extends Literal {
   value: string;
 }
 
+export interface CluedText extends Literal {
+  type: 'cluedText';
+  value: string;
+  clue: string;
+}
+
 

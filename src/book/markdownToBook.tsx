@@ -1,5 +1,5 @@
-import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, TableCell, Link } from 'mdast'
-import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial, TextEmphasis, TextLink, TextImage, YouTubeBlock, BookMetadata } from './bookModel'
+import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, Heading } from 'mdast'
+import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial, TextCluedSpecial, TextEmphasis, TextLink, TextImage, YouTubeBlock, BookMetadata, HeadingBlock, IExerciseClueBlock } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
@@ -13,7 +13,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import { toString } from 'mdast-util-to-string';
 import { parse as yamlParse } from "yaml";
 import remarkConjugation from './remark-conjugation';
-import { ConjugationNode } from './conjugation-node';
+import { extractBookMetadata } from "./markdownMetadata";
 
 
 export default async function  markdownToBook(markdown: string): Promise<Book> {
@@ -31,7 +31,10 @@ export default async function  markdownToBook(markdown: string): Promise<Book> {
     const tree = processor.parse(markdown);
     const transformedTree = await processor.run(tree);
 
-   return  astToBook(transformedTree as Parent);
+   const book = astToBook(transformedTree as Parent);
+   // Prefer a single shared metadata parser; keep AST conversion focused on content.
+   book.metadata = (await extractBookMetadata(markdown, book.metadata?.file)) ?? book.metadata;
+   return book;
 }
 
 export function remarkToBook(node: Node): ContentBlock {
@@ -50,7 +53,7 @@ export function remarkToBook(node: Node): ContentBlock {
   if( node.type==="table"){
     const table = node as Table
     const allRows = table.children
-      .map(it => it.children.map(d => new ParagraphBlock(extractText(d))))
+      .map(it => it.children.map(d => new ParagraphBlock(extractText(d as any))))
 
     return new TableBlock(allRows[0], allRows.slice(1))
   }
@@ -83,87 +86,125 @@ export function astToBook(tree: Parent): Book {
   }
 
   let currentChapter: Chapter | null = null
+  const contentTypes = new Set(["blockquote", "code", "paragraph", "list", "table"]);
+  let headingCounter = 0;
+
+  function handleHeading(h: Heading): { currentChapter: Chapter | null; headingCounter: number } {
+    const headingText = toString(h).trim();
+
+    if (h.depth === 1) {
+      if (!book.metadata) {
+        book.metadata = {
+          title: headingText,
+          author: "",
+          description: "",
+          level: "",
+          category: [],
+          tags: [],
+          file: "",
+        };
+      } else if (!book.metadata.title) {
+        book.metadata.title = headingText;
+      }
+      return { currentChapter, headingCounter };
+    }
+
+    if (h.depth === 2) {
+      const nextChapter: Chapter = { title: headingText, blocks: [] };
+      book.chapters.push(nextChapter);
+      return { currentChapter: nextChapter, headingCounter };
+    }
+
+    if (currentChapter != null) {
+      const nextCounter = headingCounter + 1;
+      const anchorId = `h-${nextCounter}-${headingText
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "")}`;
+      currentChapter.blocks.push(
+        new HeadingBlock(h.depth, extractText(h), anchorId)
+      );
+      return { currentChapter, headingCounter: nextCounter };
+    }
+    return { currentChapter, headingCounter };
+  }
 
   for (const node of tree.children) {
-    // Handle YAML frontmatter
-    if (node.type === 'yaml')
+    // YAML frontmatter (kept for backward compatibility; prefer extractBookMetadata() upstream)
+    if (node.type === "yaml") {
       try {
-        const yamlContent = toString(node)
-        const ddd = yamlParse(yamlContent) as BookMetadata;
-        book.metadata = ddd
-
-     console.log(ddd)
-     
+        const yamlContent = toString(node);
+        book.metadata = yamlParse(yamlContent) as BookMetadata;
       } catch (e) {
         console.error("Error parsing YAML:", e);
       }
-
-    // Capítulos
-    if (node.type === 'heading' ) {
-      currentChapter = {
-        title: (node.children[0] as Literal).value,
-        blocks: [],
-      }
-      book.chapters.push(currentChapter)
       continue;
     }
 
-    if (currentChapter == null) continue 
-    
-
-    if (node.type.toString() === 'exercise' ) {
-      const data = (node as any).data ?? {}
-
-      const children = (node as Parent).children.map(it=> remarkToBook(it));
-
-      currentChapter.blocks.push({
-        type: 'exercise',
-        attributes: data.hProperties ?? {},
-        instructions: data.instructions,
-        content: children
-      })
+    // Headings:
+    // - depth 1: treat as book title if not provided by metadata
+    // - depth 2: major chapter
+    // - depth 3+: minor headings inside current chapter
+    if (node.type === "heading") {
+      const next = handleHeading(node);
+      currentChapter = next.currentChapter;
+      headingCounter = next.headingCounter;
+      continue;
     }
 
-    if ( node.type === 'youtube')
-    {
-      const aaa = node as YoutubeNode;
-      const b = new YouTubeBlock(aaa.videoId)
-      currentChapter.blocks.push(b)
-      console.log(node)
+    if (currentChapter == null) continue;
 
-    }
-
-    if (node.type === 'conjugation' ) {
-      const conjugation = node as ConjugationNode;
-
-      const data = (node as any).data ?? {}
-
-      currentChapter.blocks.push({
-        type: "conjugation",
-        attributes: data.hProperties ?? {},
-        instructions: data.instructions,
-        verbs: conjugation.verbs,
-        tenses: conjugation.tenses
-      })
-    }
-
-    if (node.type.toString() === 'verify' ) {
-      const data = (node as any).data ?? {}
-       
-       
-      currentChapter.blocks.push({
-        type: 'verify',
-        instructions: data.instructions,
-        items: (node as any).children.map((it: Node) => remarkToBook(it)),
-      })
-    }
-
-    if (node.type === "blockquote"
-      || node.type === "code"
-      || node.type === 'paragraph'
-      || node.type === 'list'
-      || node.type === 'table') {
-      currentChapter.blocks.push(remarkToBook(node))
+    const type = node.type.toString();
+    switch (type) {
+      case "exercise": {
+        const data = (node as any).data ?? {};
+        const children = (node as Parent).children.map((it) => remarkToBook(it));
+        currentChapter.blocks.push({
+          type: "exercise",
+          attributes: data.hProperties ?? {},
+          instructions: data.instructions,
+          content: children,
+        });
+        break;
+      }
+      case "exercise_clue": {
+        const data = (node as any).data ?? {};
+        const children = (node as Parent).children.map((it) => remarkToBook(it));
+        currentChapter.blocks.push({
+          type: "exercise_clue",
+          attributes: data.hProperties ?? {},
+          instructions: data.instructions,
+          content: children,
+        } as IExerciseClueBlock);
+        break;
+      }
+      case "youtube":
+        currentChapter.blocks.push(new YouTubeBlock((node as any).videoId));
+        break;
+      case "conjugation": {
+        const conjugation = node as any;
+        const data = (node as any).data ?? {};
+        currentChapter.blocks.push({
+          type: "conjugation",
+          attributes: data.hProperties ?? {},
+          instructions: data.instructions,
+          verbs: conjugation.verbs,
+          tenses: conjugation.tenses,
+        });
+        break;
+      }
+      case "verify": {
+        const data = (node as any).data ?? {};
+        currentChapter.blocks.push({
+          type: "verify",
+          instructions: data.instructions,
+          items: (node as any).children.map((it: Node) => remarkToBook(it)),
+        });
+        break;
+      }
+      default:
+        if (contentTypes.has(type)) currentChapter.blocks.push(remarkToBook(node));
+        break;
     }
 
 
@@ -172,32 +213,38 @@ export function astToBook(tree: Parent): Book {
   return book
 }
 
-function extractText(node: Paragraph | TableCell | Link ): ParagraphText[] {
-  return node.children
-    .flatMap(it => {
-     const content  = (it as any).value ?? ''
-      if (it.type === "strong") {
-        return it.children.map(it => extractLiteralText(it as Literal)).map(it => new TextStrong(it));
-      }
-      if (it.type === "link") {
-       const children =  extractText(it)
-        return new TextLink(it.url,  children)
-      }
-      if (it.type === "emphasis") {
-        return it.children.map(it => extractLiteralText(it as Literal)).map(it => new TextEmphasis(it))
-      }
-      if (it.type === "image"  ) {
-        return new TextImage(it.url, it.alt || undefined )
-      }
-
-      if (it.type === "inlineCode"  ) {
-        return new TextInlineCode(content)
-      }
-      if( it.type === "specialText"){
-          return new TextSpecial(content)
-      }
-      return new TextRegular(content)
-    })
+function extractText(node: any): ParagraphText[] {
+  const children: any[] = node?.children ?? [];
+  return children.flatMap((it: any) => {
+    const content = it?.value ?? "";
+    if (it.type === "strong") {
+      return it.children
+        .map((c: any) => extractLiteralText(c as Literal))
+        .map((t: string) => new TextStrong(t));
+    }
+    if (it.type === "link") {
+      const linkChildren = extractText(it);
+      return new TextLink(it.url, linkChildren);
+    }
+    if (it.type === "emphasis") {
+      return it.children
+        .map((c: any) => extractLiteralText(c as Literal))
+        .map((t: string) => new TextEmphasis(t));
+    }
+    if (it.type === "image") {
+      return new TextImage(it.url, it.alt || undefined);
+    }
+    if (it.type === "inlineCode") {
+      return new TextInlineCode(content);
+    }
+    if (it.type === "specialText") {
+      return new TextSpecial(content);
+    }
+    if (it.type === "cluedText") {
+      return new TextCluedSpecial(content, String(it.clue ?? ""));
+    }
+    return new TextRegular(content);
+  });
 }
 
 function extractLiteralText(node: Literal): string {

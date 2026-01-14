@@ -9,7 +9,7 @@ import NotFound from './pages/NotFound';
 import VerbPreview from './pages/conjugation/VerbPreview';
 import ConjugationHistoryList from './pages/conjugation/ConugationHistoryList';
 import CodeEditor , { test }from './pages/vocabulary/CodeEditor';
-import CoursePage from './pages/SpanishCoursePage';
+import CourseView from './pages/CourseView';
 import BookLoader from './book/BookLoader';
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
         <Route path='/game/sw001' element={<VerbQuiz typed={false} />} />
        <Route path='/game/history' element={<ConjugationHistoryList/>} />
        <Route path='/game/editor' element={<CodeEditor myMarkdown={test}/>} />
-       <Route path='/course/01' element={<CoursePage />} />
+       <Route path='/course/:course' element={<CourseView />} />
        <Route path='/course/:course/chapter/:chapter' element={<BookLoader/>} />
       </Routes>
     </div>

@@ -7,6 +7,7 @@ export interface BookMetadata {
   category: string[]
   tags: string[]
   file: string
+  image?: string
 }
 
 export interface Book {
@@ -24,9 +25,10 @@ export interface BlockElement {
 }
 
 export type ContentBlock  = ParagraphBlock | ListBlock | QuoteBlock | CodeBlock | TableBlock |
-YouTubeBlock
+YouTubeBlock | HeadingBlock
  export type Block =
      | IExerciseBlock
+     | IExerciseClueBlock
      | IConjugationBlock
      | IVerifyBlock
      | ContentBlock
@@ -37,6 +39,10 @@ export  interface ParagraphText{
 
  export  class TextSpecial implements ParagraphText{
     constructor( public readonly text: string){}
+  }
+
+ export class TextCluedSpecial implements ParagraphText{
+    constructor( public readonly text: string, public readonly clue: string){}
   }
 
  export  class TextRegular implements ParagraphText{
@@ -76,6 +82,17 @@ export class CodeBlock implements  BlockElement{
   }
 
 }
+  export class HeadingBlock implements BlockElement {
+    public readonly type = "heading";
+    constructor(
+      public readonly depth: number,
+      public readonly text: ParagraphText[],
+      public readonly anchorId: string
+    ) {}
+    getText(): ParagraphText[] {
+      return this.text;
+    }
+  }
   export class ParagraphBlock implements BlockElement{
     public readonly type = "paragraph";
     constructor(public readonly text:  ParagraphText[]){}
@@ -84,6 +101,13 @@ export class CodeBlock implements  BlockElement{
   
   export interface IExerciseBlock {
     type: 'exercise'
+    instructions?: string
+    attributes: Record<string, string>
+    content: ContentBlock[]
+  }
+
+  export interface IExerciseClueBlock {
+    type: 'exercise_clue'
     instructions?: string
     attributes: Record<string, string>
     content: ContentBlock[]
@@ -100,7 +124,7 @@ export class CodeBlock implements  BlockElement{
   export interface IVerifyBlock {
     type: 'verify'
     instructions?: string
-    items: ListItemBlock[]
+    items: ContentBlock[]
   }
 
 export class QuoteBlock implements BlockElement {

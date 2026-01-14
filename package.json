@@ -32,6 +32,8 @@
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",
     "clean-verbs": "ts-node scripts/clean-verbs.ts",
+    "generate-course-meta": "ts-node scripts/generate-course-meta.ts",
+    "ensure-course-frontmatter:es01": "ts-node scripts/ensure-course-frontmatter.ts --course es01",
     "test": "vitest run --coverage",
     "console": " ts-node"
   },
