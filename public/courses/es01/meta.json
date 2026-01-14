@@ -1,6 +1,6 @@
 {
   "courseId": "es01",
-  "generatedAt": "2026-01-14T20:26:07.701Z",
+  "generatedAt": "2026-01-14T21:38:36.641Z",
   "chapters": [
     {
       "slug": "food",
@@ -22,7 +22,7 @@
       ],
       "image": "courses/es01/thumbs/food.svg",
       "href": "/course/es01/chapter/food",
-      "updatedAt": "2026-01-14T19:59:23.348Z",
+      "updatedAt": "2026-01-14T20:51:50.714Z",
       "hasContent": true
     },
     {
@@ -45,7 +45,7 @@
       ],
       "image": "courses/es01/thumbs/health.svg",
       "href": "/course/es01/chapter/health",
-      "updatedAt": "2026-01-14T19:59:23.348Z",
+      "updatedAt": "2026-01-14T20:51:50.719Z",
       "hasContent": false
     },
     {
@@ -70,7 +70,7 @@
       ],
       "image": "courses/es01/thumbs/navidad.svg",
       "href": "/course/es01/chapter/navidad",
-      "updatedAt": "2026-01-14T19:59:23.348Z",
+      "updatedAt": "2026-01-14T20:51:50.714Z",
       "hasContent": true
     },
     {
@@ -92,7 +92,7 @@
       ],
       "image": "courses/es01/thumbs/subjuntivo.svg",
       "href": "/course/es01/chapter/subjuntivo",
-      "updatedAt": "2026-01-14T20:26:00.632Z",
+      "updatedAt": "2026-01-14T20:26:28.226Z",
       "hasContent": true
     }
   ]
