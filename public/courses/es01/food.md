@@ -37,7 +37,7 @@ Tras el {fortuito} encuentro, quedó un leve {menoscabo} en su ánimo. No fue un
 
 Now let's train a litle bit conjugaction
 
-:::conjugaction[Instructions for the exercise]
+:::conjugation[Instructions for the exercise]
 ```yaml
 tenses:
   - indicativo.presente

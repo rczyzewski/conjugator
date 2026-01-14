@@ -50,10 +50,10 @@ export default function BookView({ book }: { readonly book: Book }) {
 
                 return (
                   <div key={blockIndex}>
-                      <VerbConjugateExercise title={title} words={block.verbs} tenses={block.tenses}></VerbConjugateExercise>
+                      <VerbConjugateExercise title={title} words={block.verbs} tenses={block.tenses}/>
 
                   </div>
-                );
+                )
               }
 
               if (block.type === "verify") {

@@ -28,45 +28,13 @@ const handleDragOver = (e: any) => {
     e.preventDefault()
 };
 
-function shuffle<T>(array: T[]): T[] {
-    return [...array].sort(() => Math.random() - 0.5);
-}
 
-export function getWords(prefix: string, str: string): Array<string | MissingWord> {
-
-    let reg = /{([^{}]+)}/
-    const ret: Array<string | MissingWord> = []
-    let current = str;
-    let counter =  0
-    while (true) {
-        let index = current.search(reg);
-        if (index == 0) {
-            let m = current.match(reg)
-            ret.push(new MissingWord(m![1]!, `${prefix}_${counter}`));
-            counter ++;
-            current = current.slice(m![0].length)
-        }
-        if (index > 0) {
-
-            ret.push(current.slice(0, index))
-            current = current.slice(index)
-        }
-        if (index < 0) {
-            ret.push(current)
-            break
-        }
-
-    }
-    return ret;
-}
-
-
-export default function FillMissingWords({  paragraphs: text, instructions  :myIinstructions }: GameDefinition): JSX.Element {
+export default function FillMissingWords({ paragraphs: text, instructions: myIinstructions }: GameDefinition): JSX.Element {
 
     const [gameState, setGameState] = useState<GameState | null>()
     const [currentMissingWord, setCurrentMissingWord] = useState<MissingWord | null>()
-    const [ verify , setVerify] = useState<boolean>(false)
-    
+    const [verify, setVerify] = useState<boolean>(false)
+
     const handleDrop = (e: DragEvent, missingWord: MissingWord) => {
         console.log(e)
         console.log(currentMissingWord)
@@ -75,30 +43,27 @@ export default function FillMissingWords({  paragraphs: text, instructions  :myI
         setCurrentMissingWord(null);
     };
 
-    function renderParagraph(parts: Array<MissingWord | string>) {
-        return <p> {parts.map(it => renderMissingWord(it, verify))} </p>
-    }
 
-    function renderMissingWord(missingWord: MissingWord | string, verify : boolean = false): JSX.Element {
-        if (missingWord instanceof MissingWord)
-        { 
-            if ( verify  && missingWord.answer ) {
-           return  <Button className='p-1 m-1' variant={ (missingWord.answer.original === missingWord.original)? "success": "danger"} >{missingWord.answer.original}</Button>
+
+    function renderMissingWord(missingWord: MissingWord | string, verify: boolean = false): JSX.Element {
+        if (missingWord instanceof MissingWord) {
+            if (verify && missingWord.answer) {
+                return <Button className='p-1 m-1' variant={(missingWord.answer.original === missingWord.original) ? "success" : "danger"} >{missingWord.answer.original}</Button>
 
 
             }
             else {
-                return <span 
-                        onDrop={(e: DragEvent) => handleDrop(e, missingWord)}
-                        onDragOver={(e) => handleDragOver(e)} >
-                        {missingWord.answer && <Button className='p-1 m-1' >{missingWord.answer.original}</Button>}
-                        {missingWord.answer == null && <Button className='p-1 m-1 btn-outline-secondary' variant={"light"} >
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </Button> 
-                        
-                        }
-                    </span>
+                return <span
+                    onDrop={(e: DragEvent) => handleDrop(e, missingWord)}
+                    onDragOver={(e) => handleDragOver(e)} >
+                    {missingWord.answer && <Button className='p-1 m-1' >{missingWord.answer.original}</Button>}
+                    {missingWord.answer == null && <Button className='p-1 m-1 btn-outline-secondary' variant={"light"} >
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </Button>
+
+                    }
+                </span>
             }
         } else {
             return <span>{missingWord}</span>
@@ -107,9 +72,10 @@ export default function FillMissingWords({  paragraphs: text, instructions  :myI
 
 
     useEffect(() => {
-      //TODO: revert an fix
+        //TODO: revert an fix
+        text.flatMap(it=>it.getText())
         setGameState(new GameState(text));
-    }, [text]) 
+    }, [text])
 
 
 
@@ -118,8 +84,8 @@ export default function FillMissingWords({  paragraphs: text, instructions  :myI
             <span className="navbar-brand">{myIinstructions}</span>
         </Nav>
 
-        { gameState && gameState.text.map(renderBlock) }
+        {gameState && gameState.text.map(renderBlock)}
     </Container>
-    
+
 }
 

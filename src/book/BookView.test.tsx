@@ -34,7 +34,8 @@ En muchas casas el belén {aparecía} de pronto en el salón, y la familia {acom
 `
 )
 test('renders FillMissingWords', async () => {
-  const { getByText, getByRole } = await render(<BookView book={exerciseFillMissingWords} />)
+  const { getByText, getByRole,  } = await render(<BookView book={exerciseFillMissingWords} />)
+
 
   await expect.element(getByText('Chapter 1')).toBeInTheDocument()
   await expect.element(getByText('En muchas casas')).toBeInTheDocument()
@@ -43,24 +44,28 @@ test('renders FillMissingWords', async () => {
 
 const exerciseVerbQuiz : Book = await markdownToBook(
 `
-# Test Book
 ## Chapter 1
 
-:::conjugation[Instructions for the exercise]{tense=indicativo.presente}
-- riecordar
-- visitar
-- oler
-- compartir
+:::conjugation[Instructions for the exercise]
+\`\`\`yaml
+tenses:
+  - indicativo.presente
+verbs:
+  - riecordar
+  - visitar
+  - oler
+  - compartir
+\`\`\`
 :::
-
-
 `
 )
-test('renders VerbQuiz', async () => {
+test('renders VerbConjugateExercise', async () => {
   const { getByText, getByRole } = await render(<BookView book={exerciseVerbQuiz} />)
 
   await expect.element(getByText('Chapter 1')).toBeInTheDocument()
+  await expect.element(getByText('Check')).toBeInTheDocument()
  // await expect.element(getByText('diciembre.')).toBeInTheDocument()
+
 })
 
 

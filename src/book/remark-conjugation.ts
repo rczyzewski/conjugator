@@ -17,12 +17,12 @@ const remarkConjugation: Plugin = () => {
                 .filter((it: any )=> it.lang === "yaml")[0]
 
       const ddd = yamlParse(f.value);
-      const conjugactionNode: ConjugationNode = {
+      const conjugationNode: ConjugationNode = {
         type: "conjugation",
         ...ddd,
       };
 
-      parent.children.splice(index, 1, conjugactionNode);
+      parent.children.splice(index, 1, conjugationNode);
     });
   };
 };

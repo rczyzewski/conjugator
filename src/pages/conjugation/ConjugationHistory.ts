@@ -41,7 +41,7 @@ async function demo(): Promise<IDBPDatabase<MyDB>> {
   return db;
 }
 
-class ConjugactionHistoryCollectionService {
+class ConjugationHistoryCollectionService {
   constructor(public db: IDBPDatabase<MyDB>) {}
   async get(key: string): Promise<ConjugationHistoryVerb|undefined> {
     return await db.get("test1", key);
@@ -57,4 +57,4 @@ class ConjugactionHistoryCollectionService {
 }
 
 const db = await demo();
-export default new ConjugactionHistoryCollectionService(db);
+export default new ConjugationHistoryCollectionService(db);

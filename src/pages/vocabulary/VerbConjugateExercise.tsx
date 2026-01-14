@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
+import Placeholder from 'react-bootstrap/Placeholder';
 import Container from 'react-bootstrap/Container';
 
 
@@ -12,6 +13,7 @@ interface GameDefinition {
     readonly title: string
     readonly words: string[]
     readonly tenses: string[]
+
 }
 
 
@@ -24,8 +26,8 @@ export default function VerbConjugateExercise({ title, words, tenses }: GameDefi
 
         fetchFromJsonDb(0, 2000)
             .then((data: VerbEntry[]) => {
-                const selectedVerbs = data.filter((it: VerbEntry) => words.some(v => v === it.verbo))
 
+                const selectedVerbs = data.filter((it: VerbEntry) => words.some(v => v === it.verbo))
                 const selectedMap = new Map(selectedVerbs.map(obj => [obj.verbo, obj as VerbEntry]));
 
                 const gameState = words.map(it => selectedMap.get(it))
@@ -34,17 +36,17 @@ export default function VerbConjugateExercise({ title, words, tenses }: GameDefi
                     .map(it => pickRandom(flatMapVerbEntry(it)));
                 setGameState(gameState);
             })
-    }
-        , [words, tenses])
+    }, [])
 
 
-    return <Container className="border m-2" style={{ backgroundColor: "#FAFAFA" }} >
+    return <Container className="border m-2" >
         <Nav className=" navbar-light bg-light justify-content-between">
             <span className="navbar-brand">{title}</span>
             <Button>Check</Button>
         </Nav>
-
-        {gameState && gameState.map(it =>
+        {!gameState &&    <> <Placeholder xs={7} /> <Placeholder xs={4} /> <Placeholder xs={4} /> 
+            <Placeholder xs={6} /> <Placeholder xs={8} /> </> } 
+        {gameState?.map(it =>
             <Form.Group className="row" key={it.infinitivo}>
                 <Form.Label for="inputEmail3" className="col-sm-2 col-form-label">{it.infinitivo}</Form.Label>
                 <Col >

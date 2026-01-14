@@ -136,7 +136,7 @@ For example:
 :::
 
 
-:::conjugaction[Instructions for the exercise]
+:::conjugation[Instructions for the exercise]
 ```yaml
 tenses: 
     - indicativo.presente
