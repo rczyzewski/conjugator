@@ -5,6 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   test: {
+    coverage: {
+      provider: 'v8', // or 'istanbul'
+      reporter: ['html', 'lcov', 'text', 'cobertura']
+    },
     browser: {
       enabled: true,
       provider: playwright(),

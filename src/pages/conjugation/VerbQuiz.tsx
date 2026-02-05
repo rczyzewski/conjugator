@@ -6,12 +6,12 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import fetchFromJsonDb, { VerbEntry, pickRandom, ConjugatedVerb, flatMapVerbEntry } from './VerbsService';
 
-import ConjugactionHistoryService , {ConjugactionHistoryVerb} from './ConjugactionHistory';
-import congationService, { IConjugacionSettings } from './ConjugactionSettingsService';
+import ConjugationHistoryService , {ConjugationHistoryVerb} from './ConjugationHistory';
+import congationService, { IConjugationSettings } from './ConjugationSettingsService';
 
 
 interface VerbListProps {
-  typed: boolean;
+  readonly typed: boolean;
 }
 
 interface VerbEvaluation {
@@ -31,9 +31,7 @@ function VerbResponse({ correct, conjugatedVerb }: VerbResponseProps): JSX.Eleme
     </>
   }
   else {
-    return <>
-      <h1> {conjugatedVerb?.answer}</h1>
-    </>
+    return <h1> {conjugatedVerb?.answer}</h1>
 
   }
 
@@ -57,13 +55,13 @@ function VerbQuiz({ typed = false }: VerbListProps): JSX.Element {
     const cv = conjugatedVerb;
 
     if (cv) {
-      const ddd = new ConjugactionHistoryVerb(cv.infinitivo, cv.mode, cv.tense, cv.person, cv.answer, new Date());
-      ConjugactionHistoryService.get(ddd.key)
+      const ddd = new ConjugationHistoryVerb(cv.infinitivo, cv.mode, cv.tense, cv.person, cv.answer, new Date());
+      ConjugationHistoryService.get(ddd.key)
      let  newStars =  Math.max( correct ? ddd.stars + 1  : ddd.stars -1, 0)
 
-      const ddd2 = new ConjugactionHistoryVerb(cv.infinitivo, cv.mode, cv.tense, cv.person, cv.answer, new Date(), undefined, newStars)
+      const ddd2 = new ConjugationHistoryVerb(cv.infinitivo, cv.mode, cv.tense, cv.person, cv.answer, new Date(), undefined, newStars)
 
-      ConjugactionHistoryService.insert(ddd2)
+      ConjugationHistoryService.insert(ddd2)
     }
 
 }
@@ -83,7 +81,7 @@ function VerbQuiz({ typed = false }: VerbListProps): JSX.Element {
   }
 
   useEffect(() => {
-    const ddd: IConjugacionSettings = congationService.getConutatyionSetting()
+    const ddd: IConjugationSettings = congationService.getConutatyionSetting()
 
     const predicate: (a: ConjugatedVerb) => boolean = (a: ConjugatedVerb) => {
       return ddd.tenses.some(tense => 
@@ -120,8 +118,7 @@ function VerbQuiz({ typed = false }: VerbListProps): JSX.Element {
     event.preventDefault();
     console.log(event);
     console.log(response)
-    setResponse((answerRef?.current?.value === conjugatedVerb?.answer) ? true : false)
-
+    setResponse(answerRef?.current?.value === conjugatedVerb?.answer)
   }
 
 

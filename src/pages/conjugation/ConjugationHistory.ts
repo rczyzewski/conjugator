@@ -2,7 +2,7 @@ import { openDB, DBSchema, IDBPDatabase } from "idb";
 
 
 
-export class ConjugactionHistoryVerb {
+export class ConjugationHistoryVerb {
   constructor(
     public readonly infinitivo: string,
     public readonly mode: string,
@@ -21,7 +21,7 @@ export class ConjugactionHistoryVerb {
 interface MyDB extends DBSchema {
   test1: {
     key: string;
-    value: ConjugactionHistoryVerb;
+    value: ConjugationHistoryVerb;
     indexes: {
       compoundIndex: [string, string, string, string];
       answered: [Date];
@@ -41,13 +41,13 @@ async function demo(): Promise<IDBPDatabase<MyDB>> {
   return db;
 }
 
-class ConjugactionHistoryCollectionService {
+class ConjugationHistoryCollectionService {
   constructor(public db: IDBPDatabase<MyDB>) {}
-  async get(key: string): Promise<ConjugactionHistoryVerb|undefined> {
+  async get(key: string): Promise<ConjugationHistoryVerb|undefined> {
     return await db.get("test1", key);
   }
 
-  async insert(entry: ConjugactionHistoryVerb): Promise<void> {
+  async insert(entry: ConjugationHistoryVerb): Promise<void> {
     await db.put("test1", entry, entry.key);
   }
 
@@ -57,4 +57,4 @@ class ConjugactionHistoryCollectionService {
 }
 
 const db = await demo();
-export default new ConjugactionHistoryCollectionService(db);
+export default new ConjugationHistoryCollectionService(db);

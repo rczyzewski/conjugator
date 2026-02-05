@@ -78,7 +78,7 @@ export default function fetchFromJsonDb(
 ): Promise<VerbEntry[]> {
 
   let fetchParams = getFetchPages(start, end);
-
+  
   return firstValueFrom(
     from(fetchParams.pages).pipe(
       // 1. Por cada URL, hago un fetch → Item[]

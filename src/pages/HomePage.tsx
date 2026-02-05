@@ -22,7 +22,7 @@ function HomePage(): JSX.Element {
 
             <p> Join the full spanish course<br />
                 <Button>
-                    <Nav.Link href="/conjugator/?/course/01">Spanish Course</Nav.Link>
+                    <Nav.Link href="/conjugator/?/course/es01">Spanish Course</Nav.Link>
                 </Button>
             </p>
             <p> The real fun is when you share your exercises with others!<br />

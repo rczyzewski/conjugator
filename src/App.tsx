@@ -1,15 +1,15 @@
 import './App.css';
-import VerbQuiz from './pages/conjugacion/VerbQuiz';
+import VerbQuiz from './pages/conjugation/VerbQuiz';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import ConjugationsSettings from './pages/conjugacion/ConjugacionSettings';
-import VerbList from './pages/conjugacion/VerbList'
+import ConjugationsSettings from './pages/conjugation/ConjugationSettings';
+import VerbList from './pages/conjugation/VerbList'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NotFound from './pages/NotFound';
-import VerbPreview from './pages/conjugacion/VerbPreview';
-import ConjugationHistoryList from './pages/conjugacion/ConugationHistoryList';
+import VerbPreview from './pages/conjugation/VerbPreview';
+import ConjugationHistoryList from './pages/conjugation/ConugationHistoryList';
 import CodeEditor , { test }from './pages/vocabulary/CodeEditor';
-import CoursePage from './pages/SpanishCoursePage';
+import CourseView from './pages/CourseView';
 import BookLoader from './book/BookLoader';
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
         <Route path='/game/sw001' element={<VerbQuiz typed={false} />} />
        <Route path='/game/history' element={<ConjugationHistoryList/>} />
        <Route path='/game/editor' element={<CodeEditor myMarkdown={test}/>} />
-       <Route path='/course/01' element={<CoursePage />} />
+       <Route path='/course/:course' element={<CourseView />} />
        <Route path='/course/:course/chapter/:chapter' element={<BookLoader/>} />
       </Routes>
     </div>

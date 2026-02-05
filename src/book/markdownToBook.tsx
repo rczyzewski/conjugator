@@ -1,54 +1,77 @@
-import { Literal, Table, List, Paragraph,  Parent, Node} from 'mdast'
-import { Book, Block, Chapter, ListItemBlock, ParagraphBlock } from './bookModel'
+import { Literal, Table, List, Paragraph,  Parent, Node, Blockquote, Heading } from 'mdast'
+import { Book, Chapter, ListItemBlock, ParagraphBlock, ParagraphText, TextStrong, TextRegular, TextInlineCode, CodeBlock, ListBlock, QuoteBlock, TableBlock, ContentBlock, TextSpecial, TextCluedSpecial, TextEmphasis, TextLink, TextImage, YouTubeBlock, BookMetadata, HeadingBlock, IExerciseClueBlock } from './bookModel'
 
 import remarkGfm from 'remark-gfm'
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import { remarkExerciseDirective  }from "./ExerciseNode";
 import remarkDirective from "remark-directive";
+import remarkSpecialText from './remark-special-text';
+import remarkYoutube from './remark-youtube';
+import { YoutubeNode } from './youtube-node';
+import remarkFrontmatter from 'remark-frontmatter';
+import { toString } from 'mdast-util-to-string';
+import { parse as yamlParse } from "yaml";
+import remarkConjugation from './remark-conjugation';
+import { extractBookMetadata } from "./markdownMetadata";
 
 
 export default async function  markdownToBook(markdown: string): Promise<Book> {
 
     const processor = unified()
       .use(remarkParse)
+      .use(remarkFrontmatter)
+      .use(remarkSpecialText)
       .use(remarkGfm)
       .use(remarkDirective)
+      .use(remarkYoutube)
+      .use(remarkConjugation)
       .use(remarkExerciseDirective);
-
+ 
     const tree = processor.parse(markdown);
     const transformedTree = await processor.run(tree);
 
-   return  astToBook(transformedTree as Parent);
+   const book = astToBook(transformedTree as Parent);
+   // Prefer a single shared metadata parser; keep AST conversion focused on content.
+   book.metadata = (await extractBookMetadata(markdown, book.metadata?.file)) ?? book.metadata;
+   return book;
 }
 
-export function remarkToBook(node: Node): Block {
+export function remarkToBook(node: Node): ContentBlock {
   if (node.type == 'paragraph') {
-    const ddd = extractText(node as Paragraph)
-    return new ParagraphBlock(ddd);
+    const content = extractText(node as Paragraph)
+    return new ParagraphBlock(content);
   }
-  if (node.type === "verify") {
-    const dd = node as List;
-    return {
-      type: 'verify',
-      instructions :"none",
-      items: extractListItemsFromNode(dd),
+  if (node.type === "code") {
+     const code  = (node as any).value ?? ''
+    return  new CodeBlock(code)
     }
-  }
   if (node.type === "list") {
-    const dd = node as List;
-    return {
-      type: 'list',
-      ordered: dd.ordered || false,
-      items: extractListItemsFromNode(dd),
-    }
+    const listNode = node as List;
+    return new ListBlock(extractListItemsFromNode(listNode), listNode.ordered || false)
   }
-  return new ParagraphBlock("someTextNewList");
+  if( node.type==="table"){
+    const table = node as Table
+    const allRows = table.children
+      .map(it => it.children.map(d => new ParagraphBlock(extractText(d as any))))
+
+    return new TableBlock(allRows[0], allRows.slice(1))
+  }
+
+  if (node.type === "blockquote") {
+    const quoteNode = node as Blockquote
+    return new QuoteBlock(quoteNode.children.map(it => remarkToBook(it)))
+  }
+  if (node.type === "youtube") {
+    const aaa = node as YoutubeNode;
+    return new YouTubeBlock(aaa.videoId)
+  }
+
+  return new ParagraphBlock([new TextRegular("Unknown node" + node.type)]);
 }
-export function toInnerTypes(tree: Parent): Block[] {
 
+export function toInnerTypes(tree: Parent): ContentBlock[] {
   return tree.children.map(it => remarkToBook(it))
-
 }
 
 function extractListItemsFromNode(node: List): ListItemBlock[] {
@@ -57,178 +80,173 @@ function extractListItemsFromNode(node: List): ListItemBlock[] {
 
 export function astToBook(tree: Parent): Book {
   const book: Book = {
-    title: '',
+
+    metadata: undefined,
     chapters: [],
   }
 
   let currentChapter: Chapter | null = null
+  const contentTypes = new Set(["blockquote", "code", "paragraph", "list", "table"]);
+  let headingCounter = 0;
 
-  for (const node of tree.children) {
-    // Título del libro
-    if (node.type === 'heading' && node.depth === 1) {
-      
-      book.title =(  node.children[0] as Literal).value;
-       continue;
+  function handleHeading(h: Heading): { currentChapter: Chapter | null; headingCounter: number } {
+    const headingText = toString(h).trim();
+
+    if (h.depth === 1) {
+      if (!book.metadata) {
+        book.metadata = {
+          title: headingText,
+          author: "",
+          description: "",
+          level: "",
+          category: [],
+          tags: [],
+          file: "",
+        };
+      } else if (!book.metadata.title) {
+        book.metadata.title = headingText;
+      }
+      return { currentChapter, headingCounter };
     }
 
-    // Capítulos
-    if (node.type === 'heading' && node.depth === 2) {
-      currentChapter = {
-        title: (node.children[0] as Literal).value,
-        blocks: [],
+    if (h.depth === 2) {
+      const nextChapter: Chapter = { title: headingText, blocks: [] };
+      book.chapters.push(nextChapter);
+      return { currentChapter: nextChapter, headingCounter };
+    }
+
+    if (currentChapter != null) {
+      const nextCounter = headingCounter + 1;
+      const anchorId = `h-${nextCounter}-${headingText
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "")}`;
+      currentChapter.blocks.push(
+        new HeadingBlock(h.depth, extractText(h), anchorId)
+      );
+      return { currentChapter, headingCounter: nextCounter };
+    }
+    return { currentChapter, headingCounter };
+  }
+
+  for (const node of tree.children) {
+    // YAML frontmatter (kept for backward compatibility; prefer extractBookMetadata() upstream)
+    if (node.type === "yaml") {
+      try {
+        const yamlContent = toString(node);
+        book.metadata = yamlParse(yamlContent) as BookMetadata;
+      } catch (e) {
+        console.error("Error parsing YAML:", e);
       }
-      book.chapters.push(currentChapter)
       continue;
     }
 
-    if (currentChapter == null) continue 
-    
-    // Párrafo normal
-    if (node.type === 'paragraph') {
-      currentChapter.blocks.push({
-        type: 'paragraph',
-        text: extractText(node),
-      })
+    // Headings:
+    // - depth 1: treat as book title if not provided by metadata
+    // - depth 2: major chapter
+    // - depth 3+: minor headings inside current chapter
+    if (node.type === "heading") {
+      const next = handleHeading(node);
+      currentChapter = next.currentChapter;
+      headingCounter = next.headingCounter;
+      continue;
     }
 
-    // Ejercicio
-    if (node.type.toString() === 'exercise' ) {
-      const data = (node as any).data ?? {}
-      currentChapter.blocks.push({
-        type: 'exercise',
-       attributes: data.hProperties ?? {}, 
-       instructions: data.instructions,
-        content: [ new ParagraphBlock( extractTextForExercise(node).join())] 
-      })
+    if (currentChapter == null) continue;
+
+    const type = node.type.toString();
+    switch (type) {
+      case "exercise": {
+        const data = (node as any).data ?? {};
+        const children = (node as Parent).children.map((it) => remarkToBook(it));
+        currentChapter.blocks.push({
+          type: "exercise",
+          attributes: data.hProperties ?? {},
+          instructions: data.instructions,
+          content: children,
+        });
+        break;
+      }
+      case "exercise_clue": {
+        const data = (node as any).data ?? {};
+        const children = (node as Parent).children.map((it) => remarkToBook(it));
+        currentChapter.blocks.push({
+          type: "exercise_clue",
+          attributes: data.hProperties ?? {},
+          instructions: data.instructions,
+          content: children,
+        } as IExerciseClueBlock);
+        break;
+      }
+      case "youtube":
+        currentChapter.blocks.push(new YouTubeBlock((node as any).videoId));
+        break;
+      case "conjugation": {
+        const conjugation = node as any;
+        const data = (node as any).data ?? {};
+        currentChapter.blocks.push({
+          type: "conjugation",
+          attributes: data.hProperties ?? {},
+          instructions: data.instructions,
+          verbs: conjugation.verbs,
+          tenses: conjugation.tenses,
+        });
+        break;
+      }
+      case "verify": {
+        const data = (node as any).data ?? {};
+        currentChapter.blocks.push({
+          type: "verify",
+          instructions: data.instructions,
+          items: (node as any).children.map((it: Node) => remarkToBook(it)),
+        });
+        break;
+      }
+      default:
+        if (contentTypes.has(type)) currentChapter.blocks.push(remarkToBook(node));
+        break;
     }
 
-    if (node.type.toString() === 'conjugaction' ) {
-      const data = (node as any).data ?? {}
-      currentChapter.blocks.push({
-        type: 'conjugaction',
-        attributes: data.hProperties ?? {},
-        instructions: data.instructions,
-        content: extractListItemsForConjugaction(node),
-      })
-    }
 
-    if (node.type.toString() === 'verify' ) {
-      const data = (node as any).data ?? {}
-       
-       
-      currentChapter.blocks.push({
-        type: 'verify',
-        instructions: data.instructions,
-        items: (node as any).children.map((it: Node) => remarkToBook(it)),
-      })
-    }
-
-    // Listas
-    if (node.type === 'list') {
-      currentChapter.blocks.push({
-        type: 'list',
-        ordered: node.ordered || false,
-        items: extractListItemsFromNode(node),
-      })
-    }
-
-    // Tablas
-    if (node.type === 'table') {
-        const rows = extractTableRows(node);
-      currentChapter.blocks.push({
-        type: 'table',
-        headers: rows[0],
-        rows: rows.slice(1),
-      })
-    }
   }
 
   return book
 }
 
-function extractText(node: Paragraph): string {
-  return node.children
-    ?.map((c: any) => c.value ?? '')
-    .join('') ?? ''
-}
-
-function extractFromParagraph(node: Paragraph): string {
-  return node.children
-    ?.flatMap((t:any)=>t.children)
-    .map((c: any) => c.value ?? '')
-    .join('') ?? ''
-}
-
-function extractTextForExercise(node: any): string[] {
-    return node.children
-      .flatMap((it: any ) =>it.children)
-      .map((c:Literal) => c.value ?? '')
-  }
-
-function extractListItemsForConjugaction(node: any): string[] {
-  if (!Array.isArray(node.children)) return []
-  return node.children.flatMap((child: any) => {
-    if (child.type === 'list') {
-      return child.children
-        .filter((li: any) => li.type === 'listItem')
-        .map((li: any) => extractFromParagraph(li));
+function extractText(node: any): ParagraphText[] {
+  const children: any[] = node?.children ?? [];
+  return children.flatMap((it: any) => {
+    const content = it?.value ?? "";
+    if (it.type === "strong") {
+      return it.children
+        .map((c: any) => extractLiteralText(c as Literal))
+        .map((t: string) => new TextStrong(t));
     }
-    return [];
-  })
-}
-
-export function extractTaskListItems(node: any): string[] {
-  if (!Array.isArray(node.children)) return []
-  
-  const result: string[] = []
-  
-  for (const child of node.children) {
-    // Task lists are parsed as 'list' nodes
-    if (child.type === 'list') {
-      const listItems = child.children?.filter((li: any) => li.type === 'listItem') || []
-      for (const li of listItems) {
-        // Extract text from paragraph nodes within list items
-        const paragraphs = li.children?.filter((c: any) => c.type === 'paragraph') || []
-        if (paragraphs.length > 0) {
-          const text = paragraphs
-            .map((p: any) => extractText(p as Paragraph))
-            .join(' ')
-            .trim()
-          if (text.length > 0) {
-            result.push(text)
-          }
-        } else {
-          // Fallback: try to extract text directly from list item children
-          const text = extractFromParagraph(li).trim()
-          if (text.length > 0) {
-            result.push(text)
-          }
-        }
-      }
-    } else if (child.type === 'paragraph') {
-      // Handle if children are directly paragraphs (fallback)
-      const text = extractText(child).trim()
-      if (text.length > 0) {
-        result.push(text)
-      }
+    if (it.type === "link") {
+      const linkChildren = extractText(it);
+      return new TextLink(it.url, linkChildren);
     }
-  }
-  
-  return result
+    if (it.type === "emphasis") {
+      return it.children
+        .map((c: any) => extractLiteralText(c as Literal))
+        .map((t: string) => new TextEmphasis(t));
+    }
+    if (it.type === "image") {
+      return new TextImage(it.url, it.alt || undefined);
+    }
+    if (it.type === "inlineCode") {
+      return new TextInlineCode(content);
+    }
+    if (it.type === "specialText") {
+      return new TextSpecial(content);
+    }
+    if (it.type === "cluedText") {
+      return new TextCluedSpecial(content, String(it.clue ?? ""));
+    }
+    return new TextRegular(content);
+  });
 }
 
-
-
-function extractTableRows(node: Table): string[][] {
-  
-  if (!node.children) return []
-  
-  return [...node.children]
-    .filter((row: any) => row.type === 'tableRow')
-    .map((row: any) => {
-      if (!row.children) return []
-      return row.children
-        .filter((cell: any) => cell.type === 'tableCell')
-        .map((cell: any) => extractText(cell).trim())
-    })
+function extractLiteralText(node: Literal): string {
+return node.value ?? ''
 }

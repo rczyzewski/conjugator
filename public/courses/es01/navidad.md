@@ -1,5 +1,31 @@
+---
+title: Navidad - tradiciones
+author: Rafa Cz.
+level: A2
+file: navidad.md
+image: courses/es01/thumbs/navidad.svg
+description: | 
+    Descubre tradiciones de Navidad en España con vocabulario temático y ejercicios en contexto.
+    Practica con “rellenar huecos” y un bloque de conjugación (indicativo) basado en el texto.
+category: 
+    - cultura
+    - lectura
+    - gramática
+tags:
+  - navidad
+  - españa
+  - tradiciones
+  - vocabulario
+  - rellenar huecos
+  - conjugación
+  - indicativo
+
+---
 
 ## Navidad - tradiciones
+
+Sumérgete en *una* experiencia lingüística y cultural única diseñada especialmente para aprender español de una forma divertida, significativa y 100 % orientada a la Navidad. Este curso combina vocabulario temático, ejercicios prácticos y contenidos auténticos relacionados con la cultura hispana durante las fiestas, para que no solo estudies el idioma, sino que lo vivas.
+
 :::exercise[put words in the right spots]
 En España, la {Nochebuena} es una celebración muy importante: las familias se reúnen, preparan una gran {cena} con marisco, cordero o pollo, y muchas personas van a la {iglesia} para la misa del gallo a medianoche. La mesa siempre está llena de {dulces}, como turrón, mazapán y polvorones, y los niños comen chocolates mientras esperan con ilusión.
 
@@ -34,22 +60,27 @@ Después cenamos y escuchamos antiguos {villancicos} mientras mi abuelo encendí
 Cuando dieron las doce, sonaron unas {campanas} de la iglesia del barrio y sentimos que la magia de la Navidad estaba en todas partes. Abrimos el primer {regalo} y encontramos una bufanda tejida a mano por mi abuela, que olía a lavanda y recuerdos. Yo cerré los ojos un momento y pensé que aquella noche había sido perfecta, como si la Navidad nunca hubiera terminado.
 :::
 
-:::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
-- riecordar
-- visitar
-- oler
-- compartir
-- traer
-- encender
-- pronunciar
-- escuchar
-- entonar
-- acercarse
-- calentar
-- envolver
-- abrir
-- descubrir
-- guardar
+:::conjugation[Instructions for the exercise]
+```yaml
+tenses: 
+    - indicativo.presente
+verbs: 
+    - riecordar
+    - visitar
+    - oler
+    - compartir
+    - traer
+    - encender
+    - pronunciar
+    - escuchar
+    - entonar
+    - acercarse
+    - calentar
+    - envolver
+    - abrir
+    - descubrir
+    - guardar
+```
 :::
 
 

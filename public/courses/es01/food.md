@@ -1,4 +1,25 @@
-# Here comes title - title is optional
+---
+title: Comida - repaso de vocabulario
+author: Rafa Cz.
+level: A2
+file: food.md
+image: courses/es01/thumbs/food.svg
+description: | 
+    Repaso práctico de vocabulario con listas, tablas y ejercicios interactivos.
+    Incluye un ejercicio de “rellenar huecos” y práctica de conjugación para consolidar
+    nuevas palabras en contexto.
+category: 
+    - vocabulario
+    - práctica guiada
+tags:
+  - comida
+  - vocabulario
+  - repaso
+  - ejercicios
+  - rellenar huecos
+  - conjugación
+
+---
 
 ## Repaso de las palabras
 
@@ -37,15 +58,20 @@ Tras el {fortuito} encuentro, quedó un leve {menoscabo} en su ánimo. No fue un
 
 Now let's train a litle bit conjugaction
 
-:::conjugaction[Instructions for the exercise]{tense=indicativo.presente}
-* ser
-* estar
-* tener
-* comer
-* vivir
-* leer
-* hablar
-* escribir
+:::conjugation[Instructions for the exercise]
+```yaml
+tenses:
+  - indicativo.presente
+  - indicativo.condictional
+verbs:
+  - ser
+  - estar
+  - tener
+  - comer
+  - vivir
+  - leer
+  - hablar
+  - escribir
 :::
 
 Now let's play true or false
